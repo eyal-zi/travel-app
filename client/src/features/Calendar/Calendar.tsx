@@ -46,6 +46,12 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
 
   const api = () => calendarRef.current?.getApi()
 
+  // Default the selected day to today when entering the calendar with no day
+  // already picked (e.g. no `date` in the URL), so a day is always highlighted.
+  useEffect(() => {
+    if (!selectedDate) setSelectedDate(format(new Date(), 'yyyy-MM-dd'))
+  }, [selectedDate, setSelectedDate])
+
   // FullCalendar only re-measures on `window` resize, so it ignores changes to
   // its parent's size. Observe the wrapper and call `updateSize()` whenever the
   // container resizes, so the grid scales cleanly inside any parent — not just
