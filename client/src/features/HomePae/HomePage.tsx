@@ -1,7 +1,10 @@
-import Box from '@mui/material/Box'
+import { Calendar } from '../Calendar/Calendar'
+import { HomePageRoot } from './HomePage.styles'
 
 export const HomePage = () => {
-    return (
-        <Box sx={{ height: '400px', width: '400px' }} />
-    )
+  return (
+    <HomePageRoot>
+      <Calendar />
+    </HomePageRoot>
+  )
 }
