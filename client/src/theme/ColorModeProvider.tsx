@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import type { PaletteMode } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import { createAppTheme } from './theme'
 
 type ColorModeContextValue = {
@@ -16,17 +15,17 @@ const ColorModeContext = createContext<ColorModeContextValue | undefined>(undefi
 
 const STORAGE_KEY = 'travel-app-color-mode'
 
-const getInitialMode = (prefersDark: boolean): PaletteMode => {
+const getInitialMode = (): PaletteMode => {
   if (typeof window !== 'undefined') {
     const stored = window.localStorage.getItem(STORAGE_KEY)
     if (stored === 'light' || stored === 'dark') return stored
   }
-  return prefersDark ? 'dark' : 'light'
+  // Default to dark mode unless the user has previously chosen otherwise.
+  return 'dark'
 }
 
 export const ColorModeProvider = ({ children }: { children: ReactNode }) => {
-  const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
-  const [mode, setMode] = useState<PaletteMode>(() => getInitialMode(prefersDark))
+  const [mode, setMode] = useState<PaletteMode>(getInitialMode)
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, mode)

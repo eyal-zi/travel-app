@@ -60,6 +60,28 @@ export const StyledCalendarWrapper = styled(Box)(({ theme }) => ({
     fontFamily: theme.typography.fontFamily,
   },
 
+  // FullCalendar's scrollable panes use a native scrollbar that otherwise keeps
+  // the OS/`color-scheme` appearance and ignores the toggle. Drive its colors
+  // from the palette so it updates with light/dark mode (Firefox + WebKit).
+  '& .fc-scroller': {
+    scrollbarWidth: 'thin',
+    scrollbarColor: `${theme.palette.text.disabled} transparent`,
+    '&::-webkit-scrollbar': {
+      width: 8,
+      height: 8,
+    },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: 'transparent',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.text.disabled,
+      borderRadius: 8,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      backgroundColor: theme.palette.text.secondary,
+    },
+  },
+
   // Column headers and day numbers: lighter, modern typography.
   '& .fc .fc-col-header-cell-cushion': {
     paddingBlock: theme.spacing(1),

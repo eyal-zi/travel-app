@@ -1,10 +1,16 @@
 import { Calendar } from '../Calendar/Calendar'
-import { HomePageRoot } from './HomePage.styles'
+import { ColorModeToggle } from '../../theme/ColorModeToggle'
+import { CalendarContainer, PageHeader, PageRoot } from './HomePage.styles'
 
 export const HomePage = () => {
   return (
-    <HomePageRoot>
-      <Calendar />
-    </HomePageRoot>
+    <PageRoot>
+      <PageHeader>
+        <ColorModeToggle />
+      </PageHeader>
+      <CalendarContainer>
+        <Calendar />
+      </CalendarContainer>
+    </PageRoot>
   )
 }
