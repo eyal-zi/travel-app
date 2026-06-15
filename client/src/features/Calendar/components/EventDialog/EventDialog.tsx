@@ -64,6 +64,12 @@ export const EventDialog = ({
     if (isValid(values)) onSave({ ...values, title: values.title.trim() })
   }
 
+  // Submitting the form (e.g. pressing Enter in any field) saves the event.
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleSave()
+  }
+
   const endBeforeStart = Boolean(values.start && values.end) && values.end <= values.start
 
   return (
@@ -79,86 +85,89 @@ export const EventDialog = ({
         </DialogHeader>
       </DialogTitle>
 
-      <DialogContent>
-        <FormStack>
-          <TextField
-            label="Title"
-            value={values.title}
-            onChange={(e) => update('title', e.target.value)}
-            autoFocus
-            fullWidth
-            placeholder="e.g. Trip to Lisbon"
-          />
-
-          <DateRow>
+      <form onSubmit={handleSubmit}>
+        <DialogContent>
+          <FormStack>
             <TextField
-              label="Start"
-              type={values.allDay ? 'date' : 'datetime-local'}
-              value={values.allDay ? toDatePart(values.start) : values.start}
-              onChange={(e) => handleDateChange('start', e.target.value)}
-              slotProps={{ inputLabel: { shrink: true } }}
+              label="Title"
+              value={values.title}
+              onChange={(e) => update('title', e.target.value)}
+              autoFocus
+              fullWidth
+              placeholder="e.g. Trip to Lisbon"
             />
-            <TextField
-              label="End"
-              type={values.allDay ? 'date' : 'datetime-local'}
-              value={values.allDay ? toDatePart(values.end) : values.end}
-              onChange={(e) => handleDateChange('end', e.target.value)}
-              error={endBeforeStart}
-              helperText={endBeforeStart ? 'End must be after start' : ' '}
-              slotProps={{ inputLabel: { shrink: true } }}
-            />
-          </DateRow>
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={values.allDay}
-                onChange={(e) => update('allDay', e.target.checked)}
+            <DateRow>
+              <TextField
+                label="Start"
+                type={values.allDay ? 'date' : 'datetime-local'}
+                value={values.allDay ? toDatePart(values.start) : values.start}
+                onChange={(e) => handleDateChange('start', e.target.value)}
+                slotProps={{ inputLabel: { shrink: true } }}
               />
-            }
-            label="All day"
-          />
+              <TextField
+                label="End"
+                type={values.allDay ? 'date' : 'datetime-local'}
+                value={values.allDay ? toDatePart(values.end) : values.end}
+                onChange={(e) => handleDateChange('end', e.target.value)}
+                error={endBeforeStart}
+                helperText={endBeforeStart ? 'End must be after start' : ' '}
+                slotProps={{ inputLabel: { shrink: true } }}
+              />
+            </DateRow>
 
-          <Stack spacing={1}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Colour
-            </Typography>
-            <SwatchRow>
-              {EVENT_COLOR_OPTIONS.map((color) => (
-                <Swatch
-                  key={color}
-                  swatchColor={color}
-                  selected={values.color === color}
-                  onClick={() => update('color', color)}
-                  aria-label={`${color} colour`}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={values.allDay}
+                  onChange={(e) => update('allDay', e.target.checked)}
                 />
-              ))}
-            </SwatchRow>
-          </Stack>
-        </FormStack>
-      </DialogContent>
+              }
+              label="All day"
+            />
 
-      <StyledDialogActions>
-        {mode === 'edit' && onDelete ? (
-          <Button
-            color="error"
-            startIcon={<DeleteOutlineRoundedIcon />}
-            onClick={onDelete}
-          >
-            Delete
-          </Button>
-        ) : (
-          <span />
-        )}
-        <Stack direction="row" spacing={1}>
-          <Button color="inherit" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleSave} disabled={!isValid(values)}>
-            Save
-          </Button>
-        </Stack>
-      </StyledDialogActions>
+            <Stack spacing={1}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Colour
+              </Typography>
+              <SwatchRow>
+                {EVENT_COLOR_OPTIONS.map((color) => (
+                  <Swatch
+                    key={color}
+                    swatchColor={color}
+                    selected={values.color === color}
+                    onClick={() => update('color', color)}
+                    aria-label={`${color} colour`}
+                  />
+                ))}
+              </SwatchRow>
+            </Stack>
+          </FormStack>
+        </DialogContent>
+
+        <StyledDialogActions>
+          {mode === 'edit' && onDelete ? (
+            <Button
+              type="button"
+              color="error"
+              startIcon={<DeleteOutlineRoundedIcon />}
+              onClick={onDelete}
+            >
+              Delete
+            </Button>
+          ) : (
+            <span />
+          )}
+          <Stack direction="row" spacing={1}>
+            <Button type="button" color="inherit" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained" disabled={!isValid(values)}>
+              Save
+            </Button>
+          </Stack>
+        </StyledDialogActions>
+      </form>
     </StyledDialog>
   )
 }
