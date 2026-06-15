@@ -1,4 +1,5 @@
 import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
 import ToggleButton from '@mui/material/ToggleButton'
 import Tooltip from '@mui/material/Tooltip'
@@ -12,8 +13,9 @@ import {
   ToolbarRoot,
   ViewToggle,
 } from './CalendarToolbar.styles'
-import type { CalendarView } from './Calendar.types'
+import type { CalendarView } from '../../Calendar.types'
 import type { CalendarToolbarProps } from './CalendarToolbar.types'
+import { useSelectedDate } from '../../../../common/hooks/useSelectedDate'
 
 const VIEW_LABELS: Record<CalendarView, string> = {
   dayGridMonth: 'Month',
@@ -31,6 +33,10 @@ export const CalendarToolbar = ({
   onToday,
   onAddEvent,
 }: CalendarToolbarProps) => {
+  // Consumed directly (not prop-drilled) to show the picked date stays in sync
+  // with clicks in the sibling Calendar grid.
+  const [selectedDate] = useSelectedDate()
+
   return (
     <ToolbarRoot>
       <NavGroup>
@@ -50,6 +56,8 @@ export const CalendarToolbar = ({
       </NavGroup>
 
       <PeriodTitle variant="h5">{title}</PeriodTitle>
+
+      {selectedDate && <Chip color="primary" size="small" label={selectedDate} />}
 
       <ActionGroup>
         <ViewToggle

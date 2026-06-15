@@ -5,7 +5,9 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import type { DateSelectArg, EventClickArg, EventDropArg, EventInput } from '@fullcalendar/core'
-import type { EventResizeDoneArg } from '@fullcalendar/interaction'
+import type { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction'
+import { differenceInCalendarDays, format } from 'date-fns'
+import { useSelectedDate } from '../../common/hooks/useSelectedDate'
 import { CalendarRoot, StyledCalendarWrapper } from './Calendar.styles'
 import { EventDialog } from './components/EventDialog/EventDialog'
 import {
@@ -28,6 +30,7 @@ import { CalendarToolbar } from './components/CalendarToolbar/CalendarToolbar'
 export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: CalendarProps) => {
   const theme = useTheme()
   const calendarRef = useRef<FullCalendar>(null)
+  const [selectedDate, setSelectedDate] = useSelectedDate()
 
   const [events, setEvents] = useState(() => initialEvents ?? buildDefaultEvents())
   const [view, setView] = useState<CalendarView>(initialView)
@@ -67,8 +70,11 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
 
   // --- FullCalendar callbacks ---
 
+  // A single day click also fires `select` (a 1-day all-day span); treat that
+  // as a date pick (handled by `handleDateClick`), not an event creation.
   const handleSelect = (selectInfo: DateSelectArg) => {
     api()?.unselect()
+    if (selectInfo.allDay && differenceInCalendarDays(selectInfo.end, selectInfo.start) <= 1) return
     openCreate({
       title: '',
       start: toLocalInput(selectInfo.start),
@@ -77,6 +83,9 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
       color: 'primary',
     })
   }
+
+  // Clicking a day picks it: persisted in the URL via `useSelectedDate`.
+  const handleDateClick = (arg: DateClickArg) => setSelectedDate(arg.dateStr.slice(0, 10))
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     const event = events.find((candidate) => candidate.id === clickInfo.event.id)
@@ -153,6 +162,10 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
           dayMaxEvents
           nowIndicator
           select={handleSelect}
+          dateClick={handleDateClick}
+          dayCellClassNames={(arg) =>
+            selectedDate && format(arg.date, 'yyyy-MM-dd') === selectedDate ? ['selected-day'] : []
+          }
           eventClick={handleEventClick}
           eventDrop={applyDrag}
           eventResize={applyDrag}

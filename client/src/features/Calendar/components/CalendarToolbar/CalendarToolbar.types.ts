@@ -1,4 +1,4 @@
-import type { CalendarView } from './Calendar.types'
+import type { CalendarView } from '../../Calendar.types'
 
 export interface CalendarToolbarProps {
   /** Human-readable period label for the active range, e.g. "June 2026". */

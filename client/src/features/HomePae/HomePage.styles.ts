@@ -8,8 +8,8 @@ import Box from '@mui/material/Box'
 export const HomePageRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  height: '50vh',
-  width: '30%',
+  height: '100vh',
+  width: '60%',
   padding: theme.spacing(3),
   backgroundColor: theme.palette.background.default,
   [theme.breakpoints.down('sm')]: {

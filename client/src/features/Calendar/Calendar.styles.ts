@@ -99,4 +99,11 @@ export const StyledCalendarWrapper = styled(Box)(({ theme }) => ({
   '& .fc .fc-highlight': {
     backgroundColor: alpha(theme.palette.primary.main, 0.12),
   },
+
+  // The day picked via `useSelectedDate` — stronger than today's tint so the
+  // two states stay visually distinct.
+  '& .fc .fc-daygrid-day.selected-day': {
+    backgroundColor: alpha(theme.palette.primary.main, 0.18),
+    boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}`,
+  },
 }))
