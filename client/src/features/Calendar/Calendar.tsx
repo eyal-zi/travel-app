@@ -4,6 +4,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import heLocale from '@fullcalendar/core/locales/he'
 import type { DateSelectArg, EventClickArg, EventDropArg, EventInput } from '@fullcalendar/core'
 import type { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction'
 import { differenceInCalendarDays, format } from 'date-fns'
@@ -175,6 +176,9 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView={initialView}
+          // The Hebrew locale translates day/month names and bundles
+          // `direction: 'rtl'`, so the grid mirrors right-to-left automatically.
+          locale={heLocale}
           headerToolbar={false}
           height="100%"
           events={fcEvents}

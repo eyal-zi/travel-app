@@ -57,7 +57,15 @@ export const CalendarToolbar = ({
 
       <PeriodTitle variant="h5">{title}</PeriodTitle>
 
-      {selectedDate && <Chip color="primary" size="small" label={selectedDate} />}
+      {selectedDate && (
+        // Stored as `yyyy-MM-dd`; show it as `dd-MM-yyyy` for display. Reordering
+        // the parts directly avoids the UTC-parsing day shift of `new Date(...)`.
+        <Chip
+          color="primary"
+          size="small"
+          label={selectedDate.split('-').reverse().join('-')}
+        />
+      )}
 
       <ActionGroup>
         <ViewToggle
