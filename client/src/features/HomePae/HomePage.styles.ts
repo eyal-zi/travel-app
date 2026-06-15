@@ -8,7 +8,7 @@ import Box from '@mui/material/Box'
 export const HomePageRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  height: '60vh',
+  height: '80vh',
   width: '60%',
   padding: theme.spacing(3),
   backgroundColor: theme.palette.background.default,

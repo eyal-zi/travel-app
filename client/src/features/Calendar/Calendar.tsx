@@ -181,7 +181,13 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
           selectable
           selectMirror
           editable
-          dayMaxEvents
+          // Never fold events into a "+N more" link (which hid them at small
+          // widths). Show every event at any size — busy days grow and the grid
+          // scrolls instead. `block` renders each event as a filled bar, so
+          // multi-day events read as one continuous span across their duration
+          // rather than a per-day dot.
+          dayMaxEvents={false}
+          eventDisplay="block"
           nowIndicator
           select={handleSelect}
           dateClick={handleDateClick}
