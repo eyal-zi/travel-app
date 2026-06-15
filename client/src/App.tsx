@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { RouterProvider } from 'react-router-dom'
+import router from './routes/routes'
+import { ColorModeProvider } from './theme/ColorModeProvider'
 
 const App = () => {
-  const [count, setCount] = useState(0)
-
   return (
-    <h1>hello world</h1>
+    <ColorModeProvider>
+      <RouterProvider router={router} />
+    </ColorModeProvider>
   )
 }
 
