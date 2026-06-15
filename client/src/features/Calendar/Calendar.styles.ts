@@ -17,6 +17,16 @@ export const CalendarRoot = styled(Paper)(({ theme }) => ({
   gap: theme.spacing(1),
   borderRadius: (theme.shape.borderRadius as number) * 1.5,
   border: `1px solid ${theme.palette.divider}`,
+
+  // Become a containment context so the toolbar and grid can respond to *this*
+  // component's width (via `@container calendar (...)`) rather than the viewport.
+  containerType: 'inline-size',
+  containerName: 'calendar',
+
+  // Tighten padding once the calendar itself (not the window) gets narrow.
+  '@container calendar (max-width: 600px)': {
+    padding: theme.spacing(1.5),
+  },
 }))
 
 /**
@@ -105,5 +115,37 @@ export const StyledCalendarWrapper = styled(Box)(({ theme }) => ({
   '& .fc .fc-daygrid-day.selected-day': {
     backgroundColor: alpha(theme.palette.primary.main, 0.18),
     boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}`,
+  },
+
+  // --- Scale type and padding to the calendar's own width ---
+  // Driven by the `calendar` container declared on `CalendarRoot`, so these fire
+  // for a narrow component inside a wide window — not just on small viewports.
+  '@container calendar (max-width: 600px)': {
+    '& .fc .fc-col-header-cell-cushion': {
+      paddingBlock: theme.spacing(0.5),
+      letterSpacing: '0.02em',
+    },
+    '& .fc .fc-daygrid-day-number': {
+      padding: theme.spacing(0.5),
+      fontSize: theme.typography.caption.fontSize,
+    },
+    '& .fc .fc-daygrid-event, & .fc .fc-timegrid-event': {
+      paddingInline: theme.spacing(0.5),
+      fontSize: theme.typography.caption.fontSize,
+    },
+    '& .fc .fc-timegrid-slot-label-cushion, & .fc .fc-timegrid-axis-cushion': {
+      fontSize: '0.6875rem',
+    },
+  },
+
+  '@container calendar (max-width: 480px)': {
+    '& .fc .fc-col-header-cell-cushion': {
+      fontSize: '0.6875rem',
+      paddingInline: 0,
+    },
+    '& .fc .fc-daygrid-day-number': {
+      padding: theme.spacing(0.25),
+      fontSize: '0.6875rem',
+    },
   },
 }))

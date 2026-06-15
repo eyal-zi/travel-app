@@ -14,6 +14,20 @@ export const ToolbarRoot = styled(Box)(({ theme }) => ({
   '& > :last-child': {
     marginInlineStart: 'auto',
   },
+
+  // When the calendar itself is narrow, stack the groups into centered rows
+  // (full labels kept) instead of crowding them onto one wrapping line.
+  '@container calendar (max-width: 600px)': {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    '& > :last-child': {
+      marginInlineStart: 0,
+    },
+    // Keep the selected-date chip compact rather than stretched full-width.
+    '& > .MuiChip-root': {
+      alignSelf: 'center',
+    },
+  },
 }))
 
 /** Prev / today / next navigation group. */
@@ -21,6 +35,10 @@ export const NavGroup = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(0.5),
+
+  '@container calendar (max-width: 600px)': {
+    justifyContent: 'center',
+  },
 }))
 
 /** The current period label; truncates gracefully when space is tight. */
@@ -30,6 +48,10 @@ export const PeriodTitle = styled(Typography)(({ theme }) => ({
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
+
+  '@container calendar (max-width: 600px)': {
+    textAlign: 'center',
+  },
 }))
 
 /** Right-hand cluster: view toggle + add button. */
@@ -38,6 +60,10 @@ export const ActionGroup = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   flexWrap: 'wrap',
   gap: theme.spacing(1.5),
+
+  '@container calendar (max-width: 600px)': {
+    justifyContent: 'center',
+  },
 }))
 
 /** Pill-shaped, theme-coloured view switcher. */

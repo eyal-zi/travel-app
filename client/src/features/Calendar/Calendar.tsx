@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from '@mui/material/styles'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -30,6 +30,7 @@ import { CalendarToolbar } from './components/CalendarToolbar/CalendarToolbar'
 export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: CalendarProps) => {
   const theme = useTheme()
   const calendarRef = useRef<FullCalendar>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const [selectedDate, setSelectedDate] = useSelectedDate()
 
   const [events, setEvents] = useState(() => initialEvents ?? buildDefaultEvents())
@@ -43,6 +44,27 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
   })
 
   const api = () => calendarRef.current?.getApi()
+
+  // FullCalendar only re-measures on `window` resize, so it ignores changes to
+  // its parent's size. Observe the wrapper and call `updateSize()` whenever the
+  // container resizes, so the grid scales cleanly inside any parent — not just
+  // the viewport. `requestAnimationFrame` coalesces resize bursts.
+  useEffect(() => {
+    const wrapper = wrapperRef.current
+    if (!wrapper) return
+
+    let frame = 0
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => api()?.updateSize())
+    })
+    observer.observe(wrapper)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      observer.disconnect()
+    }
+  }, [])
 
   // Resolve each event's palette key to concrete theme colours for the grid.
   const fcEvents = useMemo<EventInput[]>(
@@ -148,7 +170,7 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
         onAddEvent={() => openCreate(defaultFormValues())}
       />
 
-      <StyledCalendarWrapper>
+      <StyledCalendarWrapper ref={wrapperRef}>
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
