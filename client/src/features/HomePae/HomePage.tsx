@@ -1,5 +1,5 @@
 import { Calendar } from '../Calendar/Calendar'
-import { Map } from '../Map/Map'
+import { MapDropzone } from '../Map/MapDropzone/MapDropzone'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
 import {
   CalendarContainer,
@@ -20,7 +20,7 @@ export const HomePage = () => {
           <Calendar />
         </CalendarContainer>
         <MapContainer>
-          <Map />
+          <MapDropzone />
         </MapContainer>
       </PageContent>
     </PageRoot>
