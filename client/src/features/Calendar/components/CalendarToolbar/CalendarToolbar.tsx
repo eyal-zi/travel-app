@@ -23,7 +23,6 @@ const VIEW_LABELS: Record<CalendarView, string> = {
   timeGridDay: 'Day',
 }
 
-/** Custom MUI toolbar driving FullCalendar navigation and the active view. */
 export const CalendarToolbar = ({
   title,
   view,
@@ -33,8 +32,6 @@ export const CalendarToolbar = ({
   onToday,
   onAddEvent,
 }: CalendarToolbarProps) => {
-  // Consumed directly (not prop-drilled) to show the picked date stays in sync
-  // with clicks in the sibling Calendar grid.
   const [selectedDate] = useSelectedDate()
 
   return (
@@ -56,10 +53,7 @@ export const CalendarToolbar = ({
       </NavGroup>
 
       <PeriodTitle variant="h5">{title}</PeriodTitle>
-
       {selectedDate && (
-        // Stored as `yyyy-MM-dd`; show it as `dd-MM-yyyy` for display. Reordering
-        // the parts directly avoids the UTC-parsing day shift of `new Date(...)`.
         <Chip
           color="primary"
           size="small"

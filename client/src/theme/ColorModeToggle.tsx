@@ -4,7 +4,6 @@ import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded'
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
 import { useColorMode } from './ColorModeProvider'
 
-/** Icon button that toggles the app between dark and light mode. */
 export const ColorModeToggle = () => {
   const { mode, toggleColorMode } = useColorMode()
   const isDark = mode === 'dark'

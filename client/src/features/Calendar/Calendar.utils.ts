@@ -5,14 +5,11 @@ import type { EventFormValues } from './components/EventDialog/EventDialog.types
 const LOCAL_FMT = "yyyy-MM-dd'T'HH:mm"
 const DATE_FMT = 'yyyy-MM-dd'
 
-/** Format a `Date` into the form's `datetime-local` string. */
 export const toLocalInput = (date: Date) => format(date, LOCAL_FMT)
 
-/** Format a FullCalendar `Date` into stored form (date-only when all-day). */
 export const toStored = (date: Date, allDay: boolean) =>
   format(date, allDay ? DATE_FMT : LOCAL_FMT)
 
-/** Seed events demonstrating single- and multi-day spans, anchored to today. */
 export const buildDefaultEvents = (): CalendarEvent[] => {
   const today = new Date()
   const dayAt = (dayOffset: number, hour: number) =>
@@ -41,7 +38,6 @@ export const buildDefaultEvents = (): CalendarEvent[] => {
   ]
 }
 
-/** Default form values for a fresh "Add event" with a one-hour slot from now. */
 export const defaultFormValues = (): EventFormValues => {
   const start = new Date()
   return {
@@ -53,7 +49,6 @@ export const defaultFormValues = (): EventFormValues => {
   }
 }
 
-/** Convert a stored event into editable form values. */
 export const eventToForm = (event: CalendarEvent): EventFormValues => {
   const start = parseISO(event.start)
   const end = event.end ? parseISO(event.end) : addHours(start, 1)
@@ -66,7 +61,6 @@ export const eventToForm = (event: CalendarEvent): EventFormValues => {
   }
 }
 
-/** Convert form values back into a stored event with the given id. */
 export const formToEvent = (values: EventFormValues, id: string): CalendarEvent => ({
   id,
   title: values.title,

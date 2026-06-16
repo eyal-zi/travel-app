@@ -22,20 +22,14 @@ import {
 import { EVENT_COLOR_OPTIONS } from './EventDialog.types'
 import type { EventDialogProps, EventFormValues } from './EventDialog.types'
 
-/** `true` when the form describes a valid, saveable event. */
 const isValid = (values: EventFormValues) =>
   values.title.trim().length > 0 &&
   Boolean(values.start) &&
   Boolean(values.end) &&
   values.end > values.start
 
-/** Strip the time portion for all-day inputs (`type="date"`). */
 const toDatePart = (value: string) => value.slice(0, 10)
 
-/**
- * Create/edit dialog for a (potentially multi-day) calendar event. Holds its
- * own form state, seeded from `initialValues` each time it opens.
- */
 export const EventDialog = ({
   open,
   mode,
@@ -46,7 +40,6 @@ export const EventDialog = ({
 }: EventDialogProps) => {
   const [values, setValues] = useState<EventFormValues>(initialValues)
 
-  // Re-seed the form whenever the dialog (re)opens with fresh initial values.
   useEffect(() => {
     if (open) setValues(initialValues)
   }, [open, initialValues])
@@ -55,8 +48,6 @@ export const EventDialog = ({
     setValues((prev) => ({ ...prev, [key]: value }))
 
   const handleDateChange = (key: 'start' | 'end', raw: string) => {
-    // For all-day events the input is `type="date"`; pad back to a full
-    // datetime so form state stays uniform.
     update(key, values.allDay ? `${raw}T00:00` : raw)
   }
 
@@ -64,7 +55,6 @@ export const EventDialog = ({
     if (isValid(values)) onSave({ ...values, title: values.title.trim() })
   }
 
-  // Submitting the form (e.g. pressing Enter in any field) saves the event.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     handleSave()

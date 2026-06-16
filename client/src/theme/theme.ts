@@ -1,12 +1,7 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles'
 import type { PaletteMode, ThemeOptions } from '@mui/material/styles'
 
-/**
- * Design tokens shared across light and dark modes.
- * Keep raw values here so palettes stay consistent and easy to tweak.
- */
 const tokens = {
-  // Brand — a calm travel teal with a warm coral accent.
   brand: {
     main: '#0d9488',
     light: '#2dd4bf',
@@ -21,7 +16,6 @@ const tokens = {
   warning: '#f59e0b',
   error: '#ef4444',
   info: '#3b82f6',
-  // Neutral ramp used for backgrounds, borders and text.
   neutral: {
     50: '#f8fafc',
     100: '#f1f5f9',
@@ -40,7 +34,6 @@ const tokens = {
 const SPACING_UNIT = 8
 const BORDER_RADIUS = 12
 
-/** Build the palette for a given mode from the shared tokens. */
 const getPalette = (mode: PaletteMode): ThemeOptions['palette'] => {
   const isLight = mode === 'light'
 
@@ -75,7 +68,6 @@ const getPalette = (mode: PaletteMode): ThemeOptions['palette'] => {
   }
 }
 
-/** Typography shared across modes — system-first font stack, modern scale. */
 const typography: ThemeOptions['typography'] = {
   fontFamily: [
     'Inter',
@@ -106,7 +98,6 @@ const typography: ThemeOptions['typography'] = {
   overline: { fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' },
 }
 
-/** Component-level defaults that apply in both modes. */
 const components: ThemeOptions['components'] = {
   MuiCssBaseline: {
     styleOverrides: {
@@ -147,7 +138,6 @@ const components: ThemeOptions['components'] = {
   },
 }
 
-/** Create a fully configured, responsive theme for the requested mode. */
 export const createAppTheme = (mode: PaletteMode) =>
   responsiveFontSizes(
     createTheme({

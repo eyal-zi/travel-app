@@ -20,7 +20,6 @@ const getInitialMode = (): PaletteMode => {
     const stored = window.localStorage.getItem(STORAGE_KEY)
     if (stored === 'light' || stored === 'dark') return stored
   }
-  // Default to dark mode unless the user has previously chosen otherwise.
   return 'dark'
 }
 
@@ -52,7 +51,6 @@ export const ColorModeProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
-/** Access the current color mode and toggle helpers. */
 export const useColorMode = () => {
   const context = useContext(ColorModeContext)
   if (!context) {

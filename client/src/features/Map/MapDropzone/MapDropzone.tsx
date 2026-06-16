@@ -21,44 +21,23 @@ import type { GeoLayer } from '../../../common/geo/geo.types'
 import type { MapProps } from '../MapComponent/Map.types'
 
 export interface MapDropzoneProps extends Omit<MapProps, 'layers'> {
-  /**
-   * Called when the user confirms the pending layers. No-op today; the seam
-   * where persistence (POST to the API) will hook in later.
-   */
   onSave?: (layers: GeoLayer[]) => void
 }
 
-/**
- * Wraps {@link Map} with a drop target: drop a supported geo file (KML today)
- * and its geometry is parsed to GeoJSON and drawn. Drawn layers are listed in a
- * panel where each can be deleted. Any uncommitted change — a drop or a delete —
- * surfaces a Save/Cancel bar: Save commits the current layers ({@link onSave}),
- * Cancel reverts to the last saved snapshot.
- *
- * The drop-zone is just one source feeding {@link useGeoLayers}; the same hook
- * will later accept layers from the API, while this wrapper and {@link Map}
- * stay unchanged.
- */
 export const MapDropzone = ({ onSave, ...mapProps }: MapDropzoneProps) => {
   const { layers, addFromFiles, remove, reset, error, setError } = useGeoLayers()
-  // The last saved set, restored on Cancel. `pending` is true while `layers`
-  // has uncommitted changes (a fresh drop or a delete).
   const [committed, setCommitted] = useState<GeoLayer[]>([])
   const [pending, setPending] = useState(false)
 
   const onDrop = useCallback(
     async (accepted: File[]) => {
       if (!accepted.length) return
-      // Only enter the pending state once a layer actually parsed and drew, so a
-      // failed drop just shows the error instead of a Save/Cancel bar.
       const added = await addFromFiles(accepted)
       if (added > 0) setPending(true)
     },
     [addFromFiles],
   )
 
-  // `noClick`/`noKeyboard`: the map underneath owns clicks (pan/zoom), so only
-  // an actual drag-and-drop opens a file — never a stray click on the map.
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: acceptedFileTypes,

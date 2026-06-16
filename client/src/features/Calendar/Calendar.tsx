@@ -23,11 +23,6 @@ import type { EventFormValues } from './components/EventDialog/EventDialog.types
 import type { CalendarDialogState, CalendarProps, CalendarView } from './Calendar.types'
 import { CalendarToolbar } from './components/CalendarToolbar/CalendarToolbar'
 
-/**
- * Modern, parent-filling calendar built on FullCalendar with a custom MUI
- * toolbar. Supports creating multi-day events by dragging across days (or via
- * the dialog), plus drag/resize editing. Events live in component state.
- */
 export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: CalendarProps) => {
   const theme = useTheme()
   const calendarRef = useRef<FullCalendar>(null)
@@ -46,16 +41,10 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
 
   const api = () => calendarRef.current?.getApi()
 
-  // Default the selected day to today when entering the calendar with no day
-  // already picked (e.g. no `date` in the URL), so a day is always highlighted.
   useEffect(() => {
     if (!selectedDate) setSelectedDate(format(new Date(), 'yyyy-MM-dd'))
   }, [selectedDate, setSelectedDate])
 
-  // FullCalendar only re-measures on `window` resize, so it ignores changes to
-  // its parent's size. Observe the wrapper and call `updateSize()` whenever the
-  // container resizes, so the grid scales cleanly inside any parent — not just
-  // the viewport. `requestAnimationFrame` coalesces resize bursts.
   useEffect(() => {
     const wrapper = wrapperRef.current
     if (!wrapper) return
@@ -73,7 +62,6 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
     }
   }, [])
 
-  // Resolve each event's palette key to concrete theme colours for the grid.
   const fcEvents = useMemo<EventInput[]>(
     () =>
       events.map((event) => {
@@ -97,10 +85,7 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
   const openCreate = (values: EventFormValues) =>
     setDialog({ open: true, mode: 'create', editingId: null, values })
 
-  // --- FullCalendar callbacks ---
 
-  // A single day click also fires `select` (a 1-day all-day span); treat that
-  // as a date pick (handled by `handleDateClick`), not an event creation.
   const handleSelect = (selectInfo: DateSelectArg) => {
     api()?.unselect()
     if (selectInfo.allDay && differenceInCalendarDays(selectInfo.end, selectInfo.start) <= 1) return
@@ -113,7 +98,6 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
     })
   }
 
-  // Clicking a day picks it: persisted in the URL via `useSelectedDate`.
   const handleDateClick = (arg: DateClickArg) => setSelectedDate(arg.dateStr.slice(0, 10))
 
   const handleEventClick = (clickInfo: EventClickArg) => {
@@ -139,7 +123,6 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
     )
   }
 
-  // --- Dialog actions ---
 
   const handleSave = (values: EventFormValues) => {
     if (dialog.mode === 'edit' && dialog.editingId) {
@@ -158,7 +141,6 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
     closeDialog()
   }
 
-  // --- Toolbar actions ---
 
   const changeView = (next: CalendarView) => {
     api()?.changeView(next)
@@ -182,8 +164,6 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView={initialView}
-          // The Hebrew locale translates day/month names and bundles
-          // `direction: 'rtl'`, so the grid mirrors right-to-left automatically.
           locale={heLocale}
           headerToolbar={false}
           height="100%"
@@ -191,11 +171,6 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
           selectable
           selectMirror
           editable
-          // Never fold events into a "+N more" link (which hid them at small
-          // widths). Show every event at any size — busy days grow and the grid
-          // scrolls instead. `block` renders each event as a filled bar, so
-          // multi-day events read as one continuous span across their duration
-          // rather than a per-day dot.
           dayMaxEvents={false}
           eventDisplay="block"
           nowIndicator
