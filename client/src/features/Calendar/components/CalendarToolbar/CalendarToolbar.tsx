@@ -1,5 +1,3 @@
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
 import ToggleButton from '@mui/material/ToggleButton'
 import Tooltip from '@mui/material/Tooltip'
@@ -7,9 +5,13 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import {
-  ActionGroup,
+  AddButton,
+  ControlsRow,
+  HeaderRow,
   NavGroup,
   PeriodTitle,
+  SelectedChip,
+  TodayButton,
   ToolbarRoot,
   ViewToggle,
 } from './CalendarToolbar.styles'
@@ -23,6 +25,8 @@ const VIEW_LABELS: Record<CalendarView, string> = {
   timeGridDay: 'Day',
 }
 
+const VIEW_ORDER = Object.keys(VIEW_LABELS) as CalendarView[]
+
 export const CalendarToolbar = ({
   title,
   view,
@@ -33,35 +37,32 @@ export const CalendarToolbar = ({
   onAddEvent,
 }: CalendarToolbarProps) => {
   const [selectedDate] = useSelectedDate()
+  const formattedDate = selectedDate?.split('-').reverse().join('-')
 
   return (
     <ToolbarRoot>
-      <NavGroup>
-        <Tooltip title="Previous">
-          <IconButton onClick={onPrev} aria-label="Previous period">
-            <ChevronLeftRoundedIcon />
-          </IconButton>
-        </Tooltip>
-        <Button variant="outlined" color="inherit" onClick={onToday}>
-          Today
-        </Button>
-        <Tooltip title="Next">
-          <IconButton onClick={onNext} aria-label="Next period">
-            <ChevronRightRoundedIcon />
-          </IconButton>
-        </Tooltip>
-      </NavGroup>
+      <HeaderRow>
+        <PeriodTitle variant="h6">{title}</PeriodTitle>
+        {formattedDate && <SelectedChip color="primary" size="small" label={formattedDate} />}
+      </HeaderRow>
 
-      <PeriodTitle variant="h5">{title}</PeriodTitle>
-      {selectedDate && (
-        <Chip
-          color="primary"
-          size="small"
-          label={selectedDate.split('-').reverse().join('-')}
-        />
-      )}
+      <ControlsRow>
+        <NavGroup>
+          <Tooltip title="Previous">
+            <IconButton size="small" onClick={onPrev} aria-label="Previous period">
+              <ChevronLeftRoundedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <TodayButton variant="outlined" color="inherit" size="small" onClick={onToday}>
+            Today
+          </TodayButton>
+          <Tooltip title="Next">
+            <IconButton size="small" onClick={onNext} aria-label="Next period">
+              <ChevronRightRoundedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </NavGroup>
 
-      <ActionGroup>
         <ViewToggle
           exclusive
           size="small"
@@ -69,16 +70,19 @@ export const CalendarToolbar = ({
           onChange={(_, next: CalendarView | null) => next && onViewChange(next)}
           aria-label="Calendar view"
         >
-          {(Object.keys(VIEW_LABELS) as CalendarView[]).map((value) => (
+          {VIEW_ORDER.map((value) => (
             <ToggleButton key={value} value={value}>
               {VIEW_LABELS[value]}
             </ToggleButton>
           ))}
         </ViewToggle>
-        <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={onAddEvent}>
-          Add event
-        </Button>
-      </ActionGroup>
+
+        <Tooltip title="Add event">
+          <AddButton onClick={onAddEvent} aria-label="Add event">
+            <AddRoundedIcon fontSize="small" />
+          </AddButton>
+        </Tooltip>
+      </ControlsRow>
     </ToolbarRoot>
   )
 }
