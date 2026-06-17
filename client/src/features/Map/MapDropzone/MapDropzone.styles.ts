@@ -25,19 +25,23 @@ export const DragOverlay = styled(Box)(({ theme }) => ({
   fontWeight: theme.typography.fontWeightMedium,
 }))
 
-export const LayerPanel = styled(Box)(({ theme }) => ({
+export const LayerControl = styled(Box)(({ theme }) => ({
   position: 'absolute',
-  top: theme.spacing(2),
-  right: theme.spacing(2),
+  top: theme.spacing(1.5),
+  right: theme.spacing(1.5),
   zIndex: 1000,
-  minWidth: 200,
-  maxWidth: 280,
-  overflow: 'hidden',
-  borderRadius: (theme.shape.borderRadius as number) * 2,
+  borderRadius: '50%',
   backgroundColor: theme.palette.background.paper,
   border: `1px solid ${theme.palette.divider}`,
-  boxShadow: theme.shadows[6],
+  boxShadow: theme.shadows[4],
 }))
+
+export const LayerListContainer = styled(Box)({
+  minWidth: 200,
+  maxWidth: 320,
+  maxHeight: 280,
+  overflowY: 'auto',
+})
 
 export const ActionBar = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -45,8 +49,11 @@ export const ActionBar = styled(Box)(({ theme }) => ({
   left: '50%',
   transform: 'translateX(-50%)',
   zIndex: 1000,
+  maxWidth: `calc(100% - ${theme.spacing(4)})`,
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'center',
+  flexWrap: 'wrap',
   gap: theme.spacing(1),
   padding: theme.spacing(0.75),
   borderRadius: 999,

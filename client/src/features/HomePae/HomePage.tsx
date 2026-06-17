@@ -1,8 +1,13 @@
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded'
 import { Calendar } from '../Calendar/Calendar'
 import { MapDropzone } from '../Map/MapDropzone/MapDropzone'
 import { PdfViewer } from '../PdfViewer/PdfViewer'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
 import {
+  Brand,
+  BrandMark,
   CalendarContainer,
   MapContainer,
   PageContent,
@@ -16,6 +21,19 @@ export const HomePage = () => {
   return (
     <PageRoot>
       <PageHeader>
+        <Brand>
+          <BrandMark>
+            <ExploreRoundedIcon />
+          </BrandMark>
+          <Stack spacing={0} sx={{ minWidth: 0 }}>
+            <Typography variant="h5" noWrap>
+              Trip Planner
+            </Typography>
+            <Typography variant="body2" color="text.secondary" noWrap>
+              Plan your itinerary, map, and documents in one place
+            </Typography>
+          </Stack>
+        </Brand>
         <ColorModeToggle />
       </PageHeader>
       <PageContent>

@@ -12,12 +12,34 @@ export const PageRoot = styled(Box)(({ theme }) => ({
 export const PageHeader = styled(Box)(({ theme }) => ({
   flexShrink: 0,
   display: 'flex',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-between',
   alignItems: 'center',
-  padding: theme.spacing(1),
-  [theme.breakpoints.down('sm')]: {
-    padding: theme.spacing(1),
+  gap: theme.spacing(2),
+  padding: theme.spacing(2.5, 3),
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(2, 1.5),
   },
+}))
+
+export const Brand = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+  minWidth: 0,
+}))
+
+export const BrandMark = styled(Box)(({ theme }) => ({
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 44,
+  height: 44,
+  borderRadius: 14,
+  color: theme.palette.primary.contrastText,
+  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+  boxShadow: theme.shadows[2],
+  '& svg': { fontSize: 24 },
 }))
 
 export const PageContent = styled(Box)(({ theme }) => ({
