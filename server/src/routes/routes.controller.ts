@@ -8,8 +8,10 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CreateRouteDto } from './dto/create-route.dto';
+import { FindClosestRouteDto } from './dto/find-closest-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { RoutesService } from './routes.service';
 
@@ -20,6 +22,11 @@ export class RoutesController {
   @Get()
   findAll() {
     return this.routesService.findAll();
+  }
+
+  @Get('closest')
+  findClosest(@Query() query: FindClosestRouteDto) {
+    return this.routesService.findClosest(query.date);
   }
 
   @Get(':id')

@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, lte } from 'drizzle-orm';
 import { DRIZZLE, type DrizzleDB } from '../common/database/database.constants';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
@@ -25,6 +25,22 @@ export class RoutesService {
       .from(routes)
       .where(and(eq(routes.id, id), eq(routes.isDeleted, false)));
     if (!route) throw new NotFoundException(`Route ${id} not found`);
+    return route;
+  }
+
+  async findClosest(date: string): Promise<Route> {
+    // Newest route at or before the target date wins — same date if present,
+    // otherwise the closest preceding one.
+    const [route] = await this.db
+      .select()
+      .from(routes)
+      .where(
+        and(eq(routes.isDeleted, false), lte(routes.createdAt, new Date(date))),
+      )
+      .orderBy(desc(routes.createdAt))
+      .limit(1);
+    if (!route)
+      throw new NotFoundException(`No route found on or before ${date}`);
     return route;
   }
 
