@@ -29,6 +29,12 @@ export class RoutesController {
     return this.routesService.findClosest(query.date);
   }
 
+  @Delete()
+  @HttpCode(204)
+  removeByDate(@Query() query: FindClosestRouteDto) {
+    return this.routesService.removeByDate(query.date);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.routesService.findOne(id);

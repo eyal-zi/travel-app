@@ -1,50 +1,55 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Alert from '@mui/material/Alert'
+import Snackbar from '@mui/material/Snackbar'
 import { useTheme } from '@mui/material/styles'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import heLocale from '@fullcalendar/core/locales/he'
-import type { DateSelectArg, EventClickArg, EventDropArg, EventInput } from '@fullcalendar/core'
-import type { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction'
+import type { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/core'
+import type { DateClickArg } from '@fullcalendar/interaction'
 import { differenceInCalendarDays, format } from 'date-fns'
 import { useSelectedDate } from '../../common/hooks/useSelectedDate'
 import { CalendarRoot, StyledCalendarWrapper } from './Calendar.styles'
 import { EventDialog } from './components/EventDialog/EventDialog'
-import {
-  buildDefaultEvents,
-  defaultFormValues,
-  eventToForm,
-  formToEvent,
-  toLocalInput,
-  toStored,
-} from './Calendar.utils'
-import type { EventFormValues } from './components/EventDialog/EventDialog.types'
-import type { CalendarDialogState, CalendarProps, CalendarView } from './Calendar.types'
 import { CalendarToolbar } from './components/CalendarToolbar/CalendarToolbar'
+import { toLocalInput } from './Calendar.utils'
+import { useCalendarEvents } from './useCalendarEvents'
+import type { CalendarProps, CalendarView } from './Calendar.types'
 
-export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: CalendarProps) => {
+const DATE_FMT = 'yyyy-MM-dd'
+
+export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
   const theme = useTheme()
   const calendarRef = useRef<FullCalendar>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [selectedDate, setSelectedDate] = useSelectedDate()
 
-  const [events, setEvents] = useState(() => initialEvents ?? buildDefaultEvents())
+  const {
+    events,
+    dialog,
+    error,
+    setError,
+    openCreate,
+    openEdit,
+    closeDialog,
+    saveEvent,
+    deleteEvent,
+    moveEvent,
+  } = useCalendarEvents()
+
   const [view, setView] = useState<CalendarView>(initialView)
   const [title, setTitle] = useState('')
-  const [dialog, setDialog] = useState<CalendarDialogState>({
-    open: false,
-    mode: 'create',
-    editingId: null,
-    values: defaultFormValues(),
-  })
 
-  const api = () => calendarRef.current?.getApi()
+  const getApi = () => calendarRef.current?.getApi()
 
+  // Default the URL-driven selection to today on first mount.
   useEffect(() => {
-    if (!selectedDate) setSelectedDate(format(new Date(), 'yyyy-MM-dd'))
+    if (!selectedDate) setSelectedDate(format(new Date(), DATE_FMT))
   }, [selectedDate, setSelectedDate])
 
+  // Keep FullCalendar sized to its (flex) container, coalescing bursts into one frame.
   useEffect(() => {
     const wrapper = wrapperRef.current
     if (!wrapper) return
@@ -52,7 +57,7 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
     let frame = 0
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => api()?.updateSize())
+      frame = requestAnimationFrame(() => calendarRef.current?.getApi().updateSize())
     })
     observer.observe(wrapper)
 
@@ -80,14 +85,9 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
     [events, theme],
   )
 
-  const closeDialog = () => setDialog((prev) => ({ ...prev, open: false }))
-
-  const openCreate = (values: EventFormValues) =>
-    setDialog({ open: true, mode: 'create', editingId: null, values })
-
-
   const handleSelect = (selectInfo: DateSelectArg) => {
-    api()?.unselect()
+    getApi()?.unselect()
+    // Ignore a bare single-day click in month view; that's handled by dateClick.
     if (selectInfo.allDay && differenceInCalendarDays(selectInfo.end, selectInfo.start) <= 1) return
     openCreate({
       title: '',
@@ -98,52 +98,13 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
     })
   }
 
-  const handleDateClick = (arg: DateClickArg) => setSelectedDate(arg.dateStr.slice(0, 10))
-
   const handleEventClick = (clickInfo: EventClickArg) => {
     const event = events.find((candidate) => candidate.id === clickInfo.event.id)
-    if (!event) return
-    setDialog({ open: true, mode: 'edit', editingId: event.id, values: eventToForm(event) })
+    if (event) openEdit(event)
   }
-
-  const applyDrag = (info: EventDropArg | EventResizeDoneArg) => {
-    const { id, start, end, allDay } = info.event
-    if (!start) return
-    setEvents((prev) =>
-      prev.map((event) =>
-        event.id === id
-          ? {
-            ...event,
-            start: toStored(start, allDay),
-            end: end ? toStored(end, allDay) : undefined,
-            allDay,
-          }
-          : event,
-      ),
-    )
-  }
-
-
-  const handleSave = (values: EventFormValues) => {
-    if (dialog.mode === 'edit' && dialog.editingId) {
-      const id = dialog.editingId
-      setEvents((prev) => prev.map((event) => (event.id === id ? formToEvent(values, id) : event)))
-    } else {
-      setEvents((prev) => [...prev, formToEvent(values, crypto.randomUUID())])
-    }
-    closeDialog()
-  }
-
-  const handleDelete = () => {
-    if (!dialog.editingId) return
-    const id = dialog.editingId
-    setEvents((prev) => prev.filter((event) => event.id !== id))
-    closeDialog()
-  }
-
 
   const changeView = (next: CalendarView) => {
-    api()?.changeView(next)
+    getApi()?.changeView(next)
     setView(next)
   }
 
@@ -153,10 +114,10 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
         title={title}
         view={view}
         onViewChange={changeView}
-        onPrev={() => api()?.prev()}
-        onNext={() => api()?.next()}
-        onToday={() => api()?.today()}
-        onAddEvent={() => openCreate(defaultFormValues())}
+        onPrev={() => getApi()?.prev()}
+        onNext={() => getApi()?.next()}
+        onToday={() => getApi()?.today()}
+        onAddEvent={() => openCreate()}
       />
 
       <StyledCalendarWrapper ref={wrapperRef}>
@@ -175,13 +136,13 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
           eventDisplay="block"
           nowIndicator
           select={handleSelect}
-          dateClick={handleDateClick}
+          dateClick={(arg: DateClickArg) => setSelectedDate(arg.dateStr.slice(0, 10))}
           dayCellClassNames={(arg) =>
-            selectedDate && format(arg.date, 'yyyy-MM-dd') === selectedDate ? ['selected-day'] : []
+            selectedDate && format(arg.date, DATE_FMT) === selectedDate ? ['selected-day'] : []
           }
           eventClick={handleEventClick}
-          eventDrop={applyDrag}
-          eventResize={applyDrag}
+          eventDrop={moveEvent}
+          eventResize={moveEvent}
           datesSet={(arg) => {
             setTitle(arg.view.title)
             setView(arg.view.type as CalendarView)
@@ -193,10 +154,21 @@ export const Calendar = ({ initialEvents, initialView = 'dayGridMonth' }: Calend
         open={dialog.open}
         mode={dialog.mode}
         initialValues={dialog.values}
-        onSave={handleSave}
+        onSave={saveEvent}
         onClose={closeDialog}
-        onDelete={dialog.mode === 'edit' ? handleDelete : undefined}
+        onDelete={dialog.mode === 'edit' ? deleteEvent : undefined}
       />
+
+      <Snackbar
+        open={Boolean(error)}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="error" variant="filled" onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      </Snackbar>
     </CalendarRoot>
   )
 }

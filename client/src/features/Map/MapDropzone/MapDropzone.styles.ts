@@ -1,5 +1,8 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import Popover from '@mui/material/Popover'
 
 export const DropzoneRoot = styled(Box)({
   position: 'relative',
@@ -61,3 +64,21 @@ export const ActionBar = styled(Box)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
   boxShadow: theme.shadows[8],
 }))
+
+export const LayerPopover = styled(Popover)(({ theme }) => ({
+  '& .MuiPopover-paper': {
+    marginTop: theme.spacing(1),
+    borderRadius: (theme.shape.borderRadius as number) * 2,
+  },
+}))
+
+export const LayerListItemIcon = styled(ListItemIcon)({
+  minWidth: 32,
+})
+
+export const ActionButton = styled(Button)(({ theme }) => ({
+  borderRadius: 999,
+  paddingLeft: theme.spacing(2),
+  paddingRight: theme.spacing(2),
+}))
+

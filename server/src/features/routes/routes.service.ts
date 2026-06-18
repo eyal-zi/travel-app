@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, desc, eq, lte } from 'drizzle-orm';
-import { DRIZZLE, type DrizzleDB } from '../common/database/database.constants';
+import { DRIZZLE, type DrizzleDB } from '../../common/database/database.constants';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { Route, routes } from './routes.schema';
@@ -9,7 +9,7 @@ import { Route, routes } from './routes.schema';
 export class RoutesService {
   private readonly logger = new Logger(RoutesService.name);
 
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) { }
 
   findAll(): Promise<Route[]> {
     return this.db
@@ -71,6 +71,19 @@ export class RoutesService {
       .returning();
     if (!route) throw new NotFoundException(`Route ${id} not found`);
     return route;
+  }
+
+  async removeByDate(date: string): Promise<void> {
+    // Soft-delete the route that belongs to this exact date. Emptying a date's
+    // map removes its own route so `findClosest` falls back to the closest
+    // preceding date again. If the date never had its own route (the map was
+    // showing a fallback from an earlier date), this is a no-op — we must not
+    // delete that earlier route, which still belongs to its own date.
+    await this.db
+      .update(routes)
+      .set({ isDeleted: true, updatedAt: new Date() })
+      .where(and(eq(routes.date, date), eq(routes.isDeleted, false)));
+    this.logger.log(`Soft-deleted route for ${date}`);
   }
 
   async remove(id: string): Promise<void> {

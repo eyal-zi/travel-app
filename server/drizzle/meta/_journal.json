@@ -36,6 +36,20 @@
       "when": 1782207600002,
       "tag": "0004_warm_iron_lad",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782207600003,
+      "tag": "0005_drop_trips",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782207600004,
+      "tag": "0006_add_events",
+      "breakpoints": true
     }
   ]
 }

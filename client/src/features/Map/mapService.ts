@@ -18,4 +18,9 @@ export const mapService = {
     api.put<Route>(`/api/routes/${id}`, input),
 
   remove: (id: string) => api.delete<void>(`/api/routes/${id}`),
+
+  // Remove the route for a date so the map falls back to the closest preceding
+  // date's route. A no-op if that date had no route of its own.
+  removeByDate: (date: string) =>
+    api.delete<void>("/api/routes", { params: { date } }),
 };
