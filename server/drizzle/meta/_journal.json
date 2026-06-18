@@ -8,6 +8,13 @@
       "when": 1781705307649,
       "tag": "0000_salty_ironclad",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781764797180,
+      "tag": "0001_famous_fallen_one",
+      "breakpoints": true
     }
   ]
 }
