@@ -10,6 +10,11 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import { format, isValid as isValidDate, parseISO } from 'date-fns'
 import {
   DateRow,
   DialogHeader,
@@ -28,7 +33,20 @@ const isValid = (values: EventFormValues) =>
   Boolean(values.end) &&
   values.end > values.start
 
-const toDatePart = (value: string) => value.slice(0, 10)
+const LOCAL_FMT = "yyyy-MM-dd'T'HH:mm"
+
+/** Parse a stored form value (`yyyy-MM-ddTHH:mm`) into a Date for the picker. */
+const toDate = (value: string) => {
+  if (!value) return null
+  const date = parseISO(value)
+  return isValidDate(date) ? date : null
+}
+
+/** Serialise a picker Date back into the stored form value. */
+const fromDate = (date: Date | null, allDay: boolean) => {
+  if (!date || !isValidDate(date)) return ''
+  return allDay ? `${format(date, 'yyyy-MM-dd')}T00:00` : format(date, LOCAL_FMT)
+}
 
 export const EventDialog = ({
   open,
@@ -47,8 +65,8 @@ export const EventDialog = ({
   const update = <K extends keyof EventFormValues>(key: K, value: EventFormValues[K]) =>
     setValues((prev) => ({ ...prev, [key]: value }))
 
-  const handleDateChange = (key: 'start' | 'end', raw: string) => {
-    update(key, values.allDay ? `${raw}T00:00` : raw)
+  const handleDateChange = (key: 'start' | 'end', date: Date | null) => {
+    update(key, fromDate(date, values.allDay))
   }
 
   const handleSave = () => {
@@ -87,24 +105,54 @@ export const EventDialog = ({
               placeholder="e.g. Trip to Lisbon"
             />
 
-            <DateRow>
-              <TextField
-                label="Start"
-                type={values.allDay ? 'date' : 'datetime-local'}
-                value={values.allDay ? toDatePart(values.start) : values.start}
-                onChange={(e) => handleDateChange('start', e.target.value)}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-              <TextField
-                label="End"
-                type={values.allDay ? 'date' : 'datetime-local'}
-                value={values.allDay ? toDatePart(values.end) : values.end}
-                onChange={(e) => handleDateChange('end', e.target.value)}
-                error={endBeforeStart}
-                helperText={endBeforeStart ? 'End must be after start' : ' '}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-            </DateRow>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateRow>
+                {values.allDay ? (
+                  <DatePicker
+                    label="Start"
+                    format="dd/MM/yyyy"
+                    value={toDate(values.start)}
+                    onChange={(date) => handleDateChange('start', date)}
+                  />
+                ) : (
+                  <DateTimePicker
+                    label="Start"
+                    format="dd/MM/yyyy HH:mm"
+                    ampm={false}
+                    value={toDate(values.start)}
+                    onChange={(date) => handleDateChange('start', date)}
+                  />
+                )}
+                {values.allDay ? (
+                  <DatePicker
+                    label="End"
+                    format="dd/MM/yyyy"
+                    value={toDate(values.end)}
+                    onChange={(date) => handleDateChange('end', date)}
+                    slotProps={{
+                      textField: {
+                        error: endBeforeStart,
+                        helperText: endBeforeStart ? 'End must be after start' : ' ',
+                      },
+                    }}
+                  />
+                ) : (
+                  <DateTimePicker
+                    label="End"
+                    format="dd/MM/yyyy HH:mm"
+                    ampm={false}
+                    value={toDate(values.end)}
+                    onChange={(date) => handleDateChange('end', date)}
+                    slotProps={{
+                      textField: {
+                        error: endBeforeStart,
+                        helperText: endBeforeStart ? 'End must be after start' : ' ',
+                      },
+                    }}
+                  />
+                )}
+              </DateRow>
+            </LocalizationProvider>
 
             <FormControlLabel
               control={

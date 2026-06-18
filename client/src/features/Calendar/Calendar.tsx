@@ -14,7 +14,7 @@ import { useSelectedDate } from '../../common/hooks/useSelectedDate'
 import { CalendarRoot, StyledCalendarWrapper } from './Calendar.styles'
 import { EventDialog } from './components/EventDialog/EventDialog'
 import { CalendarToolbar } from './components/CalendarToolbar/CalendarToolbar'
-import { toLocalInput } from './Calendar.utils'
+import { toExclusiveEnd, toInclusiveEnd, toLocalInput } from './Calendar.utils'
 import { useCalendarEvents } from './useCalendarEvents'
 import type { CalendarProps, CalendarView } from './Calendar.types'
 
@@ -75,7 +75,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
           id: event.id,
           title: event.title,
           start: event.start,
-          end: event.end,
+          end: event.allDay && event.end ? toExclusiveEnd(event.end) : event.end,
           allDay: event.allDay,
           backgroundColor: palette.main,
           borderColor: palette.main,
@@ -92,7 +92,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
     openCreate({
       title: '',
       start: toLocalInput(selectInfo.start),
-      end: toLocalInput(selectInfo.end),
+      end: toLocalInput(selectInfo.allDay ? toInclusiveEnd(selectInfo.end) : selectInfo.end),
       allDay: selectInfo.allDay,
       color: 'primary',
     })

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { EventDropArg } from '@fullcalendar/core'
 import type { EventResizeDoneArg } from '@fullcalendar/interaction'
-import { defaultFormValues, eventToForm, formToInput, toStored } from './Calendar.utils'
+import { defaultFormValues, eventToForm, formToInput, toInclusiveEnd, toStored } from './Calendar.utils'
 import { eventService } from './eventService'
 import type { CalendarDialogState, CalendarEvent } from './Calendar.types'
 import type { EventFormValues } from './components/EventDialog/EventDialog.types'
@@ -105,7 +105,7 @@ export const useCalendarEvents = () => {
       if (!start) return
       const next = {
         start: toStored(start, allDay),
-        end: end ? toStored(end, allDay) : undefined,
+        end: end ? toStored(allDay ? toInclusiveEnd(end) : end, allDay) : undefined,
         allDay,
       }
       const previous = events

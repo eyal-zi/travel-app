@@ -1,4 +1,4 @@
-import { addHours, format, parseISO } from 'date-fns'
+import { addDays, addHours, format, parseISO, subDays } from 'date-fns'
 import type { CalendarEvent, EventInput } from './Calendar.types'
 import type { EventFormValues } from './components/EventDialog/EventDialog.types'
 
@@ -9,6 +9,17 @@ export const toLocalInput = (date: Date) => format(date, LOCAL_FMT)
 
 export const toStored = (date: Date, allDay: boolean) =>
   format(date, allDay ? DATE_FMT : LOCAL_FMT)
+
+/**
+ * FullCalendar renders an all-day event's `end` exclusively (the morning *after*
+ * the last day), but we store and edit it as the inclusive final day. These two
+ * helpers bridge the representations at the FullCalendar boundary.
+ */
+export const toExclusiveEnd = (storedEnd: string) =>
+  format(addDays(parseISO(storedEnd), 1), DATE_FMT)
+
+/** Inverse of {@link toExclusiveEnd}: FullCalendar's exclusive end → our last day. */
+export const toInclusiveEnd = (exclusiveEnd: Date) => subDays(exclusiveEnd, 1)
 
 export const defaultFormValues = (): EventFormValues => {
   const start = new Date()
