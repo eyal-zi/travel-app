@@ -16,7 +16,7 @@ export class RoutesService {
       .select()
       .from(routes)
       .where(eq(routes.isDeleted, false))
-      .orderBy(desc(routes.createdAt));
+      .orderBy(desc(routes.date));
   }
 
   async findOne(id: string): Promise<Route> {
@@ -34,10 +34,8 @@ export class RoutesService {
     const [route] = await this.db
       .select()
       .from(routes)
-      .where(
-        and(eq(routes.isDeleted, false), lte(routes.createdAt, new Date(date))),
-      )
-      .orderBy(desc(routes.createdAt))
+      .where(and(eq(routes.isDeleted, false), lte(routes.date, date)))
+      .orderBy(desc(routes.date))
       .limit(1);
     if (!route)
       throw new NotFoundException(`No route found on or before ${date}`);
@@ -45,8 +43,23 @@ export class RoutesService {
   }
 
   async create(dto: CreateRouteDto): Promise<Route> {
-    const [route] = await this.db.insert(routes).values(dto).returning();
-    this.logger.log(`Created route ${route.id}`);
+    // Upsert by date: there is exactly one route per date. Posting a date that
+    // already exists overwrites that route's name/geometry (and resurrects it if
+    // it had been soft-deleted) instead of inserting a duplicate.
+    const [route] = await this.db
+      .insert(routes)
+      .values(dto)
+      .onConflictDoUpdate({
+        target: routes.date,
+        set: {
+          name: dto.name,
+          data: dto.data,
+          isDeleted: false,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    this.logger.log(`Upserted route ${route.id} for ${dto.date}`);
     return route;
   }
 

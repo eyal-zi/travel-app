@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Alert from '@mui/material/Alert'
 import Badge from '@mui/material/Badge'
@@ -23,7 +23,9 @@ import {
   LayerControl,
   LayerListContainer,
 } from './MapDropzone.styles'
+import { format } from 'date-fns'
 import { useGeoLayers } from '../../../common/geo/useGeoLayers'
+import { useSelectedDate } from '../../../common/hooks/useSelectedDate'
 import { acceptedFileTypes } from '../../../common/geo/parsers'
 import type { FeatureCollection } from 'geojson'
 import type { GeoLayer } from '../../../common/geo/geo.types'
@@ -37,13 +39,51 @@ export interface MapDropzoneProps extends Omit<MapProps, 'layers'> {
 }
 
 export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzoneProps) => {
+  const [selectedDate] = useSelectedDate()
   const { layers, addFromFiles, remove, reset, error, setError } = useGeoLayers()
   const [committed, setCommitted] = useState<GeoLayer[]>([])
   const [pending, setPending] = useState(false)
   const [saving, setSaving] = useState(false)
-  // Id of the single route record that holds the whole map; set after first save.
-  const [routeId, setRouteId] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
   const [layersAnchor, setLayersAnchor] = useState<HTMLElement | null>(null)
+
+  // Load the map for the selected date: the route on that date, or the closest
+  // preceding one. A 404 means no route exists yet, so we start from a blank map.
+  useEffect(() => {
+    if (!selectedDate) return
+    let active = true
+    // Intentional: flag the fetch as in-flight before awaiting so the overlay
+    // shows immediately; the remaining setState calls run in promise callbacks.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true)
+    mapService
+      .findClosest(selectedDate)
+      .then(({ data: route }) => {
+        if (!active) return
+        const loaded: GeoLayer[] = [
+          { id: route.id, name: route.name, source: 'api', data: route.data },
+        ]
+        reset(loaded)
+        setCommitted(loaded)
+        setPending(false)
+      })
+      .catch((err: { response?: { status?: number } }) => {
+        if (!active) return
+        if (err.response?.status === 404) {
+          reset([])
+          setCommitted([])
+          setPending(false)
+        } else {
+          setError('Failed to load the map for this date.')
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+    return () => {
+      active = false
+    }
+  }, [selectedDate, reset, setError])
 
   const onDrop = useCallback(
     async (accepted: File[]) => {
@@ -71,16 +111,17 @@ export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzon
     setSaving(true)
     try {
       // The whole map is one record: merge every layer into a single GeoJSON
-      // FeatureCollection and store it as one route (create, then update).
+      // FeatureCollection and store it as one route for the selected date.
       const data: FeatureCollection = {
         type: 'FeatureCollection',
         features: layers.flatMap((layer) => layer.data.features),
       }
-      const { data: route } = routeId
-        ? await mapService.update(routeId, { data })
-        : await mapService.create({ name, data })
+      // Routes are keyed by calendar date; save against the date selected on the
+      // calendar (falling back to today). create upserts by date, so this either
+      // creates the date's route or overwrites it server-side — never a duplicate.
+      const date = selectedDate ?? format(new Date(), 'yyyy-MM-dd')
+      await mapService.create({ name, date, data })
 
-      setRouteId(route.id)
       setCommitted(layers)
       setPending(false)
       onSave?.(layers)
@@ -102,6 +143,7 @@ export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzon
       <input {...getInputProps()} />
       <Map {...mapProps} layers={layers} />
       {isDragActive && <DragOverlay>Drop a KML file to add it to the map</DragOverlay>}
+      {loading && <DragOverlay>Loading map…</DragOverlay>}
 
       {layers.length > 0 && (
         <>
@@ -158,7 +200,7 @@ export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzon
             size="small"
             startIcon={<CheckRoundedIcon />}
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || loading}
             sx={{ borderRadius: 999, px: 2 }}
           >
             {saving ? 'Saving…' : 'Save'}
@@ -169,7 +211,7 @@ export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzon
             size="small"
             startIcon={<CloseRoundedIcon />}
             onClick={handleCancel}
-            disabled={saving}
+            disabled={saving || loading}
             sx={{ borderRadius: 999, px: 2 }}
           >
             Cancel

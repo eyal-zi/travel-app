@@ -7,6 +7,11 @@ import type { Route, RouteInput } from "./types/route.type";
 export const mapService = {
   list: () => api.get<Route[]>("/api/routes"),
 
+  // The route for a date: the one on that date, or the closest preceding one.
+  // Responds 404 when no route exists on or before the date.
+  findClosest: (date: string) =>
+    api.get<Route>("/api/routes/closest", { params: { date } }),
+
   create: (input: RouteInput) => api.post<Route>("/api/routes", input),
 
   update: (id: string, input: Partial<RouteInput>) =>
