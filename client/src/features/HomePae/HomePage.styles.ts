@@ -91,7 +91,7 @@ export const CalendarContainer = styled(Panel)(({ theme }) => ({
 }))
 
 export const MapContainer = styled(Panel)(({ theme }) => ({
-  flex: 2,
+  flex: 3,
   [theme.breakpoints.down('md')]: {
     minHeight: '40svh',
   },
