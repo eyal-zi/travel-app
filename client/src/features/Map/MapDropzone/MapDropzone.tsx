@@ -25,17 +25,24 @@ import {
 } from './MapDropzone.styles'
 import { useGeoLayers } from '../../../common/geo/useGeoLayers'
 import { acceptedFileTypes } from '../../../common/geo/parsers'
+import type { FeatureCollection } from 'geojson'
 import type { GeoLayer } from '../../../common/geo/geo.types'
 import type { MapProps } from '../MapComponent/Map.types'
+import { mapService } from '../mapService'
 
 export interface MapDropzoneProps extends Omit<MapProps, 'layers'> {
+  /** Name stored for the saved route record. */
+  name?: string
   onSave?: (layers: GeoLayer[]) => void
 }
 
-export const MapDropzone = ({ onSave, ...mapProps }: MapDropzoneProps) => {
+export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzoneProps) => {
   const { layers, addFromFiles, remove, reset, error, setError } = useGeoLayers()
   const [committed, setCommitted] = useState<GeoLayer[]>([])
   const [pending, setPending] = useState(false)
+  const [saving, setSaving] = useState(false)
+  // Id of the single route record that holds the whole map; set after first save.
+  const [routeId, setRouteId] = useState<string | null>(null)
   const [layersAnchor, setLayersAnchor] = useState<HTMLElement | null>(null)
 
   const onDrop = useCallback(
@@ -60,10 +67,28 @@ export const MapDropzone = ({ onSave, ...mapProps }: MapDropzoneProps) => {
     if (layers.length <= 1) setLayersAnchor(null)
   }
 
-  const handleSave = () => {
-    onSave?.(layers)
-    setCommitted(layers)
-    setPending(false)
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      // The whole map is one record: merge every layer into a single GeoJSON
+      // FeatureCollection and store it as one route (create, then update).
+      const data: FeatureCollection = {
+        type: 'FeatureCollection',
+        features: layers.flatMap((layer) => layer.data.features),
+      }
+      const { data: route } = routeId
+        ? await mapService.update(routeId, { data })
+        : await mapService.create({ name, data })
+
+      setRouteId(route.id)
+      setCommitted(layers)
+      setPending(false)
+      onSave?.(layers)
+    } catch {
+      setError('Failed to save changes.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleCancel = () => {
@@ -133,9 +158,10 @@ export const MapDropzone = ({ onSave, ...mapProps }: MapDropzoneProps) => {
             size="small"
             startIcon={<CheckRoundedIcon />}
             onClick={handleSave}
+            disabled={saving}
             sx={{ borderRadius: 999, px: 2 }}
           >
-            Save
+            {saving ? 'Saving…' : 'Save'}
           </Button>
           <Button
             variant="text"
@@ -143,6 +169,7 @@ export const MapDropzone = ({ onSave, ...mapProps }: MapDropzoneProps) => {
             size="small"
             startIcon={<CloseRoundedIcon />}
             onClick={handleCancel}
+            disabled={saving}
             sx={{ borderRadius: 999, px: 2 }}
           >
             Cancel

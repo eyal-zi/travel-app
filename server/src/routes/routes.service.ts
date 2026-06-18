@@ -1,42 +1,57 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { and, desc, eq } from 'drizzle-orm';
 import { DRIZZLE, type DrizzleDB } from '../common/database/database.constants';
-import { S3Service } from '../common/storage/s3.service';
+import { CreateRouteDto } from './dto/create-route.dto';
+import { UpdateRouteDto } from './dto/update-route.dto';
 import { Route, routes } from './routes.schema';
 
 @Injectable()
 export class RoutesService {
   private readonly logger = new Logger(RoutesService.name);
-  private readonly bucket = process.env.S3_ROUTES_BUCKET ?? 'routes';
 
-  constructor(
-    private readonly s3Service: S3Service,
-    @Inject(DRIZZLE) private readonly db: DrizzleDB,
-  ) {}
+  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
-  async uploadRoute(file: Express.Multer.File): Promise<Route> {
-    const key = `${randomUUID()}-${file.originalname}`;
+  findAll(): Promise<Route[]> {
+    return this.db
+      .select()
+      .from(routes)
+      .where(eq(routes.isDeleted, false))
+      .orderBy(desc(routes.createdAt));
+  }
 
-    await this.s3Service.uploadFile({
-      bucket: this.bucket,
-      key,
-      body: file.buffer,
-      contentType: file.mimetype,
-    });
-
+  async findOne(id: string): Promise<Route> {
     const [route] = await this.db
-      .insert(routes)
-      .values({
-        bucket: this.bucket,
-        key,
-        originalName: file.originalname,
-        contentType: file.mimetype,
-        fileSize: file.size,
-      })
-      .returning();
-
-    this.logger.log(`Stored route ${route.id} at ${this.bucket}/${key}`);
-
+      .select()
+      .from(routes)
+      .where(and(eq(routes.id, id), eq(routes.isDeleted, false)));
+    if (!route) throw new NotFoundException(`Route ${id} not found`);
     return route;
+  }
+
+  async create(dto: CreateRouteDto): Promise<Route> {
+    const [route] = await this.db.insert(routes).values(dto).returning();
+    this.logger.log(`Created route ${route.id}`);
+    return route;
+  }
+
+  async update(id: string, dto: UpdateRouteDto): Promise<Route> {
+    const [route] = await this.db
+      .update(routes)
+      .set(dto)
+      .where(and(eq(routes.id, id), eq(routes.isDeleted, false)))
+      .returning();
+    if (!route) throw new NotFoundException(`Route ${id} not found`);
+    return route;
+  }
+
+  async remove(id: string): Promise<void> {
+    // Soft delete: flag the row instead of removing it so the data is retained.
+    const [route] = await this.db
+      .update(routes)
+      .set({ isDeleted: true })
+      .where(and(eq(routes.id, id), eq(routes.isDeleted, false)))
+      .returning();
+    if (!route) throw new NotFoundException(`Route ${id} not found`);
+    this.logger.log(`Soft-deleted route ${id}`);
   }
 }

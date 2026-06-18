@@ -21,6 +21,7 @@
     "@mui/icons-material": "^9.1.1",
     "@mui/material": "^9.1.1",
     "@tmcw/togeojson": "^7.1.2",
+    "axios": "^1.18.0",
     "date-fns": "^4.4.0",
     "leaflet": "^1.9.4",
     "react": "^19.2.6",
