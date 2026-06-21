@@ -4,6 +4,7 @@ import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 import { MapDropzone } from '../../../common/components/MapDropzone/MapDropzone'
 import type { MapDropzoneProps } from '../../../common/components/MapDropzone/MapDropzone'
+import { RouteMapRoot, UploadedTitle } from './RouteMapDropzone.styles'
 import { useSelectedDate } from '../../../common/hooks/useSelectedDate'
 import type { GeoLayer } from '../../../common/geo/geo.types'
 import type { FeatureCollection } from 'geojson'
@@ -31,6 +32,7 @@ const toLayers = (route: Route): GeoLayer[] =>
 export const RouteMapDropzone = ({ name = 'My map', onSave, ...mapProps }: RouteMapDropzoneProps) => {
   const [selectedDate] = useSelectedDate()
   const [committed, setCommitted] = useState<GeoLayer[]>([])
+  const [uploadedAt, setUploadedAt] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
 
@@ -42,11 +44,17 @@ export const RouteMapDropzone = ({ name = 'My map', onSave, ...mapProps }: Route
       setLoading(true)
       try {
         const { data: route } = await mapService.findClosest(selectedDate)
-        if (active) setCommitted(toLayers(route))
+        if (active) {
+          const layers = toLayers(route)
+          setCommitted(layers)
+          // Only surface the date when a layer was actually fetched.
+          setUploadedAt(layers.length ? route.date : null)
+        }
       } catch (err) {
         if (!active) return
         if ((err as { response?: { status?: number } }).response?.status === 404) {
           setCommitted([])
+          setUploadedAt(null)
         } else {
           setLoadError('Failed to load the map for this date.')
         }
@@ -77,13 +85,16 @@ export const RouteMapDropzone = ({ name = 'My map', onSave, ...mapProps }: Route
       }
 
       setCommitted(layers)
+      // Saving binds the map to this date; clearing it drops the title.
+      setUploadedAt(features.length ? date : null)
       onSave?.(layers)
     },
     [selectedDate, name, onSave],
   )
 
   return (
-    <>
+    <RouteMapRoot>
+      {uploadedAt && <UploadedTitle>Uploaded for {format(new Date(uploadedAt), 'PP')}</UploadedTitle>}
       <MapDropzone
         {...mapProps}
         committedLayers={committed}
@@ -100,6 +111,6 @@ export const RouteMapDropzone = ({ name = 'My map', onSave, ...mapProps }: Route
           {loadError}
         </Alert>
       </Snackbar>
-    </>
+    </RouteMapRoot>
   )
 }

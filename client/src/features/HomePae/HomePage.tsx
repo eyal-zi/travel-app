@@ -30,7 +30,7 @@ export const HomePage = () => {
             <ExploreRoundedIcon />
           </BrandMark>
           <Stack spacing={0} sx={{ minWidth: 0 }}>
-            <Typography variant="h5" noWrap>
+            <Typography variant="h6" noWrap>
               Trip Planner
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
