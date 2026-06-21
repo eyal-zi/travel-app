@@ -29,6 +29,22 @@ export const List = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   gap: theme.spacing(1.5),
   padding: theme.spacing(2),
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${theme.palette.text.disabled} transparent`,
+  '&::-webkit-scrollbar': {
+    width: 8,
+    height: 8,
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: 'transparent',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.palette.text.disabled,
+    borderRadius: 8,
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    backgroundColor: theme.palette.text.secondary,
+  },
 }))
 
 export const StatusRow = styled(Box)(({ theme }) => ({
