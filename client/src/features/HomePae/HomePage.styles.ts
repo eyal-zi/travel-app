@@ -104,6 +104,13 @@ export const MapContainer = styled(Panel)(({ theme }) => ({
   },
 }))
 
+export const AnnouncementsContainer = styled(Panel)(({ theme }) => ({
+  flex: 0.4,
+  [theme.breakpoints.down('md')]: {
+    minHeight: '70svh',
+  },
+}))
+
 export const PdfContainer = styled(Panel)(({ theme }) => ({
   flex: 1,
   [theme.breakpoints.down('md')]: {

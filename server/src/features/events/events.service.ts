@@ -1,6 +1,9 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, asc, eq } from 'drizzle-orm';
-import { DRIZZLE, type DrizzleDB } from '../../common/database/database.constants';
+import {
+  DRIZZLE,
+  type DrizzleDB,
+} from '../../common/database/database.constants';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event, events } from './events.schema';

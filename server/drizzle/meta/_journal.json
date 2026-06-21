@@ -57,6 +57,13 @@
       "when": 1782207600005,
       "tag": "0007_breezy_black_tom",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1782207600006,
+      "tag": "0008_tiresome_william_stryker",
+      "breakpoints": true
     }
   ]
 }

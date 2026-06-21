@@ -1,4 +1,11 @@
-import { boolean, date, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  date,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 // A weather image for a given calendar date. The image bytes live in S3; this
 // table keeps the S3 object key plus the date it belongs to so the signed URL

@@ -1,10 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
-import {
-  RetrievedFile,
-  UploadFileParams,
-  UploadFileResult,
-} from './s3.types';
+import { RetrievedFile, UploadFileParams, UploadFileResult } from './s3.types';
 
 @Injectable()
 export class S3Service {
@@ -89,8 +85,6 @@ export class S3Service {
   private isNotFound(error: unknown): boolean {
     const code = (error as { code?: string; statusCode?: number })?.code;
     const statusCode = (error as { statusCode?: number })?.statusCode;
-    return (
-      code === 'NoSuchKey' || code === 'NotFound' || statusCode === 404
-    );
+    return code === 'NoSuchKey' || code === 'NotFound' || statusCode === 404;
   }
 }

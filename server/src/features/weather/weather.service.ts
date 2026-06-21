@@ -2,7 +2,10 @@ import { randomUUID } from 'crypto';
 import { extname } from 'path';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, desc, eq } from 'drizzle-orm';
-import { DRIZZLE, type DrizzleDB } from '../../common/database/database.constants';
+import {
+  DRIZZLE,
+  type DrizzleDB,
+} from '../../common/database/database.constants';
 import { S3Service } from '../../common/storage/s3.service';
 import { CreateWeatherDto } from './dto/create-weather.dto';
 import { Weather, weather } from './weather.schema';
@@ -57,7 +60,10 @@ export class WeatherService {
       .limit(1);
     if (!row) throw new NotFoundException(`No weather found for ${date}`);
 
-    return { ...row, signedUrl: this.s3.getSignedUrl(row.imageKey, this.bucket) };
+    return {
+      ...row,
+      signedUrl: this.s3.getSignedUrl(row.imageKey, this.bucket),
+    };
   }
 
   async softDeleteByDate(date: string): Promise<void> {

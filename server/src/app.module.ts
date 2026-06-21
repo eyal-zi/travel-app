@@ -6,6 +6,7 @@ import { DatabaseModule } from './common/database/database.module';
 import { RoutesModule } from './features/routes/routes.module';
 import { EventsModule } from './features/events/events.module';
 import { WeatherModule } from './features/weather/weather.module';
+import { AnnouncementsModule } from './features/announcements/announcements.module';
 
 @Module({
   imports: [
@@ -14,8 +15,9 @@ import { WeatherModule } from './features/weather/weather.module';
     RoutesModule,
     EventsModule,
     WeatherModule,
+    AnnouncementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

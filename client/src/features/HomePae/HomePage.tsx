@@ -1,12 +1,14 @@
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded'
+import { Announcements } from '../Announcements/Announcements'
 import { Calendar } from '../Calendar/Calendar'
 import { RouteMapDropzone } from '../Map/RouteMapDropzone/RouteMapDropzone'
 import { PdfViewer } from '../PdfViewer/PdfViewer'
 import { WeatherWidget } from '../Weather/WeatherWidget'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
 import {
+  AnnouncementsContainer,
   Brand,
   BrandMark,
   CalendarContainer,
@@ -56,6 +58,9 @@ export const HomePage = () => {
             title="Sample slide deck"
           />
         </PdfContainer>
+        <AnnouncementsContainer>
+          <Announcements />
+        </AnnouncementsContainer>
       </PageContent>
     </PageRoot>
   )

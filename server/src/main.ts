@@ -11,7 +11,11 @@ async function bootstrap() {
   // GeoJSON layers can exceed the default 100kb body limit.
   app.useBodyParser('json', { limit: '10mb' });
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
   );
   app.enableShutdownHooks();
   await app.listen(process.env.PORT ?? 3000);

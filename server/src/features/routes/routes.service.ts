@@ -1,6 +1,9 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, desc, eq, lte } from 'drizzle-orm';
-import { DRIZZLE, type DrizzleDB } from '../../common/database/database.constants';
+import {
+  DRIZZLE,
+  type DrizzleDB,
+} from '../../common/database/database.constants';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { Route, routes } from './routes.schema';
@@ -9,7 +12,7 @@ import { Route, routes } from './routes.schema';
 export class RoutesService {
   private readonly logger = new Logger(RoutesService.name);
 
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) { }
+  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
   findAll(): Promise<Route[]> {
     return this.db
