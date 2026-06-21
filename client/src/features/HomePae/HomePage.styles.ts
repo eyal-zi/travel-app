@@ -53,7 +53,7 @@ export const PageContent = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,
   display: 'flex',
-  gap: theme.spacing(3),
+  gap: theme.spacing(1),
   padding: theme.spacing(0, 3, 3),
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
@@ -68,7 +68,7 @@ export const Sidebar = styled(Box)(({ theme }) => ({
   minHeight: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(3),
+  gap: theme.spacing(1),
   [theme.breakpoints.down('lg')]: {
     flex: '0 0 400px',
   },

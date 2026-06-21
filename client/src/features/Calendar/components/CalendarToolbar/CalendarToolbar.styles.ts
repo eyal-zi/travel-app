@@ -8,16 +8,17 @@ import Typography from '@mui/material/Typography'
 
 export const ToolbarRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(1.25),
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+  flexWrap: 'wrap',
   paddingBlockEnd: theme.spacing(0.5),
 }))
 
-export const HeaderRow = styled(Box)(({ theme }) => ({
+export const TitleGroup = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  alignItems: 'baseline',
   gap: theme.spacing(1),
+  flex: 1,
   minWidth: 0,
 }))
 
@@ -31,14 +32,19 @@ export const PeriodTitle = styled(Typography)(({ theme }) => ({
 
 export const SelectedChip = styled(Chip)({
   flexShrink: 0,
+  maxWidth: 'none',
+  '& .MuiChip-label': {
+    overflow: 'visible',
+    textOverflow: 'clip',
+  },
 })
 
-export const ControlsRow = styled(Box)(({ theme }) => ({
+export const Controls = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
-  flexWrap: 'nowrap',
-  gap: theme.spacing(1),
+  gap: theme.spacing(0.75),
+  flexShrink: 0,
+  marginInlineStart: 'auto',
 }))
 
 export const NavGroup = styled(Box)(({ theme }) => ({
@@ -51,7 +57,9 @@ export const NavGroup = styled(Box)(({ theme }) => ({
 export const TodayButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   fontWeight: theme.typography.fontWeightMedium,
-  paddingInline: theme.spacing(1.25),
+  paddingInline: theme.spacing(1),
+  paddingBlock: theme.spacing(0.25),
+  minWidth: 0,
   borderColor: theme.palette.divider,
   color: theme.palette.text.secondary,
 }))
@@ -61,7 +69,7 @@ export const ViewToggle = styled(ToggleButtonGroup)(({ theme }) => ({
   '& .MuiToggleButton-root': {
     border: `1px solid ${theme.palette.divider}`,
     paddingInline: theme.spacing(1.25),
-    paddingBlock: theme.spacing(0.5),
+    paddingBlock: theme.spacing(0.25),
     textTransform: 'none',
     fontWeight: theme.typography.fontWeightMedium,
     color: theme.palette.text.secondary,

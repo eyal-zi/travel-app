@@ -6,11 +6,11 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import {
   AddButton,
-  ControlsRow,
-  HeaderRow,
+  Controls,
   NavGroup,
   PeriodTitle,
   SelectedChip,
+  TitleGroup,
   TodayButton,
   ToolbarRoot,
   ViewToggle,
@@ -41,12 +41,12 @@ export const CalendarToolbar = ({
 
   return (
     <ToolbarRoot>
-      <HeaderRow>
+      <TitleGroup>
         <PeriodTitle variant="h6">{title}</PeriodTitle>
         {formattedDate && <SelectedChip color="primary" size="small" label={formattedDate} />}
-      </HeaderRow>
+      </TitleGroup>
 
-      <ControlsRow>
+      <Controls>
         <NavGroup>
           <Tooltip title="Previous">
             <IconButton size="small" onClick={onPrev} aria-label="Previous period">
@@ -78,11 +78,11 @@ export const CalendarToolbar = ({
         </ViewToggle>
 
         <Tooltip title="Add event">
-          <AddButton onClick={onAddEvent} aria-label="Add event">
+          <AddButton size="small" onClick={onAddEvent} aria-label="Add event">
             <AddRoundedIcon fontSize="small" />
           </AddButton>
         </Tooltip>
-      </ControlsRow>
+      </Controls>
     </ToolbarRoot>
   )
 }
