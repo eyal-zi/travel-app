@@ -1,5 +1,5 @@
 import type { LatLngTuple } from 'leaflet'
-import type { GeoLayer } from '../../../common/geo/geo.types'
+import type { GeoLayer } from '../../geo/geo.types'
 
 export interface MapProps {
   center?: LatLngTuple

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Alert from '@mui/material/Alert'
 import Badge from '@mui/material/Badge'
@@ -12,7 +12,7 @@ import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded'
-import { Map } from '../MapComponent/Map'
+import { Map } from '../Map/Map'
 import {
   ActionBar,
   ActionButton,
@@ -23,81 +23,55 @@ import {
   LayerListItemIcon,
   LayerPopover,
 } from './MapDropzone.styles'
-import { format } from 'date-fns'
-import { useGeoLayers } from '../../../common/geo/useGeoLayers'
-import { useSelectedDate } from '../../../common/hooks/useSelectedDate'
-import { acceptedFileTypes } from '../../../common/geo/parsers'
-import type { FeatureCollection } from 'geojson'
-import type { GeoLayer } from '../../../common/geo/geo.types'
-import type { MapProps } from '../MapComponent/Map.types'
-import { mapService } from '../mapService'
-import type { Route } from '../types/route.type'
+import { useGeoLayers } from '../../geo/useGeoLayers'
+import { acceptedFileTypes } from '../../geo/parsers'
+import type { GeoLayer } from '../../geo/geo.types'
+import type { MapProps } from '../Map/Map.types'
 
 export interface MapDropzoneProps extends Omit<MapProps, 'layers'> {
-  name?: string
-  onSave?: (layers: GeoLayer[]) => void
+  // The persisted layers to display and edit against. Editing diffs against
+  // this baseline; changing it (e.g. loading a different record) replaces the
+  // working layers.
+  committedLayers?: GeoLayer[]
+  // Whether the committed layers are currently being loaded by the parent.
+  loading?: boolean
+  // Persist the working layers. Rejecting surfaces a save-failed message.
+  onSave: (layers: GeoLayer[]) => Promise<void>
 }
 
-// A route with no geometry renders as no layers, so an empty FeatureCollection
-// (e.g. the closest preceding date itself was emptied) shows a blank map.
-const toLayers = (route: Route): GeoLayer[] =>
-  route.data.features.length
-    ? [{ id: route.id, name: route.name, source: 'api', data: route.data }]
-    : []
+// A stable default so the sync effect below doesn't re-run every render.
+const NO_LAYERS: GeoLayer[] = []
 
-export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzoneProps) => {
-  const [selectedDate] = useSelectedDate()
+/**
+ * Pure map + KML dropzone. Renders the map, handles file drag/drop and the
+ * layer list, and offers Save/Cancel when the working layers differ from the
+ * committed baseline. It owns no persistence — the parent loads `committedLayers`
+ * and persists via `onSave`.
+ */
+export const MapDropzone = ({
+  committedLayers = NO_LAYERS,
+  loading = false,
+  onSave,
+  ...mapProps
+}: MapDropzoneProps) => {
   const { layers, addFromFiles, remove, reset, error, setError } = useGeoLayers()
-  const [committed, setCommitted] = useState<GeoLayer[]>([])
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [layersAnchor, setLayersAnchor] = useState<HTMLElement | null>(null)
 
-  const pending =
-    layers.length !== committed.length ||
-    layers.some((layer, i) => layer.id !== committed[i].id)
-
-  const commit = useCallback(
-    (next: GeoLayer[]) => {
-      reset(next)
-      setCommitted(next)
-    },
-    [reset],
-  )
-
+  // Seed/replace the working layers whenever a new committed baseline arrives.
   useEffect(() => {
-    if (!selectedDate) return
-    let active = true
-    setLoading(true)
-    mapService
-      .findClosest(selectedDate)
-      .then(({ data: route }) => {
-        if (!active) return
-        commit(toLayers(route))
-      })
-      .catch((err: { response?: { status?: number } }) => {
-        if (!active) return
-        if (err.response?.status === 404) commit([])
-        else setError('Failed to load the map for this date.')
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-    return () => {
-      active = false
-    }
-  }, [selectedDate, commit, setError])
+    reset(committedLayers)
+  }, [committedLayers, reset])
 
-  const onDrop = useCallback(
-    async (accepted: File[]) => {
-      if (accepted.length) await addFromFiles(accepted)
-    },
-    [addFromFiles],
-  )
+  const pending =
+    layers.length !== committedLayers.length ||
+    layers.some((layer, i) => layer.id !== committedLayers[i].id)
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    onDrop: async (accepted: File[]) => {
+      if (accepted.length) await addFromFiles(accepted)
+    },
     accept: acceptedFileTypes,
     noClick: true,
     noKeyboard: true,
@@ -111,22 +85,8 @@ export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzon
   const handleSave = async () => {
     setSaving(true)
     try {
-      const date = selectedDate ?? format(new Date(), 'yyyy-MM-dd')
-      const features = layers.flatMap((layer) => layer.data.features)
-
-      if (features.length === 0) {
-        // Clearing every layer removes this date's own route so that the next
-        // load of this date falls back to the closest preceding route rather
-        // than a stored empty one.
-        await mapService.removeByDate(date)
-      } else {
-        const data: FeatureCollection = { type: 'FeatureCollection', features }
-        await mapService.create({ name, date, data })
-      }
-
-      setCommitted(layers)
+      await onSave(layers)
       setSaved(true)
-      onSave?.(layers)
     } catch {
       setError('Failed to save changes.')
     } finally {
@@ -135,8 +95,8 @@ export const MapDropzone = ({ name = 'My map', onSave, ...mapProps }: MapDropzon
   }
 
   const handleCancel = () => {
-    reset(committed)
-    if (committed.length === 0) setLayersAnchor(null)
+    reset(committedLayers)
+    if (committedLayers.length === 0) setLayersAnchor(null)
   }
 
   return (

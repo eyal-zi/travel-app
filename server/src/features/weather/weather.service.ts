@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { extname } from 'path';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { and, desc, eq } from 'drizzle-orm';
 import { DRIZZLE, type DrizzleDB } from '../../common/database/database.constants';
 import { S3Service } from '../../common/storage/s3.service';
 import { CreateWeatherDto } from './dto/create-weather.dto';
@@ -43,5 +44,35 @@ export class WeatherService {
     this.logger.log(`Stored weather image ${key} for ${dto.date}`);
 
     return { ...row, signedUrl: this.s3.getSignedUrl(key, this.bucket) };
+  }
+
+  async findByDate(date: string): Promise<WeatherWithUrl> {
+    // Newest non-deleted image for the exact date; signed URLs are short-lived
+    // and not stored, so we regenerate one on each read.
+    const [row] = await this.db
+      .select()
+      .from(weather)
+      .where(and(eq(weather.date, date), eq(weather.isDeleted, false)))
+      .orderBy(desc(weather.createdAt))
+      .limit(1);
+    if (!row) throw new NotFoundException(`No weather found for ${date}`);
+
+    return { ...row, signedUrl: this.s3.getSignedUrl(row.imageKey, this.bucket) };
+  }
+
+  async softDeleteByDate(date: string): Promise<void> {
+    // Flip the soft-delete flag rather than removing rows (or the S3 object),
+    // so the image stays recoverable and the history is preserved. Any
+    // non-deleted rows for the date are cleared so findByDate stops returning.
+    const deleted = await this.db
+      .update(weather)
+      .set({ isDeleted: true })
+      .where(and(eq(weather.date, date), eq(weather.isDeleted, false)))
+      .returning({ id: weather.id });
+    if (deleted.length === 0) {
+      throw new NotFoundException(`No weather found for ${date}`);
+    }
+
+    this.logger.log(`Soft-deleted weather image(s) for ${date}`);
   }
 }

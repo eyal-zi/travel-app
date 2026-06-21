@@ -6,17 +6,11 @@ import { WeatherModal } from './WeatherModal/WeatherModal'
 
 export const WeatherWidget = () => {
   const [open, setOpen] = useState(false)
-  const [seed, setSeed] = useState(0)
-
-  const handleOpen = () => {
-    setSeed(Date.now())
-    setOpen(true)
-  }
 
   return (
     <>
       <Tooltip title="Weather">
-        <WeatherButton onClick={handleOpen} aria-label="Open weather">
+        <WeatherButton onClick={() => setOpen(true)} aria-label="Open weather">
           <IconBadge>
             <WbSunnyRoundedIcon />
           </IconBadge>
@@ -24,7 +18,7 @@ export const WeatherWidget = () => {
         </WeatherButton>
       </Tooltip>
 
-      <WeatherModal open={open} seed={seed} onClose={() => setOpen(false)} />
+      <WeatherModal open={open} onClose={() => setOpen(false)} />
     </>
   )
 }

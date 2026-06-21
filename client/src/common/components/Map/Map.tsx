@@ -5,7 +5,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import type { MapProps } from './Map.types'
-import type { GeoLayer } from '../../../common/geo/geo.types'
+import type { GeoLayer } from '../../geo/geo.types'
 import { MapRoot } from './Map.styles'
 
 L.Icon.Default.mergeOptions({

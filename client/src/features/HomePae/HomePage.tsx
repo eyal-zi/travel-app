@@ -2,7 +2,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded'
 import { Calendar } from '../Calendar/Calendar'
-import { MapDropzone } from '../Map/MapDropzone/MapDropzone'
+import { RouteMapDropzone } from '../Map/RouteMapDropzone/RouteMapDropzone'
 import { PdfViewer } from '../PdfViewer/PdfViewer'
 import { WeatherWidget } from '../Weather/WeatherWidget'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
@@ -47,7 +47,7 @@ export const HomePage = () => {
             <Calendar />
           </CalendarContainer>
           <MapContainer>
-            <MapDropzone />
+            <RouteMapDropzone />
           </MapContainer>
         </Sidebar>
         <PdfContainer>
