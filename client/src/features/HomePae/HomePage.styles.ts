@@ -21,6 +21,13 @@ export const PageHeader = styled(Box)(({ theme }) => ({
   },
 }))
 
+export const HeaderControls = styled(Box)(({ theme }) => ({
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+}))
+
 export const Brand = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',

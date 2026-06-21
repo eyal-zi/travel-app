@@ -4,11 +4,13 @@ import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded'
 import { Calendar } from '../Calendar/Calendar'
 import { MapDropzone } from '../Map/MapDropzone/MapDropzone'
 import { PdfViewer } from '../PdfViewer/PdfViewer'
+import { WeatherWidget } from '../Weather/WeatherWidget'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
 import {
   Brand,
   BrandMark,
   CalendarContainer,
+  HeaderControls,
   MapContainer,
   PageContent,
   PageHeader,
@@ -34,7 +36,10 @@ export const HomePage = () => {
             </Typography>
           </Stack>
         </Brand>
-        <ColorModeToggle />
+        <HeaderControls>
+          <WeatherWidget />
+          <ColorModeToggle />
+        </HeaderControls>
       </PageHeader>
       <PageContent>
         <Sidebar>

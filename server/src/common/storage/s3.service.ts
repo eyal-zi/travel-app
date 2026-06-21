@@ -65,6 +65,14 @@ export class S3Service {
     }
   }
 
+  getSignedUrl(key: string, bucket: string, expiresInSeconds = 3600): string {
+    return this.s3.getSignedUrl('getObject', {
+      Bucket: bucket,
+      Key: key,
+      Expires: expiresInSeconds,
+    });
+  }
+
   private toBuffer(body: S3.Body | undefined): Buffer {
     if (!body) {
       return Buffer.alloc(0);
