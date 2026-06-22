@@ -7,6 +7,7 @@ import { RoutesModule } from './features/routes/routes.module';
 import { EventsModule } from './features/events/events.module';
 import { WeatherModule } from './features/weather/weather.module';
 import { AnnouncementsModule } from './features/announcements/announcements.module';
+import { TripRequestsModule } from './features/trip-requests/trip-requests.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AnnouncementsModule } from './features/announcements/announcements.modu
     EventsModule,
     WeatherModule,
     AnnouncementsModule,
+    TripRequestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

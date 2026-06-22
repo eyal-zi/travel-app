@@ -1,10 +1,21 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { HomePage } from '../features/HomePae/HomePage'
+import { RequestTripPage } from '../features/RequestTrip/RequestTripPage'
+import { AdminPage } from '../features/Admin/AdminPage'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <HomePage />,
+  },
+  {
+    path: '/request-trip',
+    element: <RequestTripPage />,
+  },
+  // Unlinked admin surface for triaging trip requests.
+  {
+    path: '/admin',
+    element: <AdminPage />,
   },
 ])
 

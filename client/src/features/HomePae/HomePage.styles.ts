@@ -104,11 +104,42 @@ export const MapContainer = styled(Panel)(({ theme }) => ({
   },
 }))
 
-export const AnnouncementsContainer = styled(Panel)(({ theme }) => ({
+export const RightColumn = styled(Box)(({ theme }) => ({
   flex: 0.4,
+  minWidth: 0,
+  minHeight: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1),
+  [theme.breakpoints.down('md')]: {
+    flex: 'none',
+    gap: theme.spacing(1.5),
+  },
+}))
+
+export const AnnouncementsContainer = styled(Panel)(({ theme }) => ({
+  flex: 1,
   [theme.breakpoints.down('md')]: {
     minHeight: '70svh',
   },
+}))
+
+export const TripRequestCard = styled(Panel)(({ theme }) => ({
+  flexShrink: 0,
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+  cursor: 'pointer',
+  padding: theme.spacing(2),
+  color: theme.palette.primary.contrastText,
+  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+  border: 'none',
+  transition: theme.transitions.create(['transform', 'box-shadow']),
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: theme.shadows[4],
+  },
+  '& svg': { fontSize: 28 },
 }))
 
 export const PdfContainer = styled(Panel)(({ theme }) => ({

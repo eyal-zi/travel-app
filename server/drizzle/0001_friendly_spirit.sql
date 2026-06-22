@@ -1,0 +1,1 @@
+ALTER TABLE "trip_requests" ALTER COLUMN "notes" DROP NOT NULL;

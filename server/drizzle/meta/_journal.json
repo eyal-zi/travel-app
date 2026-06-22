@@ -5,64 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1781705307649,
-      "tag": "0000_salty_ironclad",
+      "when": 1782119279229,
+      "tag": "0000_sad_king_bedlam",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1781764797180,
-      "tag": "0001_famous_fallen_one",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1782207600000,
-      "tag": "0002_brave_geojson_routes",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1782207600001,
-      "tag": "0003_freezing_arachne",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1782207600002,
-      "tag": "0004_warm_iron_lad",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1782207600003,
-      "tag": "0005_drop_trips",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1782207600004,
-      "tag": "0006_add_events",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1782207600005,
-      "tag": "0007_breezy_black_tom",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1782207600006,
-      "tag": "0008_tiresome_william_stryker",
+      "when": 1782127168539,
+      "tag": "0001_friendly_spirit",
       "breakpoints": true
     }
   ]
