@@ -9,10 +9,15 @@ export const Card = styled(Box)(({ theme }) => ({
   borderRadius: 14,
   border: `1px solid ${theme.palette.divider}`,
   backgroundColor: theme.palette.background.default,
+  cursor: 'pointer',
   transition: theme.transitions.create(['border-color', 'box-shadow']),
   '&:hover': {
     borderColor: theme.palette.primary.main,
     boxShadow: theme.shadows[1],
+  },
+  '&:focus-visible': {
+    outline: `2px solid ${theme.palette.primary.main}`,
+    outlineOffset: 2,
   },
 }))
 
@@ -42,19 +47,18 @@ export const Detail = styled(Box)({
 export const Footer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: theme.spacing(0.75),
+  justifyContent: 'space-between',
+  gap: theme.spacing(1),
+  flexWrap: 'wrap',
   paddingTop: theme.spacing(0.5),
   borderTop: `1px solid ${theme.palette.divider}`,
   color: theme.palette.text.secondary,
   '& svg': { fontSize: 16 },
 }))
 
-// Admin-only row of status-transition buttons under the request details.
-export const AdminActions = styled(Box)(({ theme }) => ({
+// Small chips flagging that the admin has left a note and/or files.
+export const Indicators = styled(Box)(({ theme }) => ({
   display: 'flex',
-  flexWrap: 'wrap',
   alignItems: 'center',
-  gap: theme.spacing(1),
-  paddingTop: theme.spacing(1),
-  borderTop: `1px solid ${theme.palette.divider}`,
+  gap: theme.spacing(0.75),
 }))

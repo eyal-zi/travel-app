@@ -6,7 +6,8 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import { useTripRequests } from '../../queries/useTripRequests'
 import { TRIP_REQUEST_STATUSES, type TripRequestStatus } from '../../types'
-import { STATUS_META, TripRequestItem } from '../TripRequestItem/TripRequestItem'
+import { TripRequestItem } from '../TripRequestItem/TripRequestItem'
+import { STATUS_META } from '../TripRequestItem/statusMeta'
 import {
   FilterBar,
   ListPanel,

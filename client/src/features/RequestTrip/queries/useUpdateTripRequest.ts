@@ -3,24 +3,32 @@ import { tripRequestService } from '../services/tripRequestService'
 import type { TripRequestStatus } from '../types'
 import { tripRequestsKey } from './useTripRequests'
 
+type UpdateVars = {
+  id: string
+  status?: TripRequestStatus
+  adminNote?: string
+}
+
 /**
- * Owns the admin status-change mutation. On success it invalidates the
- * trip-requests list prefix so every status-filtered variant refetches and the
- * card reflects (or leaves, under an active filter) its new status.
+ * Owns the admin update mutation (status and/or note). On success it invalidates
+ * the trip-requests list prefix so every status-filtered variant refetches and
+ * the card reflects (or leaves, under an active filter) its new state.
  */
-export const useUpdateTripRequestStatus = () => {
+export const useUpdateTripRequest = () => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: TripRequestStatus }) =>
-      tripRequestService.updateStatus(id, status).then((res) => res.data),
+    mutationFn: ({ id, ...payload }: UpdateVars) =>
+      tripRequestService.update(id, payload).then((res) => res.data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: tripRequestsKey })
     },
   })
 
   return {
-    updateStatus: mutation.mutate,
+    updateRequest: mutation.mutate,
+    // Promise-returning variant, for sequencing inside a batched save.
+    updateRequestAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     // The status of the in-flight transition, so the UI can spotlight just the
     // button that was clicked rather than disabling the whole row blindly.

@@ -17,9 +17,20 @@ export const TRIP_REQUEST_STATUSES = ['received', 'processing', 'done'] as const
 
 export type TripRequestStatus = (typeof TRIP_REQUEST_STATUSES)[number]
 
+// A file the admin attached to a request, with a short-lived URL to download it.
+export type TripRequestFile = {
+  id: string
+  fileName: string
+  contentType: string
+  signedUrl: string
+}
+
 export type TripRequest = CreateTripRequest & {
   id: string
   status: TripRequestStatus
+  // Admin's free-form response, or null until one is written.
+  adminNote: string | null
+  files: TripRequestFile[]
   createdAt: string
   updatedAt: string
 }

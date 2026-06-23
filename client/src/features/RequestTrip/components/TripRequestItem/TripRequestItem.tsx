@@ -1,41 +1,31 @@
+import { useState } from 'react'
 import { format, parseISO } from 'date-fns'
-import Alert from '@mui/material/Alert'
-import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
-import CircularProgress from '@mui/material/CircularProgress'
-import Snackbar from '@mui/material/Snackbar'
 import Typography from '@mui/material/Typography'
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
+import NotesRoundedIcon from '@mui/icons-material/NotesRounded'
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded'
 import {
   TIMEZONE_OPTIONS,
   TIME_DIVISION_OPTIONS,
-  TRIP_REQUEST_STATUSES,
   type TripRequest,
-  type TripRequestStatus,
 } from '../../types'
-import { useUpdateTripRequestStatus } from '../../queries/useUpdateTripRequestStatus'
+import { TripRequestResponseDialog } from '../TripRequestResponseDialog/TripRequestResponseDialog'
+import { STATUS_META } from './statusMeta'
 import {
-  AdminActions,
   Card,
   CardTop,
   Detail,
   DetailGrid,
   Footer,
+  Indicators,
 } from './TripRequestItem.styles'
 
 type TripRequestItemProps = {
   request: TripRequest
-  // When true, render admin status-transition controls.
+  // When true, the dialog opens in admin mode (status/note/file editor).
   admin?: boolean
-}
-
-export const STATUS_META: Record<
-  TripRequestStatus,
-  { label: string; color: 'info' | 'warning' | 'success' }
-> = {
-  received: { label: 'Received', color: 'info' },
-  processing: { label: 'Processing', color: 'warning' },
-  done: { label: 'Done', color: 'success' },
 }
 
 const labelFor = (options: { value: string; label: string }[], value: string) =>
@@ -60,91 +50,99 @@ const Field = ({ label, value }: { label: string; value: string }) => (
 
 export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
   const status = STATUS_META[request.status] ?? STATUS_META.received
-  const { updateStatus, isUpdating, pendingStatus, updateError, resetUpdateError } =
-    useUpdateTripRequestStatus()
+  const [open, setOpen] = useState(false)
+
+  const hasNote = Boolean(request.adminNote)
+  const fileCount = request.files.length
 
   return (
-    <Card>
-      <CardTop>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ wordBreak: 'break-word' }}>
-          {request.tripGoal}
-        </Typography>
-        <Chip label={status.label} color={status.color} size="small" />
-      </CardTop>
-
-      <DetailGrid>
-        <Field label="Country" value={request.country} />
-        <Field label="Landmark" value={request.landmark} />
-        <Field
-          label="Dates"
-          value={`${formatDay(request.startDate)} → ${formatDay(request.endDate)}`}
-        />
-        <Field
-          label="Time division"
-          value={labelFor(TIME_DIVISION_OPTIONS, request.timeDivision)}
-        />
-        <Field label="Timezone" value={labelFor(TIMEZONE_OPTIONS, request.timezone)} />
-      </DetailGrid>
-
-      {request.notes && (
-        <Detail>
-          <Typography variant="caption" color="text.secondary">
-            Notes
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
-          >
-            {request.notes}
-          </Typography>
-        </Detail>
-      )}
-
-      <Footer>
-        <ScheduleRoundedIcon />
-        <Typography variant="caption">
-          Requested {format(new Date(request.createdAt), 'PP p')}
-        </Typography>
-      </Footer>
-
-      {admin && (
-        <AdminActions>
-          <Typography variant="caption" color="text.secondary">
-            Set status
-          </Typography>
-          {TRIP_REQUEST_STATUSES.filter((value) => value !== request.status).map(
-            (value) => {
-              const isThisPending = pendingStatus === value
-              return (
-                <Button
-                  key={value}
-                  size="small"
-                  variant="outlined"
-                  color={STATUS_META[value].color}
-                  disabled={isUpdating}
-                  startIcon={
-                    isThisPending ? <CircularProgress size={14} color="inherit" /> : undefined
-                  }
-                  onClick={() => updateStatus({ id: request.id, status: value })}
-                >
-                  {STATUS_META[value].label}
-                </Button>
-              )
-            },
-          )}
-        </AdminActions>
-      )}
-
-      <Snackbar
-        open={updateError}
-        autoHideDuration={5000}
-        onClose={resetUpdateError}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    <>
+      <Card
+        role="button"
+        tabIndex={0}
+        onClick={() => setOpen(true)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            setOpen(true)
+          }
+        }}
       >
-        <Alert severity="error" variant="filled" onClose={resetUpdateError}>
-          Couldn't update the status. Please try again.
-        </Alert>
-      </Snackbar>
-    </Card>
+        <CardTop>
+          <Typography variant="subtitle1" fontWeight={700} sx={{ wordBreak: 'break-word' }}>
+            {request.tripGoal}
+          </Typography>
+          <Chip label={status.label} color={status.color} size="small" />
+        </CardTop>
+
+        <DetailGrid>
+          <Field label="Country" value={request.country} />
+          <Field label="Landmark" value={request.landmark} />
+          <Field
+            label="Dates"
+            value={`${formatDay(request.startDate)} → ${formatDay(request.endDate)}`}
+          />
+          <Field
+            label="Time division"
+            value={labelFor(TIME_DIVISION_OPTIONS, request.timeDivision)}
+          />
+          <Field label="Timezone" value={labelFor(TIMEZONE_OPTIONS, request.timezone)} />
+        </DetailGrid>
+
+        {request.notes && (
+          <Detail>
+            <Typography variant="caption" color="text.secondary">
+              Notes
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+            >
+              {request.notes}
+            </Typography>
+          </Detail>
+        )}
+
+        <Footer>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <ScheduleRoundedIcon />
+            <Typography variant="caption">
+              Requested {format(new Date(request.createdAt), 'PP p')}
+            </Typography>
+          </Box>
+
+          {/* Small indicators that the admin has responded. */}
+          {(hasNote || fileCount > 0) && (
+            <Indicators>
+              {hasNote && (
+                <Chip
+                  icon={<NotesRoundedIcon />}
+                  label="Response"
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              )}
+              {fileCount > 0 && (
+                <Chip
+                  icon={<AttachFileRoundedIcon />}
+                  label={fileCount}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              )}
+            </Indicators>
+          )}
+        </Footer>
+      </Card>
+
+      <TripRequestResponseDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        request={request}
+        admin={admin}
+      />
+    </>
   )
 }

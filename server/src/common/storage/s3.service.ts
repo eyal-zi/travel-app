@@ -61,11 +61,20 @@ export class S3Service {
     }
   }
 
-  getSignedUrl(key: string, bucket: string, expiresInSeconds = 3600): string {
+  getSignedUrl(
+    key: string,
+    bucket: string,
+    expiresInSeconds = 3600,
+    // When set (e.g. `attachment; filename="report.pdf"`), the object is served
+    // with this Content-Disposition so the browser downloads it rather than
+    // rendering it inline.
+    contentDisposition?: string,
+  ): string {
     return this.s3.getSignedUrl('getObject', {
       Bucket: bucket,
       Key: key,
       Expires: expiresInSeconds,
+      ResponseContentDisposition: contentDisposition,
     });
   }
 
