@@ -6,7 +6,7 @@ import FlightTakeoffRoundedIcon from '@mui/icons-material/FlightTakeoffRounded'
 import { Announcements } from '../Announcements/Announcements'
 import { Calendar } from '../Calendar/Calendar'
 import { RouteMapDropzone } from '../Map/RouteMapDropzone/RouteMapDropzone'
-import { PdfViewer } from '../PdfViewer/PdfViewer'
+import { PdfDropzone } from '../PdfViewer/PdfDropzone'
 import { WeatherWidget } from '../Weather/WeatherWidget'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
 import {
@@ -59,10 +59,7 @@ export const HomePage = () => {
           </MapContainer>
         </Sidebar>
         <PdfContainer>
-          <PdfViewer
-            url="https://cs231n.stanford.edu/slides/2021/lecture_1.pdf"
-            title="Sample slide deck"
-          />
+          <PdfDropzone />
         </PdfContainer>
         <RightColumn>
           <AnnouncementsContainer>

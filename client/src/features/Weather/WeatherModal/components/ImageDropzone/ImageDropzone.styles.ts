@@ -1,6 +1,8 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
+// Wraps the weather image with a rounded, clipped frame that fills the dropzone
+// and keeps a tall minimum height so the empty and filled states line up.
 export const ImageFrame = styled(Box)(({ theme }) => ({
   position: 'relative',
   display: 'flex',
@@ -17,33 +19,3 @@ export const WeatherImage = styled('img')({
   display: 'block',
   objectFit: 'cover',
 })
-
-// Empty-state drop target shown before an image is selected. `isDragActive`
-// drives the hover styling while a file is dragged over the modal.
-export const DropPrompt = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isDragActive',
-})<{ isDragActive: boolean }>(({ theme, isDragActive }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: theme.spacing(1),
-  width: '100%',
-  height: '100%',
-  minHeight: 480,
-  padding: theme.spacing(4),
-  cursor: 'pointer',
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  border: `2px dashed ${
-    isDragActive ? theme.palette.primary.main : theme.palette.divider
-  }`,
-  borderRadius: 12,
-  backgroundColor: isDragActive
-    ? theme.palette.action.hover
-    : 'transparent',
-  transition: theme.transitions.create(['border-color', 'background-color'], {
-    duration: theme.transitions.duration.shorter,
-  }),
-  '& svg': { fontSize: 48 },
-}))

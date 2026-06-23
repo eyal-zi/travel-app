@@ -15,6 +15,13 @@
       "when": 1782127168539,
       "tag": "0001_friendly_spirit",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782202803885,
+      "tag": "0002_aromatic_white_tiger",
+      "breakpoints": true
     }
   ]
 }

@@ -6,6 +6,7 @@ import { DatabaseModule } from './common/database/database.module';
 import { RoutesModule } from './features/routes/routes.module';
 import { EventsModule } from './features/events/events.module';
 import { WeatherModule } from './features/weather/weather.module';
+import { PdfModule } from './features/pdf/pdf.module';
 import { AnnouncementsModule } from './features/announcements/announcements.module';
 import { TripRequestsModule } from './features/trip-requests/trip-requests.module';
 
@@ -16,6 +17,7 @@ import { TripRequestsModule } from './features/trip-requests/trip-requests.modul
     RoutesModule,
     EventsModule,
     WeatherModule,
+    PdfModule,
     AnnouncementsModule,
     TripRequestsModule,
   ],
