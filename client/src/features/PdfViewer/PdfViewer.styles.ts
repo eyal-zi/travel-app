@@ -12,13 +12,12 @@ export const ViewerRoot = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }))
 
-// `pointer-events: none` lets clicks and drops pass through to the dropzone so
-// a new PDF can be dropped (or clicked to browse) straight over the preview,
-// the same way the image preview behaves.
+// Keep pointer events on so the PDF can be scrolled inside the iframe. Replacing
+// the file goes through the delete button + empty-state dropzone rather than
+// dropping straight over the preview.
 export const Frame = styled('iframe')({
   flex: 1,
   width: '100%',
   height: '100%',
   border: 'none',
-  pointerEvents: 'none',
 })
