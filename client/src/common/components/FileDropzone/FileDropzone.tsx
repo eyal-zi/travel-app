@@ -20,16 +20,16 @@ export const FileDropzone = ({
   const [preview, setPreview] = useState<string | null>(null)
 
   // Build an object-URL preview for the current file, revoking it whenever the
-  // file changes or the component unmounts so we don't leak blobs. Clearing the
-  // file (e.g. on reset) tears the preview down too.
+  // file changes or the component unmounts so we don't leak blobs. The effect
+  // (rather than a render-time useMemo) is deliberate: it keeps the create/revoke
+  // lifecycle correct under StrictMode's double-invocation.
   useEffect(() => {
-    if (!file) {
-      setPreview(null)
-      return
-    }
-    const url = URL.createObjectURL(file)
+    const url = file ? URL.createObjectURL(file) : null
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing an external blob-URL resource
     setPreview(url)
-    return () => URL.revokeObjectURL(url)
+    return () => {
+      if (url) URL.revokeObjectURL(url)
+    }
   }, [file])
 
   const onDrop = useCallback(

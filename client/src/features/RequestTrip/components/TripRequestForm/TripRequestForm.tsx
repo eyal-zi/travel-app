@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
-import Snackbar from '@mui/material/Snackbar'
 import TextField from '@mui/material/TextField'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { format, isValid as isValidDate } from 'date-fns'
+import { isValid as isValidDate } from 'date-fns'
+import { Notification } from '../../../../common/components/Notification/Notification'
+import { useNotification } from '../../../../common/hooks/useNotification'
+import { serializeDate } from '../../../../common/utils/date'
 import { useCreateTripRequest } from '../../queries/useCreateTripRequest'
 import {
   TIMEZONE_OPTIONS,
@@ -38,9 +39,6 @@ const INITIAL_STATE: FormState = {
   endDate: null,
 }
 
-const serializeDate = (date: Date | null) =>
-  date && isValidDate(date) ? format(date, 'yyyy-MM-dd') : ''
-
 type TripRequestFormProps = {
   // Called after a request is submitted successfully (e.g. to switch to the list).
   onSubmitted: () => void
@@ -48,12 +46,11 @@ type TripRequestFormProps = {
 }
 
 export const TripRequestForm = ({ onSubmitted, onCancel }: TripRequestFormProps) => {
-  const { submit, isSubmitting, submitError, resetSubmitError } =
-    useCreateTripRequest()
+  const { submit, isSubmitting } = useCreateTripRequest()
+  const { notification, notifyError, notifySuccess, close } = useNotification()
 
   const [values, setValues] = useState<FormState>(INITIAL_STATE)
   const [showErrors, setShowErrors] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setValues((prev) => ({ ...prev, [key]: value }))
@@ -96,13 +93,13 @@ export const TripRequestForm = ({ onSubmitted, onCancel }: TripRequestFormProps)
 
     try {
       await submit(payload)
-      setShowSuccess(true)
+      notifySuccess('Trip request submitted!')
       setValues(INITIAL_STATE)
       setShowErrors(false)
       // Let the success toast show briefly, then hand back to the list view.
       setTimeout(onSubmitted, 1000)
     } catch {
-      // Error surfaced via the submitError snackbar below.
+      notifyError("Couldn't submit your trip request. Please try again.")
     }
   }
 
@@ -227,25 +224,7 @@ export const TripRequestForm = ({ onSubmitted, onCancel }: TripRequestFormProps)
         </Actions>
       </FormCard>
 
-      <Snackbar
-        open={submitError}
-        autoHideDuration={6000}
-        onClose={resetSubmitError}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="error" onClose={resetSubmitError}>
-          Couldn't submit your trip request. Please try again.
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={showSuccess}
-        autoHideDuration={6000}
-        onClose={() => setShowSuccess(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="success">Trip request submitted!</Alert>
-      </Snackbar>
+      <Notification notification={notification} onClose={close} />
     </>
   )
 }

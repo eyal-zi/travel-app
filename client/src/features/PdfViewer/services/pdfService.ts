@@ -1,5 +1,5 @@
-import axios from 'axios'
-import api from '../../common/api/axios'
+import api from '../../../common/api/axios'
+import { getOrNull } from '../../../common/api/getOrNull'
 
 export type PdfRecord = {
   id: string
@@ -15,19 +15,8 @@ export const pdfService = {
   // Returns the PDF for the date or the closest preceding one, or null when
   // there isn't one (the server answers 404 when nothing exists on or before
   // the date).
-  getClosest: async (date: string): Promise<PdfRecord | null> => {
-    try {
-      const { data } = await api.get<PdfRecord>('/api/pdf/closest', {
-        params: { date },
-      })
-      return data
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        return null
-      }
-      throw error
-    }
-  },
+  getClosest: (date: string) =>
+    getOrNull(api.get<PdfRecord>('/api/pdf/closest', { params: { date } })),
 
   create: (date: string, file: File) => {
     const form = new FormData()

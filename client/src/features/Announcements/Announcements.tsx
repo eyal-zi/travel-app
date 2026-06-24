@@ -1,4 +1,4 @@
-import { useAnnouncements } from './quries/useAnnouncements'
+import { useAnnouncements } from './queries/useAnnouncements'
 import { AnnouncementsList } from './components/AnnouncementsList/AnnouncementsList'
 import { AnnouncementComposer } from './components/AnnouncementComposer/AnnouncementComposer'
 import { Root } from './Announcements.styles'

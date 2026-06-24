@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Alert from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar'
 import { useTheme } from '@mui/material/styles'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -11,6 +9,7 @@ import type { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/cor
 import type { DateClickArg } from '@fullcalendar/interaction'
 import { differenceInCalendarDays, format } from 'date-fns'
 import { useSelectedDate } from '../../common/hooks/useSelectedDate'
+import { Notification } from '../../common/components/Notification/Notification'
 import { CalendarRoot, StyledCalendarWrapper } from './Calendar.styles'
 import { EventDialog } from './components/EventDialog/EventDialog'
 import { CalendarToolbar } from './components/CalendarToolbar/CalendarToolbar'
@@ -29,8 +28,8 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
   const {
     events,
     dialog,
-    error,
-    setError,
+    notification,
+    closeNotification,
     openCreate,
     openEdit,
     closeDialog,
@@ -159,16 +158,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
         onDelete={dialog.mode === 'edit' ? deleteEvent : undefined}
       />
 
-      <Snackbar
-        open={Boolean(error)}
-        autoHideDuration={6000}
-        onClose={() => setError(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="error" variant="filled" onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      </Snackbar>
+      <Notification notification={notification} onClose={closeNotification} />
     </CalendarRoot>
   )
 }

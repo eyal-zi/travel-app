@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
 export const Card = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -58,6 +59,30 @@ export const Footer = styled(Box)(({ theme }) => ({
 
 // Small chips flagging that the admin has left a note and/or files.
 export const Indicators = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.75),
+}))
+
+// Trip goal heading at the top of the card.
+export const GoalTitle = styled(Typography)({
+  fontWeight: 700,
+  wordBreak: 'break-word',
+})
+
+// Value text inside a labelled detail field.
+export const FieldValue = styled(Typography)({
+  wordBreak: 'break-word',
+})
+
+// Free-text notes block, preserving the requester's line breaks.
+export const NotesText = styled(Typography)({
+  whiteSpace: 'pre-wrap',
+  wordBreak: 'break-word',
+})
+
+// "Requested <date>" row: clock icon + caption.
+export const RequestedRow = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(0.75),

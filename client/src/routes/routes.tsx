@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { HomePage } from '../features/HomePae/HomePage'
+import { HomePage } from '../features/HomePage/HomePage'
 import { RequestTripPage } from '../features/RequestTrip/RequestTripPage'
 import { LargeFileRequestPage } from '../features/LargeFileRequest/LargeFileRequestPage'
 import { AdminPage } from '../features/Admin/AdminPage'

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from '@mui/material/Button'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -58,9 +58,13 @@ export const EventDialog = ({
 }: EventDialogProps) => {
   const [values, setValues] = useState<EventFormValues>(initialValues)
 
-  useEffect(() => {
+  // Reseed the form whenever the dialog (re)opens — the render-phase way (no
+  // effect), the same pattern the trip-request response dialog uses.
+  const [wasOpen, setWasOpen] = useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
     if (open) setValues(initialValues)
-  }, [open, initialValues])
+  }
 
   const update = <K extends keyof EventFormValues>(key: K, value: EventFormValues[K]) =>
     setValues((prev) => ({ ...prev, [key]: value }))

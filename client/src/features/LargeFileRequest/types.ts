@@ -3,11 +3,10 @@
 // the server returns matching records as a cursor-paginated, newest-first page.
 
 import type { FeatureCollection, Geometry } from 'geojson'
-
-type Option = { value: string; label: string }
+import type { SelectOption } from '../../common/types'
 
 // The five fixed file-type choices (mirror the server's LARGE_FILE_TYPES).
-export const LARGE_FILE_TYPE_OPTIONS: Option[] = [
+export const LARGE_FILE_TYPE_OPTIONS: SelectOption[] = [
   { value: 'geojson', label: 'GeoJSON' },
   { value: 'shapefile', label: 'Shapefile' },
   { value: 'kml', label: 'KML' },

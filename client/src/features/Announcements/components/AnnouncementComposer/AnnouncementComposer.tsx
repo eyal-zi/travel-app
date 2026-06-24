@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import Alert from '@mui/material/Alert'
 import IconButton from '@mui/material/IconButton'
-import Snackbar from '@mui/material/Snackbar'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import SendRoundedIcon from '@mui/icons-material/SendRounded'
+import { Notification } from '../../../../common/components/Notification/Notification'
 import { Composer } from '../../Announcements.styles'
 
 type AnnouncementComposerProps = {
@@ -68,16 +67,14 @@ export const AnnouncementComposer = ({
         </Tooltip>
       </Composer>
 
-      <Snackbar
-        open={postError}
-        autoHideDuration={6000}
-        onClose={() => resetPostError()}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="error" variant="filled" onClose={() => resetPostError()}>
-          Failed to post the announcement.
-        </Alert>
-      </Snackbar>
+      <Notification
+        notification={
+          postError
+            ? { severity: 'error', message: 'Failed to post the announcement.' }
+            : null
+        }
+        onClose={resetPostError}
+      />
     </>
   )
 }

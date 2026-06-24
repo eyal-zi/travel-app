@@ -1,6 +1,8 @@
 // Trip request data model — mirrors the server DTO/schema in
 // server/src/features/trip-requests. `status` and timestamps are set server-side.
 
+import type { SelectOption } from '../../common/types'
+
 export type CreateTripRequest = {
   tripGoal: string
   country: string
@@ -42,14 +44,12 @@ export type TripRequestPage = {
   nextCursor: string | null
 }
 
-type Option = { value: string; label: string }
-
-export const TIME_DIVISION_OPTIONS: Option[] = [
+export const TIME_DIVISION_OPTIONS: SelectOption[] = [
   { value: 'hours', label: 'Hours' },
   { value: 'half-hours', label: 'Half hours' },
 ]
 
-export const TIMEZONE_OPTIONS: Option[] = [
+export const TIMEZONE_OPTIONS: SelectOption[] = [
   { value: 'America/New_York', label: 'New York' },
   { value: 'Europe/Paris', label: 'Paris' },
 ]

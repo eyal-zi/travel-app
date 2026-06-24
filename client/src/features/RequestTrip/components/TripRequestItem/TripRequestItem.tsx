@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { format, parseISO } from 'date-fns'
-import Box from '@mui/material/Box'
+import { format } from 'date-fns'
+import { formatDay } from '../../../../common/utils/format'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
@@ -18,8 +18,12 @@ import {
   CardTop,
   Detail,
   DetailGrid,
+  FieldValue,
   Footer,
+  GoalTitle,
   Indicators,
+  NotesText,
+  RequestedRow,
 } from './TripRequestItem.styles'
 
 type TripRequestItemProps = {
@@ -31,20 +35,12 @@ type TripRequestItemProps = {
 const labelFor = (options: { value: string; label: string }[], value: string) =>
   options.find((option) => option.value === value)?.label ?? value
 
-// Formats a 'YYYY-MM-DD' date string, falling back to the raw value if unparseable.
-const formatDay = (value: string) => {
-  const date = parseISO(value)
-  return Number.isNaN(date.getTime()) ? value : format(date, 'dd MMM yyyy')
-}
-
 const Field = ({ label, value }: { label: string; value: string }) => (
   <Detail>
     <Typography variant="caption" color="text.secondary">
       {label}
     </Typography>
-    <Typography variant="body2" sx={{ wordBreak: 'break-word' }}>
-      {value}
-    </Typography>
+    <FieldValue variant="body2">{value}</FieldValue>
   </Detail>
 )
 
@@ -69,9 +65,7 @@ export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
         }}
       >
         <CardTop>
-          <Typography variant="subtitle1" fontWeight={700} sx={{ wordBreak: 'break-word' }}>
-            {request.tripGoal}
-          </Typography>
+          <GoalTitle variant="subtitle1">{request.tripGoal}</GoalTitle>
           <Chip label={status.label} color={status.color} size="small" />
         </CardTop>
 
@@ -94,22 +88,17 @@ export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
             <Typography variant="caption" color="text.secondary">
               Notes
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
-            >
-              {request.notes}
-            </Typography>
+            <NotesText variant="body2">{request.notes}</NotesText>
           </Detail>
         )}
 
         <Footer>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+          <RequestedRow>
             <ScheduleRoundedIcon />
             <Typography variant="caption">
               Requested {format(new Date(request.createdAt), 'PP p')}
             </Typography>
-          </Box>
+          </RequestedRow>
 
           {/* Small indicators that the admin has responded. */}
           {(hasNote || fileCount > 0) && (

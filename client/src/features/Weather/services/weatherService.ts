@@ -1,5 +1,5 @@
-import axios from 'axios'
-import api from '../../common/api/axios'
+import api from '../../../common/api/axios'
+import { getOrNull } from '../../../common/api/getOrNull'
 
 export type WeatherRecord = {
   id: string
@@ -14,19 +14,8 @@ export type WeatherRecord = {
 export const weatherService = {
   // Returns the stored weather record for the date, or null when there isn't
   // one yet (the server answers 404 for dates without an image).
-  getByDate: async (date: string): Promise<WeatherRecord | null> => {
-    try {
-      const { data } = await api.get<WeatherRecord>('/api/weather', {
-        params: { date },
-      })
-      return data
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        return null
-      }
-      throw error
-    }
-  },
+  getByDate: (date: string) =>
+    getOrNull(api.get<WeatherRecord>('/api/weather', { params: { date } })),
 
   create: (date: string, image: File) => {
     const form = new FormData()

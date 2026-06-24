@@ -1,5 +1,5 @@
-import api from '../../common/api/axios'
-import type { EventInput, EventRecord } from './Calendar.types'
+import api from '../../../common/api/axios'
+import type { EventInput, EventRecord } from '../Calendar.types'
 
 // Calendar events are persisted as JSON via the events module. Unlike routes
 // (one per date), events are plain id-keyed CRUD: many per day, free to span a

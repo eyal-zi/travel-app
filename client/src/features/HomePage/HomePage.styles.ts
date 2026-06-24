@@ -1,5 +1,7 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 export const PageRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -124,15 +126,19 @@ export const AnnouncementsContainer = styled(Panel)(({ theme }) => ({
   },
 }))
 
-export const TripRequestCard = styled(Panel)(({ theme }) => ({
+// Tappable gradient navigation card (trip request / large file request). `tone`
+// selects which palette the gradient and text colour are drawn from.
+export const GradientActionCard = styled(Panel, {
+  shouldForwardProp: (prop) => prop !== 'tone',
+})<{ tone: 'primary' | 'secondary' }>(({ theme, tone }) => ({
   flexShrink: 0,
   flexDirection: 'row',
   alignItems: 'center',
   gap: theme.spacing(1.5),
   cursor: 'pointer',
   padding: theme.spacing(2),
-  color: theme.palette.primary.contrastText,
-  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+  color: theme.palette[tone].contrastText,
+  background: `linear-gradient(135deg, ${theme.palette[tone].main}, ${theme.palette[tone].dark})`,
   border: 'none',
   transition: theme.transitions.create(['transform', 'box-shadow']),
   '&:hover': {
@@ -142,23 +148,15 @@ export const TripRequestCard = styled(Panel)(({ theme }) => ({
   '& svg': { fontSize: 28 },
 }))
 
-export const LargeFileRequestCard = styled(Panel)(({ theme }) => ({
-  flexShrink: 0,
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: theme.spacing(1.5),
-  cursor: 'pointer',
-  padding: theme.spacing(2),
-  color: theme.palette.secondary.contrastText,
-  background: `linear-gradient(135deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.dark})`,
-  border: 'none',
-  transition: theme.transitions.create(['transform', 'box-shadow']),
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: theme.shadows[4],
-  },
-  '& svg': { fontSize: 28 },
-}))
+// Tight, truncatable text column (min-width:0 lets noWrap children ellipsize).
+export const TextColumn = styled(Stack)({
+  minWidth: 0,
+})
+
+// Muted subtitle line inside a gradient action card.
+export const CardSubtitle = styled(Typography)({
+  opacity: 0.85,
+})
 
 export const PdfContainer = styled(Panel)(({ theme }) => ({
   flex: 1,

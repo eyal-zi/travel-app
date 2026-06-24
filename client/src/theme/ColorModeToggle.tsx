@@ -2,7 +2,7 @@ import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded'
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
-import { useColorMode } from './ColorModeProvider'
+import { useColorMode } from './colorMode'
 
 export const ColorModeToggle = () => {
   const { mode, toggleColorMode } = useColorMode()
