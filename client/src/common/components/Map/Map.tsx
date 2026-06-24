@@ -8,6 +8,11 @@ import type { MapProps } from './Map.types'
 import type { GeoLayer } from '../../geo/geo.types'
 import { MapRoot } from './Map.styles'
 
+// Leaflet's default icon resolves its image URLs through `_getIconUrl`, which prepends an
+// auto-detected `imagePath` and breaks the asset URLs the bundler gives us. Dropping that
+// override lets the merged URLs below (the marker images shipped with Leaflet) resolve as-is,
+// so GeoJSON Point features render with the standard marker instead of appearing iconless.
+delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
 L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   iconRetinaUrl: markerIcon2x,

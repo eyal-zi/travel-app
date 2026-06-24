@@ -1,6 +1,9 @@
 import type { Accept } from 'react-dropzone'
 import type { FeatureCollection } from 'geojson'
 import { parseKml } from './kml'
+import { parseShpFile } from './shp'
+import { parseCsv } from './csv'
+import { parseExcel } from './excel'
 
 interface GeoFormat {
   parse: (file: File) => Promise<FeatureCollection>
@@ -11,6 +14,34 @@ const FORMATS: Record<string, GeoFormat> = {
   kml: {
     parse: parseKml,
     accept: { 'application/vnd.google-earth.kml+xml': ['.kml'] },
+  },
+  // .shp has no reliable MIME type; react-dropzone matches on the listed extension.
+  shp: {
+    parse: parseShpFile,
+    accept: { 'application/octet-stream': ['.shp'] },
+  },
+  csv: {
+    parse: parseCsv,
+    accept: { 'text/csv': ['.csv'] },
+  },
+  xlsx: {
+    parse: parseExcel,
+    accept: {
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      'application/vnd.ms-excel': ['.xls'],
+      'application/vnd.ms-excel.sheet.macroEnabled.12': ['.xlsm'],
+    },
+  },
+  // parseFile dispatches by extension, so each Excel extension needs its own entry. The
+  // accept map is already covered by the xlsx entry above, so leave these empty to avoid
+  // duplicates.
+  xls: {
+    parse: parseExcel,
+    accept: {},
+  },
+  xlsm: {
+    parse: parseExcel,
+    accept: {},
   },
 }
 

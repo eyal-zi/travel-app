@@ -26,18 +26,7 @@ import {
 import { useGeoLayers } from '../../geo/useGeoLayers'
 import { acceptedFileTypes } from '../../geo/parsers'
 import type { GeoLayer } from '../../geo/geo.types'
-import type { MapProps } from '../Map/Map.types'
-
-export interface MapDropzoneProps extends Omit<MapProps, 'layers'> {
-  // The persisted layers to display and edit against. Editing diffs against
-  // this baseline; changing it (e.g. loading a different record) replaces the
-  // working layers.
-  committedLayers?: GeoLayer[]
-  // Whether the committed layers are currently being loaded by the parent.
-  loading?: boolean
-  // Persist the working layers. Rejecting surfaces a save-failed message.
-  onSave: (layers: GeoLayer[]) => Promise<void>
-}
+import type { MapDropzoneProps } from './MapDropzone.types'
 
 // A stable default so the sync effect below doesn't re-run every render.
 const NO_LAYERS: GeoLayer[] = []
@@ -103,7 +92,9 @@ export const MapDropzone = ({
     <DropzoneRoot {...getRootProps()}>
       <input {...getInputProps()} />
       <Map {...mapProps} layers={layers} />
-      {isDragActive && <DragOverlay>Drop a KML file to add it to the map</DragOverlay>}
+      {isDragActive && (
+        <DragOverlay>Drop a KML, SHP, CSV or Excel file to add it to the map</DragOverlay>
+      )}
       {loading && <DragOverlay>Loading map…</DragOverlay>}
 
       {layers.length > 0 && (
