@@ -142,6 +142,24 @@ export const TripRequestCard = styled(Panel)(({ theme }) => ({
   '& svg': { fontSize: 28 },
 }))
 
+export const LargeFileRequestCard = styled(Panel)(({ theme }) => ({
+  flexShrink: 0,
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+  cursor: 'pointer',
+  padding: theme.spacing(2),
+  color: theme.palette.secondary.contrastText,
+  background: `linear-gradient(135deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.dark})`,
+  border: 'none',
+  transition: theme.transitions.create(['transform', 'box-shadow']),
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: theme.shadows[4],
+  },
+  '& svg': { fontSize: 28 },
+}))
+
 export const PdfContainer = styled(Panel)(({ theme }) => ({
   flex: 1,
   [theme.breakpoints.down('md')]: {

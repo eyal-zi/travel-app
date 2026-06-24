@@ -9,6 +9,7 @@ import { WeatherModule } from './features/weather/weather.module';
 import { PdfModule } from './features/pdf/pdf.module';
 import { AnnouncementsModule } from './features/announcements/announcements.module';
 import { TripRequestsModule } from './features/trip-requests/trip-requests.module';
+import { LargeFilesModule } from './features/large-files/large-files.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TripRequestsModule } from './features/trip-requests/trip-requests.modul
     PdfModule,
     AnnouncementsModule,
     TripRequestsModule,
+    LargeFilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

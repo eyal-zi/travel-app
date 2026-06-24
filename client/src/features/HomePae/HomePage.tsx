@@ -3,6 +3,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded'
 import FlightTakeoffRoundedIcon from '@mui/icons-material/FlightTakeoffRounded'
+import DatasetRoundedIcon from '@mui/icons-material/DatasetRounded'
 import { Announcements } from '../Announcements/Announcements'
 import { Calendar } from '../Calendar/Calendar'
 import { RouteMapDropzone } from '../Map/RouteMapDropzone/RouteMapDropzone'
@@ -15,6 +16,7 @@ import {
   BrandMark,
   CalendarContainer,
   HeaderControls,
+  LargeFileRequestCard,
   MapContainer,
   PageContent,
   PageHeader,
@@ -76,6 +78,17 @@ export const HomePage = () => {
               </Typography>
             </Stack>
           </TripRequestCard>
+          <LargeFileRequestCard onClick={() => navigate('/large-file-request')}>
+            <DatasetRoundedIcon />
+            <Stack spacing={0} sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle1" noWrap>
+                Large file request
+              </Typography>
+              <Typography variant="body2" noWrap sx={{ opacity: 0.85 }}>
+                Search files by type, accuracy and area
+              </Typography>
+            </Stack>
+          </LargeFileRequestCard>
         </RightColumn>
       </PageContent>
     </PageRoot>

@@ -4,3 +4,4 @@ export * from '../../../features/weather/weather.schema';
 export * from '../../../features/pdf/pdf.schema';
 export * from '../../../features/announcements/announcements.schema';
 export * from '../../../features/trip-requests/trip-requests.schema';
+export * from '../../../features/large-files/large-files.schema';
