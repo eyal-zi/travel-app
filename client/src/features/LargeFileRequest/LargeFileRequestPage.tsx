@@ -9,6 +9,7 @@ import DatasetRoundedIcon from '@mui/icons-material/DatasetRounded'
 import { LargeFileRequestForm } from './components/LargeFileRequestForm/LargeFileRequestForm'
 import { LargeFileResultsList } from './components/LargeFileResultsList/LargeFileResultsList'
 import { FileRequestForm } from '../FileRequest/components/FileRequestForm/FileRequestForm'
+import { FileRequestsList } from '../FileRequest/components/FileRequestsList/FileRequestsList'
 import type { AppliedFilters } from './queries/useLargeFileSearch'
 import {
   HeaderText,
@@ -19,7 +20,7 @@ import {
   Split,
 } from './LargeFileRequest.styles'
 
-type TabValue = 'search' | 'request'
+type TabValue = 'search' | 'request' | 'history'
 
 export const LargeFileRequestPage = () => {
   const navigate = useNavigate()
@@ -50,18 +51,19 @@ export const LargeFileRequestPage = () => {
         <Tabs value={tab} onChange={(_event, value: TabValue) => setTab(value)}>
           <Tab value="search" label="Search files" />
           <Tab value="request" label="Request a file" />
+          <Tab value="history" label="My requests" />
         </Tabs>
 
-        {tab === 'search' ? (
+        {tab === 'search' && (
           <Split>
             <LargeFileRequestForm onSearch={setFilters} />
             <ResultsColumn>
               <LargeFileResultsList filters={filters} />
             </ResultsColumn>
           </Split>
-        ) : (
-          <FileRequestForm />
         )}
+        {tab === 'request' && <FileRequestForm />}
+        {tab === 'history' && <FileRequestsList />}
       </Shell>
     </PageRoot>
   )
