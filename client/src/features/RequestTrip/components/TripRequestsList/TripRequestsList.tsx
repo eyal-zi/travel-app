@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { RequestFeed } from '../../../../common/components/RequestFeed/RequestFeed'
-import type { StatusFilter } from '../../../../common/components/RequestFeed/RequestFeed.types'
+import { useStatusFilterParam } from '../../../../common/hooks/useStatusFilterParam'
 import { useTripRequests } from '../../queries/useTripRequests'
 import { TripRequestItem } from '../TripRequestItem/TripRequestItem'
 
@@ -15,7 +14,7 @@ type TripRequestsListProps = {
  * Pass `admin` to expose status-change controls on each card.
  */
 export const TripRequestsList = ({ admin }: TripRequestsListProps) => {
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [statusFilter, setStatusFilter] = useStatusFilterParam()
   const feed = useTripRequests(statusFilter === 'all' ? undefined : statusFilter)
 
   return (

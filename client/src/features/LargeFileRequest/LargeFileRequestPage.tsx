@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTabParam } from '../../common/hooks/useTabParam'
 import IconButton from '@mui/material/IconButton'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
@@ -26,7 +27,10 @@ export const LargeFileRequestPage = () => {
   const navigate = useNavigate()
   // Null until the first search; submitting the form applies a fresh filter set.
   const [filters, setFilters] = useState<AppliedFilters | null>(null)
-  const [tab, setTab] = useState<TabValue>('search')
+  const [tab, setTab] = useTabParam(
+    ['search', 'request', 'history'] as const,
+    'search',
+  )
 
   return (
     <PageRoot>

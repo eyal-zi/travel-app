@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTabParam } from '../../common/hooks/useTabParam'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
@@ -17,11 +17,9 @@ import {
   TabsBar,
 } from './RequestTrip.styles'
 
-type Tab = 'form' | 'list'
-
 export const RequestTripPage = () => {
   const navigate = useNavigate()
-  const [tab, setTab] = useState<Tab>('form')
+  const [tab, setTab] = useTabParam(['form', 'list'] as const, 'form')
 
   return (
     <PageRoot>

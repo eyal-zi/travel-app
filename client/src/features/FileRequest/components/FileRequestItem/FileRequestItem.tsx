@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { format } from 'date-fns'
 import { formatDay } from '../../../../common/utils/format'
 import Chip from '@mui/material/Chip'
@@ -7,6 +6,7 @@ import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded'
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded'
 import { RequestResponseDialog } from '../../../../common/components/RequestResponseDialog/RequestResponseDialog'
+import { useOpenRequestId } from '../../../../common/hooks/useOpenRequestId'
 import { LARGE_FILE_TYPE_OPTIONS } from '../../../../common/constants/fileTypes'
 import { REQUEST_STATUS_META } from '../../../../common/requests/requestStatus'
 import type { SelectOption } from '../../../../common/types'
@@ -67,7 +67,8 @@ const TagDetail = ({
 
 export const FileRequestItem = ({ request, admin }: FileRequestItemProps) => {
   const status = REQUEST_STATUS_META[request.status] ?? REQUEST_STATUS_META.received
-  const [open, setOpen] = useState(false)
+  const { openId, openRequest, closeRequest } = useOpenRequestId()
+  const open = openId === request.id
   const draft = useFileRequestDraft(request, open)
 
   const hasNote = Boolean(request.adminNote)
@@ -79,11 +80,11 @@ export const FileRequestItem = ({ request, admin }: FileRequestItemProps) => {
       <Card
         role="button"
         tabIndex={0}
-        onClick={() => setOpen(true)}
+        onClick={() => openRequest(request.id)}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault()
-            setOpen(true)
+            openRequest(request.id)
           }
         }}
       >
@@ -156,7 +157,7 @@ export const FileRequestItem = ({ request, admin }: FileRequestItemProps) => {
 
       <RequestResponseDialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={closeRequest}
         request={request}
         draft={draft}
         admin={admin}

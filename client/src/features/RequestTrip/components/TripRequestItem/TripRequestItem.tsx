@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { format } from 'date-fns'
 import { formatDay } from '../../../../common/utils/format'
 import Chip from '@mui/material/Chip'
@@ -12,6 +11,7 @@ import {
   type TripRequest,
 } from '../../types'
 import { RequestResponseDialog } from '../../../../common/components/RequestResponseDialog/RequestResponseDialog'
+import { useOpenRequestId } from '../../../../common/hooks/useOpenRequestId'
 import { useTripRequestDraft } from '../TripRequestResponseDialog/useTripRequestDraft'
 import { STATUS_META } from './statusMeta'
 import {
@@ -47,7 +47,8 @@ const Field = ({ label, value }: { label: string; value: string }) => (
 
 export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
   const status = STATUS_META[request.status] ?? STATUS_META.received
-  const [open, setOpen] = useState(false)
+  const { openId, openRequest, closeRequest } = useOpenRequestId()
+  const open = openId === request.id
   const draft = useTripRequestDraft(request, open)
 
   const hasNote = Boolean(request.adminNote)
@@ -58,11 +59,11 @@ export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
       <Card
         role="button"
         tabIndex={0}
-        onClick={() => setOpen(true)}
+        onClick={() => openRequest(request.id)}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault()
-            setOpen(true)
+            openRequest(request.id)
           }
         }}
       >
@@ -130,7 +131,7 @@ export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
 
       <RequestResponseDialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={closeRequest}
         request={request}
         draft={draft}
         admin={admin}

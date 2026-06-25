@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { RequestFeed } from '../../../../common/components/RequestFeed/RequestFeed'
-import type { StatusFilter } from '../../../../common/components/RequestFeed/RequestFeed.types'
+import { useStatusFilterParam } from '../../../../common/hooks/useStatusFilterParam'
 import { useFileRequests } from '../../queries/useFileRequests'
 import { FileRequestItem } from '../FileRequestItem/FileRequestItem'
 
@@ -15,7 +14,7 @@ type FileRequestsListProps = {
  * Pass `admin` to expose status/response editing on each card.
  */
 export const FileRequestsList = ({ admin }: FileRequestsListProps) => {
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [statusFilter, setStatusFilter] = useStatusFilterParam()
   const feed = useFileRequests(statusFilter === 'all' ? undefined : statusFilter)
 
   return (
