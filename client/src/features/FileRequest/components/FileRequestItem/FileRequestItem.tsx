@@ -6,17 +6,16 @@ import Typography from '@mui/material/Typography'
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded'
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded'
-import {
-  TIMEZONE_OPTIONS,
-  TIME_DIVISION_OPTIONS,
-  type TripRequest,
-} from '../../types'
 import { RequestResponseDialog } from '../../../../common/components/RequestResponseDialog/RequestResponseDialog'
-import { useTripRequestDraft } from '../TripRequestResponseDialog/useTripRequestDraft'
-import { STATUS_META } from './statusMeta'
+import { LARGE_FILE_TYPE_OPTIONS } from '../../../../common/constants/fileTypes'
+import { REQUEST_STATUS_META } from '../../../../common/requests/requestStatus'
+import type { SelectOption } from '../../../../common/types'
+import { useFileRequestDraft } from '../FileRequestResponseDialog/useFileRequestDraft'
+import { GEO_OPTIONS, type FileRequest } from '../../types'
 import {
   Card,
   CardTop,
+  ChipRow,
   Detail,
   DetailGrid,
   FieldValue,
@@ -25,15 +24,15 @@ import {
   Indicators,
   NotesText,
   RequestedRow,
-} from './TripRequestItem.styles'
+} from './FileRequestItem.styles'
 
-type TripRequestItemProps = {
-  request: TripRequest
+type FileRequestItemProps = {
+  request: FileRequest
   // When true, the dialog opens in admin mode (status/note/file editor).
   admin?: boolean
 }
 
-const labelFor = (options: { value: string; label: string }[], value: string) =>
+const labelFor = (options: SelectOption[], value: string) =>
   options.find((option) => option.value === value)?.label ?? value
 
 const Field = ({ label, value }: { label: string; value: string }) => (
@@ -45,13 +44,35 @@ const Field = ({ label, value }: { label: string; value: string }) => (
   </Detail>
 )
 
-export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
-  const status = STATUS_META[request.status] ?? STATUS_META.received
+const TagDetail = ({
+  label,
+  values,
+  options,
+}: {
+  label: string
+  values: string[]
+  options: SelectOption[]
+}) => (
+  <Detail>
+    <Typography variant="caption" color="text.secondary">
+      {label}
+    </Typography>
+    <ChipRow>
+      {values.map((value) => (
+        <Chip key={value} size="small" label={labelFor(options, value)} />
+      ))}
+    </ChipRow>
+  </Detail>
+)
+
+export const FileRequestItem = ({ request, admin }: FileRequestItemProps) => {
+  const status = REQUEST_STATUS_META[request.status] ?? REQUEST_STATUS_META.received
   const [open, setOpen] = useState(false)
-  const draft = useTripRequestDraft(request, open)
+  const draft = useFileRequestDraft(request, open)
 
   const hasNote = Boolean(request.adminNote)
   const fileCount = request.files.length
+  const areaCount = request.area.features.length
 
   return (
     <>
@@ -73,16 +94,21 @@ export const TripRequestItem = ({ request, admin }: TripRequestItemProps) => {
 
         <DetailGrid>
           <Field label="Country" value={request.country} />
-          <Field label="Landmark" value={request.landmark} />
+          <Field label="Agency" value={request.agency} />
           <Field
             label="Dates"
             value={`${formatDay(request.startDate)} → ${formatDay(request.endDate)}`}
           />
           <Field
-            label="Time division"
-            value={labelFor(TIME_DIVISION_OPTIONS, request.timeDivision)}
+            label="Area"
+            value={`${areaCount} feature${areaCount === 1 ? '' : 's'}`}
           />
-          <Field label="Timezone" value={labelFor(TIMEZONE_OPTIONS, request.timezone)} />
+          <TagDetail
+            label="File types"
+            values={request.fileTypes}
+            options={LARGE_FILE_TYPE_OPTIONS}
+          />
+          <TagDetail label="Geo" values={request.geo} options={GEO_OPTIONS} />
         </DetailGrid>
 
         {request.notes && (

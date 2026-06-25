@@ -3,6 +3,7 @@ import { HomePage } from '../features/HomePage/HomePage'
 import { RequestTripPage } from '../features/RequestTrip/RequestTripPage'
 import { LargeFileRequestPage } from '../features/LargeFileRequest/LargeFileRequestPage'
 import { AdminPage } from '../features/Admin/AdminPage'
+import { FileRequestAdminPage } from '../features/Admin/FileRequestAdminPage'
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,11 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: <AdminPage />,
+  },
+  // Unlinked admin surface for triaging file requests.
+  {
+    path: '/admin/file-requests',
+    element: <FileRequestAdminPage />,
   },
 ])
 

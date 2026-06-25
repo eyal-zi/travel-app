@@ -3,20 +3,13 @@
 // the server returns matching records as a cursor-paginated, newest-first page.
 
 import type { FeatureCollection, Geometry } from 'geojson'
-import type { SelectOption } from '../../common/types'
 
-// The five fixed file-type choices (mirror the server's LARGE_FILE_TYPES).
-export const LARGE_FILE_TYPE_OPTIONS: SelectOption[] = [
-  { value: 'geojson', label: 'GeoJSON' },
-  { value: 'shapefile', label: 'Shapefile' },
-  { value: 'kml', label: 'KML' },
-  { value: 'csv', label: 'CSV' },
-  { value: 'excel', label: 'Excel' },
-]
-
-// Sentinel option that reveals a free-text input; its typed values are sent
-// alongside the fixed selections.
-export const OTHER_FILE_TYPE = 'other'
+// File-type options live in the shared constants so the new-file request form
+// can reuse them; re-exported here for existing importers.
+export {
+  LARGE_FILE_TYPE_OPTIONS,
+  OTHER_FILE_TYPE,
+} from '../../common/constants/fileTypes'
 
 // Accuracy slider bounds. The server matches records within ±1 of the value.
 export const ACCURACY_MIN = 0

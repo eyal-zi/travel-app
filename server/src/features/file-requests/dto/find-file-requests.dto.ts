@@ -8,13 +8,13 @@ import {
   Min,
 } from 'class-validator';
 import {
-  TRIP_REQUEST_STATUSES,
-  type TripRequestStatus,
-} from '../trip-requests.schema';
+  FILE_REQUEST_STATUSES,
+  type FileRequestStatus,
+} from '../file-requests.schema';
 
-// Query for a page of trip requests. Cursor pagination on `createdAt`: pass the
+// Query for a page of file requests. Cursor pagination on `createdAt`: pass the
 // `createdAt` of the last item you already have to fetch the next (older) page.
-export class FindTripRequestsDto {
+export class FindFileRequestsDto {
   @IsOptional()
   @IsDateString()
   cursor?: string;
@@ -28,6 +28,6 @@ export class FindTripRequestsDto {
 
   // Optional workflow-status filter. Omit to list requests of every status.
   @IsOptional()
-  @IsIn(TRIP_REQUEST_STATUSES)
-  status?: TripRequestStatus;
+  @IsIn(FILE_REQUEST_STATUSES)
+  status?: FileRequestStatus;
 }

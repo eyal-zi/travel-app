@@ -10,6 +10,7 @@ import { PdfModule } from './features/pdf/pdf.module';
 import { AnnouncementsModule } from './features/announcements/announcements.module';
 import { TripRequestsModule } from './features/trip-requests/trip-requests.module';
 import { LargeFilesModule } from './features/large-files/large-files.module';
+import { FileRequestsModule } from './features/file-requests/file-requests.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { LargeFilesModule } from './features/large-files/large-files.module';
     AnnouncementsModule,
     TripRequestsModule,
     LargeFilesModule,
+    FileRequestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

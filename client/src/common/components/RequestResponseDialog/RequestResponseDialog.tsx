@@ -4,12 +4,14 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import IconButton from '@mui/material/IconButton'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
-import { Notification } from '../../../../common/components/Notification/Notification'
-import type { TripRequest } from '../../types'
-import { STATUS_META } from '../TripRequestItem/statusMeta'
-import { TripRequestAdminEditor } from './TripRequestAdminEditor'
-import { TripRequestUserView } from './TripRequestUserView'
-import { useTripRequestDraft } from './useTripRequestDraft'
+import { Notification } from '../Notification/Notification'
+import { REQUEST_STATUS_META } from '../../requests/requestStatus'
+import { RequestAdminEditor } from './RequestAdminEditor'
+import { RequestUserView } from './RequestUserView'
+import type {
+  RequestDraft,
+  RequestSummary,
+} from './RequestResponseDialog.types'
 import {
   DialogGoalTitle,
   DialogHeader,
@@ -17,25 +19,33 @@ import {
   StatusChip,
   StyledDialog,
   TitleColumn,
-} from './TripRequestResponseDialog.styles'
+} from './RequestResponseDialog.styles'
 
-type TripRequestResponseDialogProps = {
+type RequestResponseDialogProps = {
   open: boolean
   onClose: () => void
-  request: TripRequest
+  request: RequestSummary
+  // The draft is owned by a feature-specific `use*Draft` hook (called by the
+  // caller so it can seed from `open`), keeping this dialog feature-agnostic.
+  draft: RequestDraft
   // When true, render the admin editor; otherwise the read-only user view.
   admin?: boolean
 }
 
-export const TripRequestResponseDialog = ({
+/**
+ * Shared response dialog for a request workflow. Renders the admin editor
+ * (status/note/files) or the read-only requester view. Used by both trip
+ * requests and file requests via the generic RequestSummary/RequestDraft shapes.
+ */
+export const RequestResponseDialog = ({
   open,
   onClose,
   request,
+  draft,
   admin,
-}: TripRequestResponseDialogProps) => {
-  const draft = useTripRequestDraft(request, open)
+}: RequestResponseDialogProps) => {
   const { saving, canSave, save, notification, closeNotification } = draft
-  const status = STATUS_META[request.status] ?? STATUS_META.received
+  const status = REQUEST_STATUS_META[request.status] ?? REQUEST_STATUS_META.received
 
   const handleSave = async () => {
     // The success snackbar lives outside the dialog, so it still shows after we
@@ -60,9 +70,9 @@ export const TripRequestResponseDialog = ({
 
         <DialogContent dividers>
           {admin ? (
-            <TripRequestAdminEditor request={request} draft={draft} />
+            <RequestAdminEditor request={request} draft={draft} />
           ) : (
-            <TripRequestUserView request={request} />
+            <RequestUserView request={request} />
           )}
         </DialogContent>
 

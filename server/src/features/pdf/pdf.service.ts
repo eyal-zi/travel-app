@@ -68,7 +68,10 @@ export class PdfService {
       .limit(1);
     if (!row) throw new NotFoundException(`No PDF found on or before ${date}`);
 
-    return { ...row, signedUrl: this.s3.getSignedUrl(row.fileKey, this.bucket) };
+    return {
+      ...row,
+      signedUrl: this.s3.getSignedUrl(row.fileKey, this.bucket),
+    };
   }
 
   async softDeleteByDate(date: string): Promise<void> {

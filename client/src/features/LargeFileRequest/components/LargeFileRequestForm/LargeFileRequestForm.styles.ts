@@ -1,13 +1,6 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
-// Wraps the selected file-type chips inside the Select's collapsed value.
-export const ChipRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: theme.spacing(0.5),
-}))
-
 // A field's label row with a trailing hint (e.g. the accuracy band).
 export const FieldHeader = styled(Box)({
   display: 'flex',

@@ -8,40 +8,40 @@ import {
 } from '../../common/database/database.constants';
 import { S3Service } from '../../common/storage/s3.service';
 import {
-  tripRequestFiles,
-  tripRequests,
-  TripRequest,
-  TripRequestFile,
-  type TripRequestStatus,
-} from './trip-requests.schema';
-import { CreateTripRequestDto } from './dto/create-trip-request.dto';
-import { UpdateTripRequestDto } from './dto/update-trip-request.dto';
+  fileRequestFiles,
+  fileRequests,
+  FileRequest,
+  FileRequestFile,
+  type FileRequestStatus,
+} from './file-requests.schema';
+import { CreateFileRequestDto } from './dto/create-file-request.dto';
+import { UpdateFileRequestDto } from './dto/update-file-request.dto';
 
 // A file plus a short-lived presigned URL the client can download it from.
-export interface TripRequestFileWithUrl extends TripRequestFile {
+export interface FileRequestFileWithUrl extends FileRequestFile {
   signedUrl: string;
 }
 
-// A trip request enriched with the admin's attached files (each carrying a
+// A file request enriched with the admin's attached files (each carrying a
 // download URL). `adminNote` already lives on the row.
-export interface TripRequestWithFiles extends TripRequest {
-  files: TripRequestFileWithUrl[];
+export interface FileRequestWithFiles extends FileRequest {
+  files: FileRequestFileWithUrl[];
 }
 
-export interface TripRequestPage {
-  items: TripRequestWithFiles[];
+export interface FileRequestPage {
+  items: FileRequestWithFiles[];
   // `createdAt` of the last item, to be passed back as the next cursor. Null when
-  // there are no older trip requests left.
+  // there are no older file requests left.
   nextCursor: string | null;
 }
 
 const DEFAULT_LIMIT = 20;
 
 @Injectable()
-export class TripRequestsService {
-  private readonly logger = new Logger(TripRequestsService.name);
+export class FileRequestsService {
+  private readonly logger = new Logger(FileRequestsService.name);
   private readonly bucket =
-    process.env.S3_TRIP_REQUEST_BUCKET ?? 'trip-request-files';
+    process.env.S3_FILE_REQUEST_BUCKET ?? 'file-request-files';
 
   constructor(
     @Inject(DRIZZLE) private readonly db: DrizzleDB,
@@ -54,18 +54,18 @@ export class TripRequestsService {
   async findPage(
     limit = DEFAULT_LIMIT,
     cursor?: string,
-    status?: TripRequestStatus,
-  ): Promise<TripRequestPage> {
+    status?: FileRequestStatus,
+  ): Promise<FileRequestPage> {
     const rows = await this.db
       .select()
-      .from(tripRequests)
+      .from(fileRequests)
       .where(
         and(
-          cursor ? lt(tripRequests.createdAt, new Date(cursor)) : undefined,
-          status ? eq(tripRequests.status, status) : undefined,
+          cursor ? lt(fileRequests.createdAt, new Date(cursor)) : undefined,
+          status ? eq(fileRequests.status, status) : undefined,
         ),
       )
-      .orderBy(desc(tripRequests.createdAt), desc(tripRequests.id))
+      .orderBy(desc(fileRequests.createdAt), desc(fileRequests.id))
       .limit(limit + 1);
 
     const hasMore = rows.length > limit;
@@ -78,33 +78,33 @@ export class TripRequestsService {
     return { items, nextCursor };
   }
 
-  async create(dto: CreateTripRequestDto): Promise<TripRequest> {
+  async create(dto: CreateFileRequestDto): Promise<FileRequest> {
     // `status` is omitted so it falls back to the column default ("received").
-    const [tripRequest] = await this.db
-      .insert(tripRequests)
+    const [fileRequest] = await this.db
+      .insert(fileRequests)
       .values(dto)
       .returning();
-    this.logger.log(`Created trip request ${tripRequest.id}`);
-    return tripRequest;
+    this.logger.log(`Created file request ${fileRequest.id}`);
+    return fileRequest;
   }
 
   // Admin update: advance the workflow `status` and/or set the `adminNote`. Only
   // the provided fields change. `updatedAt` bumps automatically via $onUpdate.
-  async update(id: string, dto: UpdateTripRequestDto): Promise<TripRequest> {
-    const patch: Partial<Pick<TripRequest, 'status' | 'adminNote'>> = {};
+  async update(id: string, dto: UpdateFileRequestDto): Promise<FileRequest> {
+    const patch: Partial<Pick<FileRequest, 'status' | 'adminNote'>> = {};
     if (dto.status !== undefined) patch.status = dto.status;
     if (dto.adminNote !== undefined) patch.adminNote = dto.adminNote;
 
-    const [tripRequest] = await this.db
-      .update(tripRequests)
+    const [fileRequest] = await this.db
+      .update(fileRequests)
       .set(patch)
-      .where(eq(tripRequests.id, id))
+      .where(eq(fileRequests.id, id))
       .returning();
-    if (!tripRequest) {
-      throw new NotFoundException(`Trip request ${id} not found`);
+    if (!fileRequest) {
+      throw new NotFoundException(`File request ${id} not found`);
     }
-    this.logger.log(`Updated trip request ${id}`);
-    return tripRequest;
+    this.logger.log(`Updated file request ${id}`);
+    return fileRequest;
   }
 
   // Attaches a file to a request. Stored under a uuid-based S3 key (keeping the
@@ -113,7 +113,7 @@ export class TripRequestsService {
   async addFile(
     id: string,
     file: Express.Multer.File,
-  ): Promise<TripRequestFileWithUrl> {
+  ): Promise<FileRequestFileWithUrl> {
     await this.ensureExists(id);
 
     const key = `${randomUUID()}${extname(file.originalname)}`;
@@ -125,15 +125,15 @@ export class TripRequestsService {
     });
 
     const [row] = await this.db
-      .insert(tripRequestFiles)
+      .insert(fileRequestFiles)
       .values({
-        tripRequestId: id,
+        fileRequestId: id,
         fileKey: key,
         fileName: file.originalname,
         contentType: file.mimetype,
       })
       .returning();
-    this.logger.log(`Attached file ${key} to trip request ${id}`);
+    this.logger.log(`Attached file ${key} to file request ${id}`);
 
     return this.withUrl(row);
   }
@@ -142,55 +142,55 @@ export class TripRequestsService {
   // row is enough to hide it from clients.
   async removeFile(id: string, fileId: string): Promise<void> {
     const result = await this.db
-      .delete(tripRequestFiles)
+      .delete(fileRequestFiles)
       .where(
         and(
-          eq(tripRequestFiles.id, fileId),
-          eq(tripRequestFiles.tripRequestId, id),
+          eq(fileRequestFiles.id, fileId),
+          eq(fileRequestFiles.fileRequestId, id),
         ),
       )
-      .returning({ id: tripRequestFiles.id });
+      .returning({ id: fileRequestFiles.id });
     if (result.length === 0) {
       throw new NotFoundException(
-        `File ${fileId} not found on trip request ${id}`,
+        `File ${fileId} not found on file request ${id}`,
       );
     }
-    this.logger.log(`Removed file ${fileId} from trip request ${id}`);
+    this.logger.log(`Removed file ${fileId} from file request ${id}`);
   }
 
   private async ensureExists(id: string): Promise<void> {
     const [row] = await this.db
-      .select({ id: tripRequests.id })
-      .from(tripRequests)
-      .where(eq(tripRequests.id, id))
+      .select({ id: fileRequests.id })
+      .from(fileRequests)
+      .where(eq(fileRequests.id, id))
       .limit(1);
-    if (!row) throw new NotFoundException(`Trip request ${id} not found`);
+    if (!row) throw new NotFoundException(`File request ${id} not found`);
   }
 
   // Loads the files for a set of requests in one query and groups them onto each
   // request. Signed URLs are generated locally (no network) and download as the
   // original filename.
   private async attachFiles(
-    rows: TripRequest[],
-  ): Promise<TripRequestWithFiles[]> {
+    rows: FileRequest[],
+  ): Promise<FileRequestWithFiles[]> {
     if (rows.length === 0) return [];
 
     const fileRows = await this.db
       .select()
-      .from(tripRequestFiles)
+      .from(fileRequestFiles)
       .where(
         inArray(
-          tripRequestFiles.tripRequestId,
+          fileRequestFiles.fileRequestId,
           rows.map((row) => row.id),
         ),
       )
-      .orderBy(desc(tripRequestFiles.createdAt));
+      .orderBy(desc(fileRequestFiles.createdAt));
 
-    const filesByRequest = new Map<string, TripRequestFileWithUrl[]>();
+    const filesByRequest = new Map<string, FileRequestFileWithUrl[]>();
     for (const file of fileRows) {
-      const list = filesByRequest.get(file.tripRequestId) ?? [];
+      const list = filesByRequest.get(file.fileRequestId) ?? [];
       list.push(this.withUrl(file));
-      filesByRequest.set(file.tripRequestId, list);
+      filesByRequest.set(file.fileRequestId, list);
     }
 
     return rows.map((row) => ({
@@ -199,7 +199,7 @@ export class TripRequestsService {
     }));
   }
 
-  private withUrl(file: TripRequestFile): TripRequestFileWithUrl {
+  private withUrl(file: FileRequestFile): FileRequestFileWithUrl {
     const signedUrl = this.s3.getSignedUrl(
       file.fileKey,
       this.bucket,

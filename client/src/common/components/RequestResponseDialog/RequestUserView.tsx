@@ -3,7 +3,7 @@ import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineR
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded'
 import FolderOpenRoundedIcon from '@mui/icons-material/FolderOpenRounded'
-import type { TripRequest } from '../../types'
+import type { RequestSummary } from './RequestResponseDialog.types'
 import {
   EmptyState,
   FileCard,
@@ -15,14 +15,14 @@ import {
   Section,
   SectionLabel,
   UserSections,
-} from './TripRequestResponseDialog.styles'
+} from './RequestResponseDialog.styles'
 
-type TripRequestUserViewProps = {
-  request: TripRequest
+type RequestUserViewProps = {
+  request: RequestSummary
 }
 
 /** Read-only requester view: the admin's response note and downloadable files. */
-export const TripRequestUserView = ({ request }: TripRequestUserViewProps) => {
+export const RequestUserView = ({ request }: RequestUserViewProps) => {
   const hasNote = Boolean(request.adminNote)
 
   return (

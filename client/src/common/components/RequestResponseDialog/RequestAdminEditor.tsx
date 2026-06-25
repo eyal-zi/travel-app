@@ -5,9 +5,16 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import UndoRoundedIcon from '@mui/icons-material/UndoRounded'
-import { FileDropzone } from '../../../../common/components/FileDropzone/FileDropzone'
-import { TRIP_REQUEST_STATUSES, type TripRequest, type TripRequestStatus } from '../../types'
-import { STATUS_META } from '../TripRequestItem/statusMeta'
+import { FileDropzone } from '../FileDropzone/FileDropzone'
+import {
+  REQUEST_STATUSES,
+  REQUEST_STATUS_META,
+  type RequestStatus,
+} from '../../requests/requestStatus'
+import type {
+  RequestDraft,
+  RequestSummary,
+} from './RequestResponseDialog.types'
 import {
   AdminSections,
   ExistingFileIcon,
@@ -18,16 +25,15 @@ import {
   StagedFileIcon,
   StagedFileName,
   StatusToggle,
-} from './TripRequestResponseDialog.styles'
-import type { useTripRequestDraft } from './useTripRequestDraft'
+} from './RequestResponseDialog.styles'
 
-type TripRequestAdminEditorProps = {
-  request: TripRequest
-  draft: ReturnType<typeof useTripRequestDraft>
+type RequestAdminEditorProps = {
+  request: RequestSummary
+  draft: RequestDraft
 }
 
 /** Admin editor: status transitions, an editable note, and staged file changes. */
-export const TripRequestAdminEditor = ({ request, draft }: TripRequestAdminEditorProps) => {
+export const RequestAdminEditor = ({ request, draft }: RequestAdminEditorProps) => {
   const {
     statusDraft,
     noteDraft,
@@ -53,12 +59,12 @@ export const TripRequestAdminEditor = ({ request, draft }: TripRequestAdminEdito
           size="small"
           value={statusDraft}
           disabled={saving}
-          onChange={(_event, value: TripRequestStatus | null) => {
+          onChange={(_event, value: RequestStatus | null) => {
             if (value) setStatus(value)
           }}
         >
-          {TRIP_REQUEST_STATUSES.map((value) => {
-            const meta = STATUS_META[value]
+          {REQUEST_STATUSES.map((value) => {
+            const meta = REQUEST_STATUS_META[value]
             return (
               <StatusToggle key={value} value={value} statusColor={meta.color}>
                 {meta.label}

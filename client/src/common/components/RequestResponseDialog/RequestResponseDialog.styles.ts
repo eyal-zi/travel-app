@@ -9,7 +9,7 @@ import ToggleButton from '@mui/material/ToggleButton'
 import Typography from '@mui/material/Typography'
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
 
-// MUI palette colours a workflow status can map to (see STATUS_META).
+// MUI palette colours a workflow status can map to (see REQUEST_STATUS_META).
 type StatusColor = 'info' | 'warning' | 'success'
 
 export const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -44,7 +44,7 @@ export const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }))
 
-// Title bar with a touch less bottom padding so the chip sits near the goal.
+// Title bar with a touch less bottom padding so the chip sits near the title.
 // Typed with `component` so it can render as a div (avoiding an <h6> inside the
 // default <h2>).
 export const DialogTitleBar = styled(DialogTitle)<{ component?: ElementType }>(
@@ -60,7 +60,7 @@ export const DialogHeader = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1.5),
 }))
 
-// Goal title + status chip stacked in the header.
+// Title + status chip stacked in the header.
 export const TitleColumn = styled(Box)(({ theme }) => ({
   minWidth: 0,
   display: 'flex',

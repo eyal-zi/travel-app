@@ -4,7 +4,11 @@ import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 // Intake-only for now: rows are created via POST and carry a workflow `status`
 // so they can be processed later. Dates are stored as "YYYY-MM-DD" text (like
 // events) to avoid timezone coercion the caller doesn't want.
-export const TRIP_REQUEST_STATUSES = ['received', 'processing', 'done'] as const;
+export const TRIP_REQUEST_STATUSES = [
+  'received',
+  'processing',
+  'done',
+] as const;
 export type TripRequestStatus = (typeof TRIP_REQUEST_STATUSES)[number];
 
 export const tripRequests = pgTable('trip_requests', {
