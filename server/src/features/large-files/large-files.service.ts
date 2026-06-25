@@ -1,19 +1,15 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import {
-  and,
-  between,
-  desc,
-  inArray,
-  lt,
-  or,
-  sql,
-  type SQL,
-} from 'drizzle-orm';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, between, desc, inArray, or, sql, type SQL } from 'drizzle-orm';
 import type { FeatureCollection, Geometry } from 'geojson';
 import {
   DRIZZLE,
   type DrizzleDB,
 } from '../../common/database/database.constants';
+import {
+  buildPage,
+  keysetCondition,
+  type Page,
+} from '../../common/pagination/keyset';
 import { largeFiles } from './large-files.schema';
 import { SearchLargeFilesDto } from './dto/search-large-files.dto';
 
@@ -28,19 +24,12 @@ export interface LargeFileResult {
   createdAt: string;
 }
 
-export interface LargeFilePage {
-  items: LargeFileResult[];
-  // `createdAt` of the last item, to pass back as the next cursor. Null when
-  // there are no older matches left.
-  nextCursor: string | null;
-}
+export type LargeFilePage = Page<LargeFileResult>;
 
 const DEFAULT_LIMIT = 20;
 
 @Injectable()
 export class LargeFilesService {
-  private readonly logger = new Logger(LargeFilesService.name);
-
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
   // Newest-first page of large files matching the given filters. Accuracy is an
@@ -51,7 +40,7 @@ export class LargeFilesService {
     const limit = dto.limit ?? DEFAULT_LIMIT;
 
     const conditions: (SQL | undefined)[] = [
-      dto.cursor ? lt(largeFiles.createdAt, new Date(dto.cursor)) : undefined,
+      keysetCondition(largeFiles.createdAt, largeFiles.id, dto.cursor),
       dto.accuracy !== undefined
         ? between(largeFiles.accuracy, dto.accuracy - 1, dto.accuracy + 1)
         : undefined,
@@ -76,13 +65,12 @@ export class LargeFilesService {
       .orderBy(desc(largeFiles.createdAt), desc(largeFiles.id))
       .limit(limit + 1);
 
-    const hasMore = rows.length > limit;
-    const pageRows = hasMore ? rows.slice(0, limit) : rows;
-    const nextCursor = hasMore
-      ? pageRows[pageRows.length - 1].createdAt.toISOString()
-      : null;
+    const page = buildPage(rows, limit, (row) => ({
+      createdAt: row.createdAt,
+      id: row.id,
+    }));
 
-    const items: LargeFileResult[] = pageRows.map((row) => ({
+    const items: LargeFileResult[] = page.items.map((row) => ({
       id: row.id,
       name: row.name,
       fileType: row.fileType,
@@ -92,7 +80,7 @@ export class LargeFilesService {
       createdAt: row.createdAt.toISOString(),
     }));
 
-    return { items, nextCursor };
+    return { items, nextCursor: page.nextCursor };
   }
 
   // Match records intersecting the drawn area. ORs a per-feature ST_Intersects

@@ -1,4 +1,18 @@
-import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, text, uuid } from 'drizzle-orm/pg-core';
+import { softDelete, timestamps } from '../../common/database/columns';
+
+// The calendar event color options. Mirrors the client EventColor union and is the
+// single source of truth shared by the schema's column type and the DTO validator.
+export const EVENT_COLORS = [
+  'primary',
+  'secondary',
+  'success',
+  'warning',
+  'error',
+  'info',
+] as const;
+
+export type EventColor = (typeof EVENT_COLORS)[number];
 
 // A calendar event. Unlike routes (one per date), there can be many events on
 // any given day and an event can span a range, so this is a plain id-keyed table
@@ -12,18 +26,10 @@ export const events = pgTable('events', {
   start: text('start').notNull(),
   end: text('end'),
   allDay: boolean('all_day').notNull().default(false),
-  // One of the client EventColor union ("primary" | "secondary" | ...).
-  color: text('color'),
-  // Soft-delete flag: rows are marked deleted instead of being removed so the
-  // history is preserved and deletes stay reversible.
-  isDeleted: boolean('is_deleted').notNull().default(false),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  // One of the EventColor union.
+  color: text('color').$type<EventColor>(),
+  ...softDelete(),
+  ...timestamps(),
 });
 
 export type Event = typeof events.$inferSelect;

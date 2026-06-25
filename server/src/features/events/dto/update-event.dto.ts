@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { EVENT_COLORS } from './create-event.dto';
+import { EVENT_COLORS, type EventColor } from '../events.schema';
 
 export class UpdateEventDto {
   @IsOptional()
@@ -29,5 +29,5 @@ export class UpdateEventDto {
 
   @IsOptional()
   @IsIn(EVENT_COLORS)
-  color?: (typeof EVENT_COLORS)[number];
+  color?: EventColor;
 }

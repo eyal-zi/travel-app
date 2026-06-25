@@ -1,13 +1,13 @@
 import {
   ArrayNotEmpty,
   IsArray,
-  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 import type { FeatureCollection } from 'geojson';
-import { IsFeatureCollection } from '../../routes/dto/is-feature-collection.validator';
+import { IsFeatureCollection } from '../../../common/validators/is-feature-collection.validator';
+import { IsIsoDate } from '../../../common/validators/is-iso-date.validator';
 
 // All fields except `notes` are required. `status` is set server-side
 // ("received"), not accepted from the client — the global ValidationPipe
@@ -26,10 +26,10 @@ export class CreateFileRequestDto {
   @IsNotEmpty()
   agency: string;
 
-  @IsDateString()
+  @IsIsoDate()
   startDate: string; // 'YYYY-MM-DD'
 
-  @IsDateString()
+  @IsIsoDate()
   endDate: string; // 'YYYY-MM-DD'
 
   // Area of interest drawn on the map.

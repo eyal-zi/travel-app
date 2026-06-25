@@ -1,11 +1,5 @@
-import {
-  boolean,
-  date,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { date, pgTable, text, uuid } from 'drizzle-orm/pg-core';
+import { softDelete, timestamps } from '../../common/database/columns';
 
 // A PDF document for a given calendar date. The file bytes live in S3; this
 // table keeps the S3 object key plus the date it belongs to so the signed URL
@@ -18,16 +12,8 @@ export const pdf = pgTable('pdf', {
   // date, so uploading for an existing date overwrites it instead of inserting a
   // duplicate. Stored as a date-only value ("YYYY-MM-DD").
   date: date('date').notNull().unique(),
-  // Soft-delete flag: rows are marked deleted instead of being removed so the
-  // history is preserved and deletes stay reversible.
-  isDeleted: boolean('is_deleted').notNull().default(false),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  ...softDelete(),
+  ...timestamps(),
 });
 
 export type Pdf = typeof pdf.$inferSelect;

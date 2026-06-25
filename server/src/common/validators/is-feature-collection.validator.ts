@@ -5,8 +5,8 @@ import { registerDecorator, type ValidationOptions } from 'class-validator';
  * cheap check (type tag + features array) rather than a full GeoJSON schema
  * validation, which is enough to reject obviously malformed payloads.
  */
-export function IsFeatureCollection(options?: ValidationOptions) {
-  return (object: object, propertyName: string) => {
+export const IsFeatureCollection =
+  (options?: ValidationOptions) => (object: object, propertyName: string) => {
     registerDecorator({
       name: 'isFeatureCollection',
       target: object.constructor,
@@ -27,4 +27,3 @@ export function IsFeatureCollection(options?: ValidationOptions) {
       },
     });
   };
-}

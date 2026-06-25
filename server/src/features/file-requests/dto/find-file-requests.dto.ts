@@ -1,33 +1,14 @@
-import { Type } from 'class-transformer';
+import { IsIn, IsOptional } from 'class-validator';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import {
-  IsDateString,
-  IsIn,
-  IsInt,
-  IsOptional,
-  Max,
-  Min,
-} from 'class-validator';
-import {
-  FILE_REQUEST_STATUSES,
-  type FileRequestStatus,
-} from '../file-requests.schema';
+  requestStatus,
+  type RequestStatus,
+} from '../../../common/database/enums';
 
-// Query for a page of file requests. Cursor pagination on `createdAt`: pass the
-// `createdAt` of the last item you already have to fetch the next (older) page.
-export class FindFileRequestsDto {
-  @IsOptional()
-  @IsDateString()
-  cursor?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(50)
-  limit?: number;
-
+// Query for a page of file requests. Inherits `cursor`/`limit` keyset pagination.
+export class FindFileRequestsDto extends PaginationQueryDto {
   // Optional workflow-status filter. Omit to list requests of every status.
   @IsOptional()
-  @IsIn(FILE_REQUEST_STATUSES)
-  status?: FileRequestStatus;
+  @IsIn(requestStatus.enumValues)
+  status?: RequestStatus;
 }

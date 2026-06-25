@@ -1,6 +1,7 @@
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import type { FeatureCollection } from 'geojson';
-import { IsFeatureCollection } from './is-feature-collection.validator';
+import { IsFeatureCollection } from '../../../common/validators/is-feature-collection.validator';
+import { IsIsoDate } from '../../../common/validators/is-iso-date.validator';
 
 export class CreateRouteDto {
   @IsString()
@@ -9,8 +10,7 @@ export class CreateRouteDto {
 
   // The calendar date the route belongs to ("YYYY-MM-DD"). One route per date:
   // posting a date that already exists overwrites that route (see RoutesService).
-  @IsNotEmpty()
-  @IsDateString()
+  @IsIsoDate()
   date: string;
 
   @IsFeatureCollection()

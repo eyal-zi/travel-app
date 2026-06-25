@@ -67,9 +67,15 @@ export class RoutesService {
   }
 
   async update(id: string, dto: UpdateRouteDto): Promise<Route> {
+    // Build the patch from only the provided fields rather than passing the DTO
+    // straight to .set(), so the update stays explicit as the DTO grows.
+    const set: Partial<Pick<Route, 'name' | 'data'>> = {};
+    if (dto.name !== undefined) set.name = dto.name;
+    if (dto.data !== undefined) set.data = dto.data;
+
     const [route] = await this.db
       .update(routes)
-      .set(dto)
+      .set(set)
       .where(and(eq(routes.id, id), eq(routes.isDeleted, false)))
       .returning();
     if (!route) throw new NotFoundException(`Route ${id} not found`);

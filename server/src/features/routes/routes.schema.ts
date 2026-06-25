@@ -1,13 +1,6 @@
-import {
-  boolean,
-  date,
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { date, jsonb, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import type { FeatureCollection } from 'geojson';
+import { softDelete, timestamps } from '../../common/database/columns';
 
 export const routes = pgTable('routes', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -19,16 +12,8 @@ export const routes = pgTable('routes', {
   // The route geometry, stored as a GeoJSON FeatureCollection. jsonb keeps it
   // queryable and lets us read/write whole layers without a separate blob store.
   data: jsonb('data').$type<FeatureCollection>().notNull(),
-  // Soft-delete flag: rows are marked deleted instead of being removed so the
-  // history is preserved and deletes stay reversible.
-  isDeleted: boolean('is_deleted').notNull().default(false),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  ...softDelete(),
+  ...timestamps(),
 });
 
 export type Route = typeof routes.$inferSelect;

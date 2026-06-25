@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateRouteDto } from './dto/create-route.dto';
-import { FindClosestRouteDto } from './dto/find-closest-route.dto';
+import { RouteDateQueryDto } from './dto/route-date-query.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { RoutesService } from './routes.service';
 
@@ -25,13 +25,13 @@ export class RoutesController {
   }
 
   @Get('closest')
-  findClosest(@Query() query: FindClosestRouteDto) {
+  findClosest(@Query() query: RouteDateQueryDto) {
     return this.routesService.findClosest(query.date);
   }
 
   @Delete()
   @HttpCode(204)
-  removeByDate(@Query() query: FindClosestRouteDto) {
+  removeByDate(@Query() query: RouteDateQueryDto) {
     return this.routesService.removeByDate(query.date);
   }
 

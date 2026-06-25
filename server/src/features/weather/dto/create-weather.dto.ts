@@ -1,9 +1,8 @@
-import { IsDateString, IsNotEmpty } from 'class-validator';
+import { IsIsoDate } from '../../../common/validators/is-iso-date.validator';
 
 export class CreateWeatherDto {
-  // The calendar date the uploaded image belongs to. ISO date (e.g.
-  // "2026-06-18") or full timestamp; stored as a date-only value.
-  @IsNotEmpty()
-  @IsDateString()
+  // The calendar date the uploaded image belongs to ("YYYY-MM-DD"); stored as a
+  // date-only value.
+  @IsIsoDate()
   date: string;
 }

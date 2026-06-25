@@ -1,33 +1,14 @@
-import { Type } from 'class-transformer';
+import { IsIn, IsOptional } from 'class-validator';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import {
-  IsDateString,
-  IsIn,
-  IsInt,
-  IsOptional,
-  Max,
-  Min,
-} from 'class-validator';
-import {
-  TRIP_REQUEST_STATUSES,
-  type TripRequestStatus,
-} from '../trip-requests.schema';
+  requestStatus,
+  type RequestStatus,
+} from '../../../common/database/enums';
 
-// Query for a page of trip requests. Cursor pagination on `createdAt`: pass the
-// `createdAt` of the last item you already have to fetch the next (older) page.
-export class FindTripRequestsDto {
-  @IsOptional()
-  @IsDateString()
-  cursor?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(50)
-  limit?: number;
-
+// Query for a page of trip requests. Inherits `cursor`/`limit` keyset pagination.
+export class FindTripRequestsDto extends PaginationQueryDto {
   // Optional workflow-status filter. Omit to list requests of every status.
   @IsOptional()
-  @IsIn(TRIP_REQUEST_STATUSES)
-  status?: TripRequestStatus;
+  @IsIn(requestStatus.enumValues)
+  status?: RequestStatus;
 }

@@ -5,16 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-
-// Mirrors the client EventColor union.
-export const EVENT_COLORS = [
-  'primary',
-  'secondary',
-  'success',
-  'warning',
-  'error',
-  'info',
-] as const;
+import { EVENT_COLORS, type EventColor } from '../events.schema';
 
 export class CreateEventDto {
   @IsString()
@@ -36,5 +27,5 @@ export class CreateEventDto {
 
   @IsOptional()
   @IsIn(EVENT_COLORS)
-  color?: (typeof EVENT_COLORS)[number];
+  color?: EventColor;
 }

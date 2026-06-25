@@ -1,9 +1,5 @@
-import {
-  IsDateString,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsIsoDate } from '../../../common/validators/is-iso-date.validator';
 
 // All fields except `notes` are required. `status` is set server-side
 // ("received"), not accepted from the client — the global ValidationPipe
@@ -18,10 +14,10 @@ export class CreateTripRequestDto {
   @IsNotEmpty()
   country: string;
 
-  @IsDateString()
+  @IsIsoDate()
   startDate: string; // 'YYYY-MM-DD'
 
-  @IsDateString()
+  @IsIsoDate()
   endDate: string; // 'YYYY-MM-DD'
 
   @IsString()

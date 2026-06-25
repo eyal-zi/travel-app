@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsDateString,
   IsInt,
   IsOptional,
   IsString,
@@ -9,23 +8,12 @@ import {
   Min,
 } from 'class-validator';
 import type { FeatureCollection } from 'geojson';
-import { IsFeatureCollection } from '../../routes/dto/is-feature-collection.validator';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { IsFeatureCollection } from '../../../common/validators/is-feature-collection.validator';
 
-// Search a page of large files. Every filter is optional — an empty body
-// returns the newest page unfiltered. Cursor pagination on `createdAt`: pass the
-// `createdAt` of the last item you already have to fetch the next (older) page.
-export class SearchLargeFilesDto {
-  @IsOptional()
-  @IsDateString()
-  cursor?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(50)
-  limit?: number;
-
+// Search a page of large files. Every filter is optional — an empty body returns
+// the newest page unfiltered. Inherits `cursor`/`limit` for keyset pagination.
+export class SearchLargeFilesDto extends PaginationQueryDto {
   // Target accuracy 0..15; matches records whose accuracy is within ±1.
   @IsOptional()
   @Type(() => Number)

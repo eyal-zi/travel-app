@@ -5,10 +5,10 @@ import {
   integer,
   pgTable,
   text,
-  timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
 import type { Geometry } from 'geojson';
+import { creationTimestamp } from '../../common/database/columns';
 
 // A PostGIS geometry column (SRID 4326). This custom type only owns the DDL the
 // migration emits — values are read and written as GeoJSON through
@@ -48,15 +48,16 @@ export const largeFiles = pgTable(
     sizeBytes: bigint('size_bytes', { mode: 'number' }).notNull(),
     // The record's footprint, a PostGIS geometry in WGS84 (SRID 4326).
     geom: geometry('geom').notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    ...creationTimestamp(),
   },
   (table) => [
     // GiST index backing the ST_Intersects area filter.
     index('large_files_geom_idx').using('gist', table.geom),
-    // Supports the newest-first, cursor-paginated ordering.
-    index('large_files_created_at_idx').on(table.createdAt.desc()),
+    // Backs the newest-first keyset pagination on (createdAt, id).
+    index('large_files_created_at_idx').on(
+      table.createdAt.desc(),
+      table.id.desc(),
+    ),
   ],
 );
 
