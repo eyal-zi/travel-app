@@ -50,6 +50,13 @@
       "when": 1782415514975,
       "tag": "0006_broken_human_fly",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1782415514976,
+      "tag": "0007_rename_event_color_to_style",
+      "breakpoints": true
     }
   ]
 }

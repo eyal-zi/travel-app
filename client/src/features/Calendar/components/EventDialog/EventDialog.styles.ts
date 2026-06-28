@@ -1,9 +1,10 @@
-import { styled } from '@mui/material/styles'
+import { styled, alpha } from '@mui/material/styles'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import Box from '@mui/material/Box'
 import ButtonBase from '@mui/material/ButtonBase'
-import type { EventColor } from '../../Calendar.types'
+import type { EventStyle } from '../../Calendar.types'
+import { isColorStyle } from '../../eventStyles'
 
 export const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -50,18 +51,35 @@ export const SwatchRow = styled(Box)(({ theme }) => ({
 }))
 
 export const Swatch = styled(ButtonBase, {
-  shouldForwardProp: (prop) => prop !== 'swatchColor' && prop !== 'selected',
-})<{ swatchColor: EventColor; selected: boolean }>(({ theme, swatchColor, selected }) => ({
-  width: 28,
-  height: 28,
-  borderRadius: '50%',
-  backgroundColor: theme.palette[swatchColor].main,
-  transition: theme.transitions.create(['transform', 'box-shadow']),
-  transform: selected ? 'scale(1.12)' : 'scale(1)',
-  boxShadow: selected
-    ? `0 0 0 2px ${theme.palette.background.paper}, 0 0 0 4px ${theme.palette[swatchColor].main}`
-    : 'none',
-  '&:hover': {
-    transform: 'scale(1.12)',
-  },
-}))
+  shouldForwardProp: (prop) => prop !== 'swatchStyle' && prop !== 'selected',
+})<{ swatchStyle: EventStyle; selected: boolean }>(({ theme, swatchStyle, selected }) => {
+  // Colours fill with their palette; icon markings use a neutral fill (the icon
+  // child is what distinguishes them).
+  const fill = isColorStyle(swatchStyle)
+    ? theme.palette[swatchStyle].main
+    : alpha(theme.palette.text.primary, 0.12)
+  const ring = isColorStyle(swatchStyle)
+    ? theme.palette[swatchStyle].main
+    : theme.palette.text.primary
+  return {
+    width: 28,
+    height: 28,
+    borderRadius: '50%',
+    backgroundColor: fill,
+    color: theme.palette.text.primary,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: theme.transitions.create(['transform', 'box-shadow']),
+    transform: selected ? 'scale(1.12)' : 'scale(1)',
+    boxShadow: selected
+      ? `0 0 0 2px ${theme.palette.background.paper}, 0 0 0 4px ${ring}`
+      : 'none',
+    '& svg': {
+      fontSize: 17,
+    },
+    '&:hover': {
+      transform: 'scale(1.12)',
+    },
+  }
+})

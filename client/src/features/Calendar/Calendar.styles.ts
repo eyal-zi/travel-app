@@ -21,6 +21,31 @@ export const CalendarRoot = styled(Paper)(({ theme }) => ({
   },
 }))
 
+// Custom event body so an icon-marked event can show its marking icon inline,
+// mirroring FullCalendar's default block layout (time then title).
+export const EventContent = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.5),
+  minWidth: 0,
+  overflow: 'hidden',
+
+  '& .fc-event-marking': {
+    flexShrink: 0,
+    fontSize: '0.95em',
+    opacity: 0.9,
+  },
+  '& .fc-event-time': {
+    flexShrink: 0,
+    fontWeight: theme.typography.fontWeightBold,
+  },
+  '& .fc-event-title': {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+}))
+
 export const StyledCalendarWrapper = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,

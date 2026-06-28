@@ -5,12 +5,18 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import heLocale from '@fullcalendar/core/locales/he'
-import type { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/core'
+import type {
+  DateSelectArg,
+  EventClickArg,
+  EventContentArg,
+  EventInput,
+} from '@fullcalendar/core'
 import type { DateClickArg } from '@fullcalendar/interaction'
 import { differenceInCalendarDays, format } from 'date-fns'
 import { useSelectedDate } from '../../common/hooks/useSelectedDate'
 import { Notification } from '../../common/components/Notification/Notification'
-import { CalendarRoot, StyledCalendarWrapper } from './Calendar.styles'
+import { CalendarRoot, EventContent, StyledCalendarWrapper } from './Calendar.styles'
+import { getMarkingIcon, resolveEventAppearance } from './eventStyles'
 import { EventDialog } from './components/EventDialog/EventDialog'
 import { CalendarToolbar } from './components/CalendarToolbar/CalendarToolbar'
 import { toExclusiveEnd, toInclusiveEnd, toLocalInput } from './Calendar.utils'
@@ -69,20 +75,37 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
   const fcEvents = useMemo<EventInput[]>(
     () =>
       events.map((event) => {
-        const palette = theme.palette[event.color ?? 'primary']
+        const { backgroundColor, borderColor, textColor } = resolveEventAppearance(
+          theme,
+          event.style,
+        )
         return {
           id: event.id,
           title: event.title,
           start: event.start,
           end: event.allDay && event.end ? toExclusiveEnd(event.end) : event.end,
           allDay: event.allDay,
-          backgroundColor: palette.main,
-          borderColor: palette.main,
-          textColor: palette.contrastText,
+          backgroundColor,
+          borderColor,
+          textColor,
+          extendedProps: { style: event.style },
         }
       }),
     [events, theme],
   )
+
+  // Render the event ourselves so an icon-marked event shows its marking icon
+  // before the time/title; otherwise mirror FullCalendar's default block layout.
+  const renderEventContent = (arg: EventContentArg) => {
+    const MarkingIcon = getMarkingIcon(arg.event.extendedProps.style ?? 'primary')
+    return (
+      <EventContent>
+        {MarkingIcon && <MarkingIcon className="fc-event-marking" fontSize="inherit" />}
+        {arg.timeText && <span className="fc-event-time">{arg.timeText}</span>}
+        {arg.event.title && <span className="fc-event-title">{arg.event.title}</span>}
+      </EventContent>
+    )
+  }
 
   const handleSelect = (selectInfo: DateSelectArg) => {
     getApi()?.unselect()
@@ -93,7 +116,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
       start: toLocalInput(selectInfo.start),
       end: toLocalInput(selectInfo.allDay ? toInclusiveEnd(selectInfo.end) : selectInfo.end),
       allDay: selectInfo.allDay,
-      color: 'primary',
+      style: 'primary',
     })
   }
 
@@ -133,6 +156,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
           editable
           dayMaxEvents={false}
           eventDisplay="block"
+          eventContent={renderEventContent}
           nowIndicator
           select={handleSelect}
           dateClick={(arg: DateClickArg) => setSelectedDate(arg.dateStr.slice(0, 10))}

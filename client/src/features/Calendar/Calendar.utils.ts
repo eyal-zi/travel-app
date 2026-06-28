@@ -28,7 +28,7 @@ export const defaultFormValues = (): EventFormValues => {
     start: toLocalInput(start),
     end: toLocalInput(addHours(start, 1)),
     allDay: false,
-    color: 'primary',
+    style: 'primary',
   }
 }
 
@@ -40,7 +40,7 @@ export const eventToForm = (event: CalendarEvent): EventFormValues => {
     start: toLocalInput(start),
     end: toLocalInput(end),
     allDay: event.allDay,
-    color: event.color ?? 'primary',
+    style: event.style ?? 'primary',
   }
 }
 
@@ -50,7 +50,7 @@ export const formToInput = (values: EventFormValues): EventInput => ({
   start: values.allDay ? values.start.slice(0, 10) : values.start,
   end: values.allDay ? values.end.slice(0, 10) : values.end,
   allDay: values.allDay,
-  color: values.color,
+  style: values.style,
 })
 
 export const formToEvent = (values: EventFormValues, id: string): CalendarEvent => ({

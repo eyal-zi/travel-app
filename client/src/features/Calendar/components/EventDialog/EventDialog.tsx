@@ -24,7 +24,7 @@ import {
   Swatch,
   SwatchRow,
 } from './EventDialog.styles'
-import { EVENT_COLOR_OPTIONS } from './EventDialog.types'
+import { EVENT_STYLE_OPTIONS, getMarkingIcon } from '../../eventStyles'
 import type { EventDialogProps, EventFormValues } from './EventDialog.types'
 
 const isValid = (values: EventFormValues) =>
@@ -170,18 +170,23 @@ export const EventDialog = ({
 
             <Stack spacing={1}>
               <Typography variant="subtitle2" color="text.secondary">
-                Colour
+                Marking
               </Typography>
               <SwatchRow>
-                {EVENT_COLOR_OPTIONS.map((color) => (
-                  <Swatch
-                    key={color}
-                    swatchColor={color}
-                    selected={values.color === color}
-                    onClick={() => update('color', color)}
-                    aria-label={`${color} colour`}
-                  />
-                ))}
+                {EVENT_STYLE_OPTIONS.map((style) => {
+                  const MarkingIcon = getMarkingIcon(style)
+                  return (
+                    <Swatch
+                      key={style}
+                      swatchStyle={style}
+                      selected={values.style === style}
+                      onClick={() => update('style', style)}
+                      aria-label={`${style} marking`}
+                    >
+                      {MarkingIcon && <MarkingIcon fontSize="small" />}
+                    </Swatch>
+                  )
+                })}
               </SwatchRow>
             </Stack>
           </FormStack>

@@ -1,4 +1,4 @@
-import type { EventColor } from '../../Calendar.types'
+import type { EventStyle } from '../../Calendar.types'
 
 export type EventDialogMode = 'create' | 'edit'
 
@@ -7,7 +7,7 @@ export interface EventFormValues {
   start: string
   end: string
   allDay: boolean
-  color: EventColor
+  style: EventStyle
 }
 
 export interface EventDialogProps {
@@ -18,12 +18,3 @@ export interface EventDialogProps {
   onClose: () => void
   onDelete?: () => void
 }
-
-export const EVENT_COLOR_OPTIONS: EventColor[] = [
-  'primary',
-  'secondary',
-  'success',
-  'warning',
-  'error',
-  'info',
-]

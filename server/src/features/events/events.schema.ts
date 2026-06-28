@@ -1,8 +1,7 @@
 import { boolean, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { softDelete, timestamps } from '../../common/database/columns';
 
-// The calendar event color options. Mirrors the client EventColor union and is the
-// single source of truth shared by the schema's column type and the DTO validator.
+// The calendar event color options.
 export const EVENT_COLORS = [
   'primary',
   'secondary',
@@ -13,6 +12,14 @@ export const EVENT_COLORS = [
 ] as const;
 
 export type EventColor = (typeof EVENT_COLORS)[number];
+
+// The marking style applied to an event: one of the palette colors, or a special
+// marking such as 'moon'. Mirrors the client EventStyle union and is the single
+// source of truth shared by the schema's column type and the DTO validator. New
+// markings are added here and to the client registry.
+export const EVENT_STYLES = [...EVENT_COLORS, 'moon'] as const;
+
+export type EventStyle = (typeof EVENT_STYLES)[number];
 
 // A calendar event. Unlike routes (one per date), there can be many events on
 // any given day and an event can span a range, so this is a plain id-keyed table
@@ -26,8 +33,8 @@ export const events = pgTable('events', {
   start: text('start').notNull(),
   end: text('end'),
   allDay: boolean('all_day').notNull().default(false),
-  // One of the EventColor union.
-  color: text('color').$type<EventColor>(),
+  // One of the EventStyle union (a palette color or a special marking like 'moon').
+  style: text('style').$type<EventStyle>(),
   ...softDelete(),
   ...timestamps(),
 });
