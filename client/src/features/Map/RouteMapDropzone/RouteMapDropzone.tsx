@@ -1,15 +1,15 @@
 import { useEffect } from 'react'
-import { format } from 'date-fns'
 import { MapDropzone } from '../../../common/components/MapDropzone/MapDropzone'
 import type { MapDropzoneProps } from '../../../common/components/MapDropzone/MapDropzone.types'
 import { Notification } from '../../../common/components/Notification/Notification'
+import { UploadedTag } from '../../../common/components/UploadedTag/UploadedTag'
 import { useNotification } from '../../../common/hooks/useNotification'
 import { useSelectedDate } from '../../../common/hooks/useSelectedDate'
 import { todayKey } from '../../../common/utils/date'
 import type { GeoLayer } from '../../../common/geo/geo.types'
 import { useRouteForDate, useSaveRoute } from '../queries/useRoute'
 import type { Route } from '../types/route.type'
-import { RouteMapRoot, UploadedTitle } from './RouteMapDropzone.styles'
+import { RouteMapRoot } from './RouteMapDropzone.styles'
 
 export interface RouteMapDropzoneProps
   extends Omit<MapDropzoneProps, 'committedLayers' | 'loading' | 'onSave'> {
@@ -64,9 +64,7 @@ export const RouteMapDropzone = ({
 
   return (
     <RouteMapRoot>
-      {uploadedAt && (
-        <UploadedTitle>Uploaded for {format(new Date(uploadedAt), 'PP')}</UploadedTitle>
-      )}
+      <UploadedTag date={uploadedAt} zIndex={1000} />
       <MapDropzone
         {...mapProps}
         committedLayers={committed}

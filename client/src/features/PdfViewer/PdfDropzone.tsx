@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { format } from 'date-fns'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 import { FileDropzone } from '../../common/components/FileDropzone/FileDropzone'
 import { Notification } from '../../common/components/Notification/Notification'
+import { UploadedTag } from '../../common/components/UploadedTag/UploadedTag'
 import { useNotification } from '../../common/hooks/useNotification'
 import { useSelectedDate } from '../../common/hooks/useSelectedDate'
 import { todayKey } from '../../common/utils/date'
 import { PdfViewer } from './PdfViewer'
 import { usePdfForDate, useSavePdf, useDeletePdf } from './queries/usePdf'
-import { DeleteButton, PdfRoot, UploadedTitle } from './PdfDropzone.styles'
+import { DeleteButton, PdfRoot } from './PdfDropzone.styles'
 
 /**
  * Inline PDF dropzone: loads the PDF for the selected date (or the closest
@@ -53,11 +53,7 @@ export const PdfDropzone = () => {
 
   return (
     <PdfRoot>
-      {uploadedAt && (
-        <UploadedTitle>
-          Uploaded for {format(new Date(uploadedAt), 'PP')}
-        </UploadedTitle>
-      )}
+      <UploadedTag date={uploadedAt} />
       {existingUrl && !file && (
         <DeleteButton
           onClick={handleDelete}

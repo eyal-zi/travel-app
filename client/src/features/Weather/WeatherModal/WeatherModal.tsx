@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import { Notification } from '../../../common/components/Notification/Notification'
+import { UploadedTag } from '../../../common/components/UploadedTag/UploadedTag'
 import { useNotification } from '../../../common/hooks/useNotification'
 import { useSelectedDate } from '../../../common/hooks/useSelectedDate'
 import { todayKey } from '../../../common/utils/date'
@@ -16,7 +17,12 @@ import {
   useDeleteWeather,
 } from '../queries/useWeather'
 import { ImageDropzone } from './components/ImageDropzone/ImageDropzone'
-import { DeleteButton, DialogHeader, StyledDialog } from './WeatherModal.styles'
+import {
+  DeleteButton,
+  DialogHeader,
+  DropzoneWrapper,
+  StyledDialog,
+} from './WeatherModal.styles'
 
 type WeatherModalProps = {
   open: boolean
@@ -36,6 +42,9 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
   const deleteWeather = useDeleteWeather()
 
   const existingUrl = record?.signedUrl ?? null
+  // The date the shown image was actually uploaded for; may be a closest-
+  // preceding fallback rather than the selected date.
+  const uploadedAt = record?.date ?? null
   const busy = saveWeather.isPending || deleteWeather.isPending
 
   // Clear the staged file once the close animation finishes; the saved image is
@@ -80,12 +89,15 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
         </DialogTitle>
 
         <DialogContent>
-          <ImageDropzone
-            file={file}
-            onFileChange={setFile}
-            imageUrl={existingUrl}
-            loading={isLoading}
-          />
+          <DropzoneWrapper>
+            <UploadedTag date={uploadedAt} />
+            <ImageDropzone
+              file={file}
+              onFileChange={setFile}
+              imageUrl={existingUrl}
+              loading={isLoading}
+            />
+          </DropzoneWrapper>
         </DialogContent>
 
         <DialogActions>

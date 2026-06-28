@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { extname } from 'path';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, lte } from 'drizzle-orm';
 import {
   DRIZZLE,
   type DrizzleDB,
@@ -49,16 +49,20 @@ export class WeatherService {
     return { ...row, signedUrl: this.s3.getSignedUrl(key, this.bucket) };
   }
 
-  async findByDate(date: string): Promise<WeatherWithUrl> {
-    // Newest non-deleted image for the exact date; signed URLs are short-lived
-    // and not stored, so we regenerate one on each read.
+  async findClosest(date: string): Promise<WeatherWithUrl> {
+    // Newest non-deleted image at or before the target date wins — same date if
+    // present, otherwise the closest preceding one. Ties on date fall back to
+    // the most recently uploaded. Signed URLs are short-lived and not stored, so
+    // we regenerate one on each read.
     const [row] = await this.db
       .select()
       .from(weather)
-      .where(and(eq(weather.date, date), eq(weather.isDeleted, false)))
-      .orderBy(desc(weather.createdAt))
+      .where(and(eq(weather.isDeleted, false), lte(weather.date, date)))
+      .orderBy(desc(weather.date), desc(weather.createdAt))
       .limit(1);
-    if (!row) throw new NotFoundException(`No weather found for ${date}`);
+    if (!row) {
+      throw new NotFoundException(`No weather found on or before ${date}`);
+    }
 
     return {
       ...row,
@@ -67,18 +71,16 @@ export class WeatherService {
   }
 
   async softDeleteByDate(date: string): Promise<void> {
-    // Flip the soft-delete flag rather than removing rows (or the S3 object),
-    // so the image stays recoverable and the history is preserved. Any
-    // non-deleted rows for the date are cleared so findByDate stops returning.
-    const deleted = await this.db
+    // Soft-delete the image(s) for this exact date so findClosest falls back to
+    // the closest preceding date again. Flip the flag rather than removing rows
+    // (or the S3 object), so the image stays recoverable and the history is
+    // preserved. If the date never had its own image (the view was showing a
+    // fallback from an earlier date), this is a no-op — we must not delete that
+    // earlier image, which still belongs to its own date.
+    await this.db
       .update(weather)
       .set({ isDeleted: true })
-      .where(and(eq(weather.date, date), eq(weather.isDeleted, false)))
-      .returning({ id: weather.id });
-    if (deleted.length === 0) {
-      throw new NotFoundException(`No weather found for ${date}`);
-    }
-
+      .where(and(eq(weather.date, date), eq(weather.isDeleted, false)));
     this.logger.log(`Soft-deleted weather image(s) for ${date}`);
   }
 }
