@@ -49,12 +49,6 @@ export const RequestFeed = <T,>({
   return (
     <ListSection>
       <FilterBar>
-        <Chip
-          label="All"
-          color={statusFilter === 'all' ? 'primary' : 'default'}
-          variant={statusFilter === 'all' ? 'filled' : 'outlined'}
-          onClick={() => onStatusFilterChange('all')}
-        />
         {REQUEST_STATUSES.map((value) => (
           <Chip
             key={value}
@@ -89,9 +83,7 @@ export const RequestFeed = <T,>({
         {!isLoading && !isError && items.length === 0 && (
           <StatusRow>
             <Typography variant="body2">
-              {statusFilter === 'all'
-                ? `No ${noun} yet.`
-                : `No ${REQUEST_STATUS_META[statusFilter].label.toLowerCase()} ${noun}.`}
+              No {REQUEST_STATUS_META[statusFilter].label.toLowerCase()} {noun}.
             </Typography>
           </StatusRow>
         )}

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import type { RequestStatus } from '../../requests/requestStatus'
 
-// The active filter on a request feed: a workflow status, or "all".
-export type StatusFilter = RequestStatus | 'all'
+// The active filter on a request feed: a single workflow status.
+export type StatusFilter = RequestStatus
 
 export type RequestFeedProps<T> = {
   // Cursor-paginated feed result (the shape returned by the use*Requests hooks).

@@ -14,8 +14,10 @@ type FileRequestsListProps = {
  * Pass `admin` to expose status/response editing on each card.
  */
 export const FileRequestsList = ({ admin }: FileRequestsListProps) => {
-  const [statusFilter, setStatusFilter] = useStatusFilterParam()
-  const feed = useFileRequests(statusFilter === 'all' ? undefined : statusFilter)
+  const [statusFilter, setStatusFilter] = useStatusFilterParam(
+    admin ? 'received' : 'done',
+  )
+  const feed = useFileRequests(statusFilter)
 
   return (
     <RequestFeed

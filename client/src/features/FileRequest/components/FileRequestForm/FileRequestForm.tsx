@@ -2,7 +2,6 @@ import { useState } from 'react'
 import Button from '@mui/material/Button'
 import FormHelperText from '@mui/material/FormHelperText'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
@@ -20,9 +19,17 @@ import { useCreateFileRequest } from '../../queries/useCreateFileRequest'
 import { GEO_OPTIONS, type CreateFileRequest } from '../../types'
 import {
   Actions,
-  Field,
+  FieldGroup,
   FieldRow,
   FormCard,
+  FormSection,
+  SectionHint,
+  SectionLabel,
+} from '../../../../common/styles/formLayout'
+import {
+  FormBody,
+  FormMain,
+  FormSide,
   MapFrame,
 } from './FileRequestForm.styles'
 
@@ -126,132 +133,153 @@ export const FileRequestForm = () => {
   return (
     <>
       <FormCard onSubmit={handleSubmit}>
-        <TextField
-          label="Trip explanation"
-          value={values.tripGoal}
-          onChange={(e) => update('tripGoal', e.target.value)}
-          fullWidth
-          autoFocus
-          multiline
-          minRows={2}
-          placeholder="Describe the trip this file is for"
-          error={textRequired(values.tripGoal)}
-          helperText={textRequired(values.tripGoal) ? 'Required' : ' '}
-        />
+        <FormBody>
+          <FormMain>
+            <FormSection>
+              <SectionLabel variant="overline">Trip details</SectionLabel>
+              <TextField
+                label="Trip explanation"
+                value={values.tripGoal}
+                onChange={(e) => update('tripGoal', e.target.value)}
+                fullWidth
+                autoFocus
+                multiline
+                minRows={2}
+                placeholder="Describe the trip this file is for"
+                error={textRequired(values.tripGoal)}
+                helperText={textRequired(values.tripGoal) ? 'Required' : ' '}
+              />
 
-        <FieldRow>
-          <TextField
-            label="Country"
-            value={values.country}
-            onChange={(e) => update('country', e.target.value)}
-            placeholder="e.g. France"
-            error={textRequired(values.country)}
-            helperText={textRequired(values.country) ? 'Required' : ' '}
-          />
-          <TextField
-            label="Agency"
-            value={values.agency}
-            onChange={(e) => update('agency', e.target.value)}
-            placeholder="e.g. Acme Geo"
-            error={textRequired(values.agency)}
-            helperText={textRequired(values.agency) ? 'Required' : ' '}
-          />
-        </FieldRow>
+              <FieldRow>
+                <TextField
+                  label="Country"
+                  value={values.country}
+                  onChange={(e) => update('country', e.target.value)}
+                  placeholder="e.g. France"
+                  error={textRequired(values.country)}
+                  helperText={textRequired(values.country) ? 'Required' : ' '}
+                />
+                <TextField
+                  label="Agency"
+                  value={values.agency}
+                  onChange={(e) => update('agency', e.target.value)}
+                  placeholder="e.g. Acme Geo"
+                  error={textRequired(values.agency)}
+                  helperText={textRequired(values.agency) ? 'Required' : ' '}
+                />
+              </FieldRow>
 
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <FieldRow>
-            <DatePicker
-              label="Start date"
-              format="dd/MM/yyyy"
-              value={values.startDate}
-              onChange={(date) => update('startDate', date)}
-              slotProps={{
-                textField: {
-                  error: showErrors && !values.startDate,
-                  helperText: showErrors && !values.startDate ? 'Required' : ' ',
-                },
-              }}
-            />
-            <DatePicker
-              label="End date"
-              format="dd/MM/yyyy"
-              value={values.endDate}
-              onChange={(date) => update('endDate', date)}
-              slotProps={{
-                textField: {
-                  error: endBeforeStart || (showErrors && !values.endDate),
-                  helperText: endBeforeStart
-                    ? 'End must be after start'
-                    : showErrors && !values.endDate
-                      ? 'Required'
-                      : ' ',
-                },
-              }}
-            />
-          </FieldRow>
-        </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <FieldRow>
+                  <DatePicker
+                    label="Start date"
+                    format="dd/MM/yyyy"
+                    value={values.startDate}
+                    onChange={(date) => update('startDate', date)}
+                    slotProps={{
+                      textField: {
+                        error: showErrors && !values.startDate,
+                        helperText:
+                          showErrors && !values.startDate
+                            ? 'Required'
+                            : undefined,
+                      },
+                    }}
+                  />
+                  <DatePicker
+                    label="End date"
+                    format="dd/MM/yyyy"
+                    value={values.endDate}
+                    onChange={(date) => update('endDate', date)}
+                    slotProps={{
+                      textField: {
+                        error:
+                          endBeforeStart || (showErrors && !values.endDate),
+                        helperText: endBeforeStart
+                          ? 'End must be after start'
+                          : showErrors && !values.endDate
+                            ? 'Required'
+                            : undefined,
+                      },
+                    }}
+                  />
+                </FieldRow>
+              </LocalizationProvider>
+            </FormSection>
 
-        <Field>
-          <MultiSelectField
-            label="File types"
-            emptyText="Select file types"
-            options={LARGE_FILE_TYPE_OPTIONS}
-            value={fileTypes}
-            onChange={setFileTypes}
-            allowOther
-            otherText={otherTypes}
-            onOtherTextChange={setOtherTypes}
-            otherLabel="Other file types"
-            otherHelperText="Comma-separated, included alongside the selected types."
-          />
-          {fileTypesMissing && (
-            <FormHelperText error>Select at least one file type</FormHelperText>
-          )}
-        </Field>
+            <FormSection>
+              <SectionLabel variant="overline">What you need</SectionLabel>
+              <FieldRow>
+                <FieldGroup>
+                  <MultiSelectField
+                    label="File types"
+                    emptyText="Select file types"
+                    options={LARGE_FILE_TYPE_OPTIONS}
+                    value={fileTypes}
+                    onChange={setFileTypes}
+                    allowOther
+                    otherText={otherTypes}
+                    onOtherTextChange={setOtherTypes}
+                    otherLabel="Other file types"
+                    otherHelperText="Comma-separated, included alongside the selected types."
+                  />
+                  {fileTypesMissing && (
+                    <FormHelperText error>
+                      Select at least one file type
+                    </FormHelperText>
+                  )}
+                </FieldGroup>
 
-        <Field>
-          <MultiSelectField
-            label="Geo"
-            emptyText="Select geo"
-            options={GEO_OPTIONS}
-            value={geo}
-            onChange={setGeo}
-          />
-          {geoMissing && (
-            <FormHelperText error>Select at least one geo</FormHelperText>
-          )}
-        </Field>
+                <FieldGroup>
+                  <MultiSelectField
+                    label="Geo"
+                    emptyText="Select geo"
+                    options={GEO_OPTIONS}
+                    value={geo}
+                    onChange={setGeo}
+                  />
+                  {geoMissing && (
+                    <FormHelperText error>
+                      Select at least one geo
+                    </FormHelperText>
+                  )}
+                </FieldGroup>
+              </FieldRow>
+            </FormSection>
 
-        <Field>
-          <Typography variant="subtitle2">
-            Request area{' '}
-            <Typography component="span" variant="body2" color="text.secondary">
-              — drop a KML, SHP, CSV or Excel file on the map.
-            </Typography>
-          </Typography>
-          <MapFrame>
-            <GeoFilterMap
-              onChange={setAreaLayers}
-              prompt="Drop a KML, SHP, CSV or Excel file to set the request area"
-            />
-          </MapFrame>
-          {areaMissing && (
-            <FormHelperText error>
-              Drop a file on the map to define the request area
-            </FormHelperText>
-          )}
-        </Field>
+            <FormSection>
+              <SectionLabel variant="overline">Notes</SectionLabel>
+              <TextField
+                label="Notes (optional)"
+                value={values.notes}
+                onChange={(e) => update('notes', e.target.value)}
+                fullWidth
+                multiline
+                minRows={2}
+                placeholder="Anything else we should know?"
+                helperText=" "
+              />
+            </FormSection>
+          </FormMain>
 
-        <TextField
-          label="Notes (optional)"
-          value={values.notes}
-          onChange={(e) => update('notes', e.target.value)}
-          fullWidth
-          multiline
-          minRows={2}
-          placeholder="Anything else we should know?"
-          helperText=" "
-        />
+          <FormSide>
+            <SectionLabel variant="overline">Request area</SectionLabel>
+            <SectionHint variant="body2">
+              Drop a KML, SHP, CSV or Excel file on the map to define the area.
+            </SectionHint>
+            <MapFrame>
+              <GeoFilterMap
+                onChange={setAreaLayers}
+                prompt="Drop a KML, SHP, CSV or Excel file to set the request area"
+              />
+            </MapFrame>
+            {areaMissing && (
+              <FormHelperText error>
+                Drop a file on the map to define the request area
+              </FormHelperText>
+            )}
+          </FormSide>
+        </FormBody>
 
         <Actions>
           <Button type="submit" variant="contained" disabled={isSubmitting}>

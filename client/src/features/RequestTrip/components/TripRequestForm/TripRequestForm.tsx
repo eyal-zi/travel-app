@@ -15,7 +15,14 @@ import {
   TIME_DIVISION_OPTIONS,
   type CreateTripRequest,
 } from '../../types'
-import { Actions, FieldRow, FormCard, FormStack } from '../../RequestTrip.styles'
+import {
+  Actions,
+  FieldRow,
+  FormCard,
+  FormColumns,
+  FormSection,
+  SectionLabel,
+} from '../../../../common/styles/formLayout'
 
 type FormState = {
   tripGoal: string
@@ -106,113 +113,125 @@ export const TripRequestForm = ({ onSubmitted, onCancel }: TripRequestFormProps)
   return (
     <>
       <FormCard onSubmit={handleSubmit}>
-        <FormStack>
-          <TextField
-            label="Trip goal"
-            value={values.tripGoal}
-            onChange={(e) => update('tripGoal', e.target.value)}
-            fullWidth
-            autoFocus
-            placeholder="e.g. A relaxing week by the coast"
-            error={textRequired(values.tripGoal)}
-            helperText={textRequired(values.tripGoal) ? 'Required' : ' '}
-          />
-
-          <FieldRow>
+        <FormColumns>
+          <FormSection>
+            <SectionLabel variant="overline">Trip details</SectionLabel>
             <TextField
-              label="Country"
-              value={values.country}
-              onChange={(e) => update('country', e.target.value)}
-              placeholder="e.g. France"
-              error={textRequired(values.country)}
-              helperText={textRequired(values.country) ? 'Required' : ' '}
+              label="Trip goal"
+              value={values.tripGoal}
+              onChange={(e) => update('tripGoal', e.target.value)}
+              fullWidth
+              autoFocus
+              placeholder="e.g. A relaxing week by the coast"
+              error={textRequired(values.tripGoal)}
+              helperText={textRequired(values.tripGoal) ? 'Required' : ' '}
             />
-            <TextField
-              label="Landmark"
-              value={values.landmark}
-              onChange={(e) => update('landmark', e.target.value)}
-              placeholder="e.g. Eiffel Tower"
-              error={textRequired(values.landmark)}
-              helperText={textRequired(values.landmark) ? 'Required' : ' '}
-            />
-          </FieldRow>
 
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
             <FieldRow>
-              <DatePicker
-                label="Start date"
-                format="dd/MM/yyyy"
-                value={values.startDate}
-                onChange={(date) => update('startDate', date)}
-                slotProps={{
-                  textField: {
-                    error: showErrors && !values.startDate,
-                    helperText:
-                      showErrors && !values.startDate ? 'Required' : ' ',
-                  },
-                }}
+              <TextField
+                label="Country"
+                value={values.country}
+                onChange={(e) => update('country', e.target.value)}
+                placeholder="e.g. France"
+                error={textRequired(values.country)}
+                helperText={textRequired(values.country) ? 'Required' : ' '}
               />
-              <DatePicker
-                label="End date"
-                format="dd/MM/yyyy"
-                value={values.endDate}
-                onChange={(date) => update('endDate', date)}
-                slotProps={{
-                  textField: {
-                    error: endBeforeStart || (showErrors && !values.endDate),
-                    helperText: endBeforeStart
-                      ? 'End must be after start'
-                      : showErrors && !values.endDate
-                        ? 'Required'
-                        : ' ',
-                  },
-                }}
+              <TextField
+                label="Landmark"
+                value={values.landmark}
+                onChange={(e) => update('landmark', e.target.value)}
+                placeholder="e.g. Eiffel Tower"
+                error={textRequired(values.landmark)}
+                helperText={textRequired(values.landmark) ? 'Required' : ' '}
               />
             </FieldRow>
-          </LocalizationProvider>
+          </FormSection>
 
-          <FieldRow>
-            <TextField
-              select
-              label="Time division"
-              value={values.timeDivision}
-              onChange={(e) => update('timeDivision', e.target.value)}
-              error={showErrors && !values.timeDivision}
-              helperText={showErrors && !values.timeDivision ? 'Required' : ' '}
-            >
-              {TIME_DIVISION_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              label="Timezone"
-              value={values.timezone}
-              onChange={(e) => update('timezone', e.target.value)}
-              error={showErrors && !values.timezone}
-              helperText={showErrors && !values.timezone ? 'Required' : ' '}
-            >
-              {TIMEZONE_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FieldRow>
+          <FormSection>
+            <SectionLabel variant="overline">When</SectionLabel>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <FieldRow>
+                <DatePicker
+                  label="Start date"
+                  format="dd/MM/yyyy"
+                  value={values.startDate}
+                  onChange={(date) => update('startDate', date)}
+                  slotProps={{
+                    textField: {
+                      error: showErrors && !values.startDate,
+                      helperText:
+                        showErrors && !values.startDate ? 'Required' : ' ',
+                    },
+                  }}
+                />
+                <DatePicker
+                  label="End date"
+                  format="dd/MM/yyyy"
+                  value={values.endDate}
+                  onChange={(date) => update('endDate', date)}
+                  slotProps={{
+                    textField: {
+                      error:
+                        endBeforeStart || (showErrors && !values.endDate),
+                      helperText: endBeforeStart
+                        ? 'End must be after start'
+                        : showErrors && !values.endDate
+                          ? 'Required'
+                          : ' ',
+                    },
+                  }}
+                />
+              </FieldRow>
+            </LocalizationProvider>
 
+            <FieldRow>
+              <TextField
+                select
+                label="Time division"
+                value={values.timeDivision}
+                onChange={(e) => update('timeDivision', e.target.value)}
+                error={showErrors && !values.timeDivision}
+                helperText={
+                  showErrors && !values.timeDivision ? 'Required' : ' '
+                }
+              >
+                {TIME_DIVISION_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                label="Timezone"
+                value={values.timezone}
+                onChange={(e) => update('timezone', e.target.value)}
+                error={showErrors && !values.timezone}
+                helperText={showErrors && !values.timezone ? 'Required' : ' '}
+              >
+                {TIMEZONE_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </FieldRow>
+          </FormSection>
+        </FormColumns>
+
+        <FormSection>
+          <SectionLabel variant="overline">Notes</SectionLabel>
           <TextField
             label="Notes (optional)"
             value={values.notes}
             onChange={(e) => update('notes', e.target.value)}
             fullWidth
             multiline
-            minRows={3}
+            minRows={2}
             placeholder="Anything else we should know?"
             helperText=" "
           />
-        </FormStack>
+        </FormSection>
 
         <Actions>
           <Button type="button" color="inherit" onClick={onCancel}>

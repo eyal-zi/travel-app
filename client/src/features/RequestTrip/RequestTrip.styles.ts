@@ -71,49 +71,5 @@ export const TabButton = styled('button', {
   },
 }))
 
-// Shared card container for both the form and the list panels.
-const panelBase = (theme: import('@mui/material/styles').Theme) => ({
-  width: '100%',
-  borderRadius: 16,
-  backgroundColor: theme.palette.background.paper,
-  border: `1px solid ${theme.palette.divider}`,
-  boxShadow: theme.shadows[2],
-})
-
-export const FormCard = styled('form')(({ theme }) => ({
-  ...panelBase(theme),
-  flex: 1,
-  minHeight: 0,
-  display: 'flex',
-  flexDirection: 'column',
-  padding: theme.spacing(3),
-  [theme.breakpoints.down('sm')]: {
-    padding: theme.spacing(2.5),
-  },
-}))
-
-// Grows to fill the card and spreads the field rows evenly across the available
-// height, so the form scales with the screen instead of overflowing.
-export const FormStack = styled(Box)({
-  flex: 1,
-  minHeight: 0,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-})
-
-export const FieldRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  gap: theme.spacing(2),
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column',
-  },
-  '& > *': { flex: 1, minWidth: 0 },
-}))
-
-export const Actions = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: theme.spacing(1.5),
-  marginTop: theme.spacing(1),
-}))
+// The form's card container and field-layout primitives (FormCard, FieldRow,
+// FormSection, Actions) now live in common/styles/formLayout.ts.

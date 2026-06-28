@@ -14,8 +14,10 @@ type TripRequestsListProps = {
  * Pass `admin` to expose status-change controls on each card.
  */
 export const TripRequestsList = ({ admin }: TripRequestsListProps) => {
-  const [statusFilter, setStatusFilter] = useStatusFilterParam()
-  const feed = useTripRequests(statusFilter === 'all' ? undefined : statusFilter)
+  const [statusFilter, setStatusFilter] = useStatusFilterParam(
+    admin ? 'received' : 'done',
+  )
+  const feed = useTripRequests(statusFilter)
 
   return (
     <RequestFeed

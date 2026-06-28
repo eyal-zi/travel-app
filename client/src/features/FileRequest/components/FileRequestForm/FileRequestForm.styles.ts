@@ -1,72 +1,49 @@
 import { styled } from '@mui/material/styles'
-import type { Theme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
-const panelBase = (theme: Theme) => ({
-  width: '100%',
-  borderRadius: 16,
-  backgroundColor: theme.palette.background.paper,
-  border: `1px solid ${theme.palette.divider}`,
-  boxShadow: theme.shadows[2],
-})
-
-// The request form: a scrollable card holding the fields, the map and the
-// submit action. Flexes to fill the tab's remaining height.
-export const FormCard = styled('form')(({ theme }) => ({
-  ...panelBase(theme),
+// Two-column body: the text fields on the left, the request-area map on the
+// right. Stacks into a single column on narrow screens.
+export const FormBody = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,
   display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(2),
-  padding: theme.spacing(3),
-  overflowY: 'auto',
-  scrollbarWidth: 'thin',
-  scrollbarColor: `${theme.palette.text.disabled} transparent`,
-  '&::-webkit-scrollbar': { width: 8 },
-  '&::-webkit-scrollbar-track': { backgroundColor: 'transparent' },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: theme.palette.text.disabled,
-    borderRadius: 8,
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    backgroundColor: theme.palette.text.secondary,
-  },
-  [theme.breakpoints.down('sm')]: {
-    padding: theme.spacing(2.5),
-  },
-}))
-
-// Two controls side by side, stacking on small screens.
-export const FieldRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  gap: theme.spacing(2),
-  [theme.breakpoints.down('sm')]: {
+  gap: theme.spacing(3),
+  [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
   },
-  '& > *': { flex: 1, minWidth: 0 },
 }))
 
-// A labelled block (label/hint above the control).
-export const Field = styled(Box)(({ theme }) => ({
+// Left column: the form fields, stacked with a compact, even rhythm.
+export const FormMain = styled(Box)(({ theme }) => ({
+  flex: 1,
+  minWidth: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1.25),
+}))
+
+// Right column: the request-area label, hint and map, filling the height.
+export const FormSide = styled(Box)(({ theme }) => ({
+  flex: '0 0 42%',
+  minWidth: 0,
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
+  [theme.breakpoints.down('md')]: {
+    flex: 'initial',
+  },
 }))
 
-// Frames the embedded request-area map with rounded, clipped corners.
+// Frames the embedded request-area map with rounded, clipped corners. Grows to
+// fill the side column; keeps a sensible minimum when the layout stacks.
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: 'relative',
-  height: 280,
+  flex: 1,
+  minHeight: 300,
   borderRadius: 12,
   overflow: 'hidden',
   border: `1px solid ${theme.palette.divider}`,
-}))
-
-export const Actions = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: theme.spacing(1.5),
-  marginTop: 'auto',
-  paddingTop: theme.spacing(0.5),
+  [theme.breakpoints.down('md')]: {
+    minHeight: 260,
+  },
 }))
