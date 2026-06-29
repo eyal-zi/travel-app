@@ -1,58 +1,45 @@
 import { useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
-import Alert from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar'
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded'
-import { Map } from '../Map/Map'
+import { MapEditor } from '../MapEditor/MapEditor'
 import { useGeoLayers } from '../../geo/useGeoLayers'
-import { acceptedFileTypes } from '../../geo/parsers'
-import { DragOverlay, DropzoneRoot } from '../MapDropzone/MapDropzone.styles'
+import { useNotification } from '../../hooks/useNotification'
 import type { GeoLayer } from '../../geo/geo.types'
 import { OverlayChip } from './GeoFilterMap.styles'
 
 const DEFAULT_PROMPT = 'Drop a KML, SHP, CSV or Excel file to set the search area'
 
 type GeoFilterMapProps = {
-  // Called whenever the drawn layers change, so the parent can derive the
-  // selected area. Memoize it to keep the sync effect stable.
+  // Called whenever the layers change, so the parent can derive the selected
+  // area. Memoize it to keep the sync effect stable.
   onChange: (layers: GeoLayer[]) => void
   // Overlay text shown while dragging a file over the map.
   prompt?: string
 }
 
 /**
- * A map dropzone: drop geo files (KML/SHP/CSV/Excel) to define an area. Unlike
- * the shared MapDropzone it has no Save/Cancel or persistence — it just renders
- * the dropped geometry and reports the live layers to the parent via `onChange`.
- * Reuses the Map renderer, the geo parsing hook and the accepted-file-type map.
+ * Search-area map: drop geo files or draw/edit/delete shapes to define an area.
+ * Unlike `RouteMapDropzone` it has no Save/Cancel or persistence — it reports
+ * the live layers to the parent form via `onChange`. A thin wrapper over the
+ * shared `MapEditor`.
  */
-export const GeoFilterMap = ({
-  onChange,
-  prompt = DEFAULT_PROMPT,
-}: GeoFilterMapProps) => {
-  const { layers, addFromFiles, clear, error, setError } = useGeoLayers()
+export const GeoFilterMap = ({ onChange, prompt = DEFAULT_PROMPT }: GeoFilterMapProps) => {
+  const { notification, notifyError, close } = useNotification()
+  const { layers, addFromFiles, clear, replace } = useGeoLayers(notifyError)
 
   // Surface the current layers to the parent whenever they change.
   useEffect(() => {
     onChange(layers)
   }, [layers, onChange])
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: async (accepted: File[]) => {
-      if (accepted.length) await addFromFiles(accepted)
-    },
-    accept: acceptedFileTypes,
-    noClick: true,
-    noKeyboard: true,
-  })
-
   return (
-    <DropzoneRoot {...getRootProps()}>
-      <input {...getInputProps()} />
-      <Map layers={layers} />
-
-      {isDragActive && <DragOverlay>{prompt}</DragOverlay>}
-
+    <MapEditor
+      layers={layers}
+      onLayersChange={replace}
+      onAddFiles={addFromFiles}
+      notification={notification}
+      onCloseNotification={close}
+      dragPrompt={prompt}
+    >
       {layers.length > 0 && (
         <OverlayChip
           icon={<LayersRoundedIcon />}
@@ -62,17 +49,6 @@ export const GeoFilterMap = ({
           size="small"
         />
       )}
-
-      <Snackbar
-        open={Boolean(error)}
-        autoHideDuration={6000}
-        onClose={() => setError(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="error" variant="filled" onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      </Snackbar>
-    </DropzoneRoot>
+    </MapEditor>
   )
 }
