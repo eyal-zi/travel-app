@@ -39,7 +39,7 @@ export const HomePage = () => {
           </BrandMark>
           <TextColumn spacing={0}>
             <Typography variant="h6" noWrap>
-              Trip Planner
+              Trip Advisor
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
               Plan your itinerary, map, and documents in one place
