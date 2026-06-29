@@ -22,9 +22,10 @@ export const FormMain = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1.25),
 }))
 
-// Right column: the request-area label, hint and map, filling the height.
+// Right column: the request-area label, hint and map, filling the height. Takes
+// the larger share of the row so the map has plenty of room to work in.
 export const FormSide = styled(Box)(({ theme }) => ({
-  flex: '0 0 42%',
+  flex: '0 0 60%',
   minWidth: 0,
   display: 'flex',
   flexDirection: 'column',
@@ -35,15 +36,15 @@ export const FormSide = styled(Box)(({ theme }) => ({
 }))
 
 // Frames the embedded request-area map with rounded, clipped corners. Grows to
-// fill the side column; keeps a sensible minimum when the layout stacks.
+// fill the side column; keeps a generous minimum when the layout stacks.
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: 'relative',
   flex: 1,
-  minHeight: 300,
+  minHeight: 500,
   borderRadius: 12,
   overflow: 'hidden',
   border: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.down('md')]: {
-    minHeight: 260,
+    minHeight: 420,
   },
 }))

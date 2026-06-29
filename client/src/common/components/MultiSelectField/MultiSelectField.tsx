@@ -84,13 +84,13 @@ export const MultiSelectField = ({
 
   return (
     <FormControl fullWidth disabled={disabled}>
-      <InputLabel>{label}</InputLabel>
+      <InputLabel shrink>{label}</InputLabel>
       <Select
         multiple
         displayEmpty
         value={value}
         onChange={handleChange}
-        input={<OutlinedInput label={label} />}
+        input={<OutlinedInput notched label={label} />}
         renderValue={(selected) =>
           selected.length === 0 ? (
             <Typography component="span" color="text.secondary">

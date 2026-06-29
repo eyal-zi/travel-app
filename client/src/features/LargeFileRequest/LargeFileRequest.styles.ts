@@ -19,7 +19,7 @@ export const PageRoot = styled(Box)(({ theme }) => ({
 
 export const Shell = styled(Box)(({ theme }) => ({
   width: '100%',
-  maxWidth: 1200,
+  maxWidth: 1680,
   flex: 1,
   minHeight: 0,
   display: 'flex',
@@ -79,7 +79,7 @@ export const FormCard = styled('form')(({ theme }) => ({
   ...panelBase(theme),
   // Give the filters/map column extra width over the results so the map has
   // more room to breathe.
-  flex: 1.4,
+  flex: 2,
   minWidth: 0,
   minHeight: 0,
   display: 'flex',
@@ -114,13 +114,13 @@ export const MapField = styled(Field)({
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: 'relative',
   flex: 1,
-  minHeight: 260,
+  minHeight: 460,
   borderRadius: 12,
   overflow: 'hidden',
   border: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.down('md')]: {
     flex: 'none',
-    height: 260,
+    height: 400,
   },
 }))
 
