@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StorageModule } from './common/storage/storage.module';
 import { DatabaseModule } from './common/database/database.module';
+import { AuthModule } from './features/auth/auth.module';
 import { RoutesModule } from './features/routes/routes.module';
 import { EventsModule } from './features/events/events.module';
 import { WeatherModule } from './features/weather/weather.module';
@@ -16,6 +17,7 @@ import { FileRequestsModule } from './features/file-requests/file-requests.modul
   imports: [
     DatabaseModule,
     StorageModule,
+    AuthModule,
     RoutesModule,
     EventsModule,
     WeatherModule,

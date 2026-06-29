@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Signing in…</title>
+  </head>
+  <body>
+    <p>Signing you in…</p>
+    <script>
+      // MOCK identity provider. A real IdP would authenticate the user and then
+      // post their token back to the opener. Here we just notify the opener so
+      // the app's message handler runs; the token itself is mocked client-side.
+      if (window.opener) {
+        window.opener.postMessage(
+          { user: { token: 'mock-external-token' } },
+          window.location.origin,
+        )
+      }
+    </script>
+  </body>
+</html>
