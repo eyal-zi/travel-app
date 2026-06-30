@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
 export const Card = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -17,3 +18,9 @@ export const Meta = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1),
   flexWrap: 'wrap',
 }))
+
+// Announcement body, preserving the author's line breaks.
+export const MessageText = styled(Typography)({
+  whiteSpace: 'pre-wrap',
+  wordBreak: 'break-word',
+})

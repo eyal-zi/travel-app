@@ -47,13 +47,6 @@ export const List = styled(Box)(({ theme }) => ({
   },
 }))
 
-export const StatusRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  padding: theme.spacing(1.5),
-  color: theme.palette.text.secondary,
-}))
-
 // Bottom sentinel observed for infinite scroll; zero-height so it doesn't
 // affect layout.
 export const Sentinel = styled(Box)({

@@ -4,7 +4,7 @@ import MyLocationRoundedIcon from '@mui/icons-material/MyLocationRounded'
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded'
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded'
 import { formatBytes, formatDay } from '../../../../common/utils/format'
-import { LARGE_FILE_TYPE_OPTIONS, type LargeFileResult } from '../../types'
+import { LARGE_FILE_TYPE_OPTIONS } from '../../types'
 import {
   Card,
   CardTop,
@@ -12,14 +12,11 @@ import {
   MetaRow,
   TitleBlock,
 } from './LargeFileResultItem.styles'
+import type { LargeFileResultItemProps } from './LargeFileResultItem.types'
 
 const typeLabel = (value: string) =>
   LARGE_FILE_TYPE_OPTIONS.find((option) => option.value === value)?.label ??
   value.charAt(0).toUpperCase() + value.slice(1)
-
-type LargeFileResultItemProps = {
-  file: LargeFileResult
-}
 
 export const LargeFileResultItem = ({ file }: LargeFileResultItemProps) => (
   <Card>

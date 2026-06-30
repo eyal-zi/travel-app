@@ -1,20 +1,11 @@
-import { useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
-import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import {
-  useLargeFileSearch,
-  type AppliedFilters,
-} from '../../queries/useLargeFileSearch'
+import { FeedStatus } from '../../../../common/components/FeedStatus/FeedStatus'
+import { useInfiniteScrollSentinel } from '../../../../common/hooks/useInfiniteScrollSentinel'
+import { useLargeFileSearch } from '../../queries/useLargeFileSearch'
 import { LargeFileResultItem } from '../LargeFileResultItem/LargeFileResultItem'
 import { ListPanel, Sentinel, StatusRow } from '../../LargeFileRequest.styles'
-
-type LargeFileResultsListProps = {
-  // Null until the user runs their first search; the list stays idle until then.
-  filters: AppliedFilters | null
-}
+import type { LargeFileResultsListProps } from './LargeFileResultsList.types'
 
 /**
  * Newest-first, cursor-paginated results feed with infinite scroll. Owns the
@@ -32,13 +23,11 @@ export const LargeFileResultsList = ({ filters }: LargeFileResultsListProps) => 
     fetchNextPage,
   } = useLargeFileSearch(filters)
 
-  const { ref: sentinelRef, inView } = useInView({ rootMargin: '200px' })
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage()
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+  const { sentinelRef } = useInfiniteScrollSentinel({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
 
   if (filters === null) {
     return (
@@ -59,32 +48,15 @@ export const LargeFileResultsList = ({ filters }: LargeFileResultsListProps) => 
         <LargeFileResultItem key={file.id} file={file} />
       ))}
 
-      {isLoading && (
-        <StatusRow>
-          <CircularProgress size={24} />
-        </StatusRow>
-      )}
-
-      {isError && !isLoading && (
-        <StatusRow>
-          <Typography variant="body2">Search failed.</Typography>
-          <Button size="small" onClick={() => refetch()}>
-            Retry
-          </Button>
-        </StatusRow>
-      )}
-
-      {!isLoading && !isError && items.length === 0 && (
-        <StatusRow>
-          <Typography variant="body2">No files match these filters.</Typography>
-        </StatusRow>
-      )}
-
-      {isFetchingNextPage && (
-        <StatusRow>
-          <CircularProgress size={20} />
-        </StatusRow>
-      )}
+      <FeedStatus
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={items.length === 0}
+        isFetchingNextPage={isFetchingNextPage}
+        onRetry={refetch}
+        errorMessage="Search failed."
+        emptyMessage="No files match these filters."
+      />
 
       {hasNextPage && <Sentinel ref={sentinelRef} />}
     </ListPanel>

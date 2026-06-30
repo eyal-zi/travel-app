@@ -53,18 +53,6 @@ export const ListPanel = styled(Box)(({ theme }) => ({
   },
 }))
 
-// Centered status/empty/loading row. Column layout so a message and a retry
-// button stack without needing inline overrides.
-export const StatusRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: theme.spacing(1),
-  padding: theme.spacing(3),
-  color: theme.palette.text.secondary,
-}))
-
 // Zero-height sentinel observed for infinite scroll.
 export const Sentinel = styled(Box)({
   height: 1,

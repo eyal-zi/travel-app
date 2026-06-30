@@ -1,20 +1,12 @@
-import { Fragment, useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
-import Button from '@mui/material/Button'
+import { Fragment } from 'react'
 import Chip from '@mui/material/Chip'
-import CircularProgress from '@mui/material/CircularProgress'
-import Typography from '@mui/material/Typography'
+import { FeedStatus } from '../FeedStatus/FeedStatus'
+import { useInfiniteScrollSentinel } from '../../hooks/useInfiniteScrollSentinel'
 import {
   REQUEST_STATUSES,
   REQUEST_STATUS_META,
 } from '../../requests/requestStatus'
-import {
-  FilterBar,
-  ListPanel,
-  ListSection,
-  Sentinel,
-  StatusRow,
-} from './RequestFeed.styles'
+import { FilterBar, ListPanel, ListSection, Sentinel } from './RequestFeed.styles'
 import type { RequestFeedProps } from './RequestFeed.types'
 
 /**
@@ -37,14 +29,11 @@ export const RequestFeed = <T,>({
   getItemKey,
   noun,
 }: RequestFeedProps<T>) => {
-  // Fetch the next (older) page when the bottom sentinel nears the viewport.
-  const { ref: sentinelRef, inView } = useInView({ rootMargin: '200px' })
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage()
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+  const { sentinelRef } = useInfiniteScrollSentinel({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
 
   return (
     <ListSection>
@@ -65,34 +54,15 @@ export const RequestFeed = <T,>({
           <Fragment key={getItemKey(item)}>{renderItem(item)}</Fragment>
         ))}
 
-        {isLoading && (
-          <StatusRow>
-            <CircularProgress size={24} />
-          </StatusRow>
-        )}
-
-        {isError && !isLoading && (
-          <StatusRow>
-            <Typography variant="body2">Failed to load {noun}.</Typography>
-            <Button size="small" onClick={() => refetch()}>
-              Retry
-            </Button>
-          </StatusRow>
-        )}
-
-        {!isLoading && !isError && items.length === 0 && (
-          <StatusRow>
-            <Typography variant="body2">
-              No {REQUEST_STATUS_META[statusFilter].label.toLowerCase()} {noun}.
-            </Typography>
-          </StatusRow>
-        )}
-
-        {isFetchingNextPage && (
-          <StatusRow>
-            <CircularProgress size={20} />
-          </StatusRow>
-        )}
+        <FeedStatus
+          isLoading={isLoading}
+          isError={isError}
+          isEmpty={items.length === 0}
+          isFetchingNextPage={isFetchingNextPage}
+          onRetry={refetch}
+          errorMessage={`Failed to load ${noun}.`}
+          emptyMessage={`No ${REQUEST_STATUS_META[statusFilter].label.toLowerCase()} ${noun}.`}
+        />
 
         {hasNextPage && <Sentinel ref={sentinelRef} />}
       </ListPanel>

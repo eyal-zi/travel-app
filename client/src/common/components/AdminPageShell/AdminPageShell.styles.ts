@@ -15,6 +15,8 @@ export const PageRoot = styled(Box)(({ theme }) => ({
   },
 }))
 
+// Centered column holding the header and the admin content, filling the page
+// height so the content below can grow into the remaining space.
 export const Shell = styled(Box)(({ theme }) => ({
   width: '100%',
   maxWidth: 1040,

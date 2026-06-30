@@ -24,11 +24,7 @@ import {
   DropzoneWrapper,
   StyledDialog,
 } from './WeatherModal.styles'
-
-type WeatherModalProps = {
-  open: boolean
-  onClose: () => void
-}
+import type { WeatherModalProps } from './WeatherModal.types'
 
 export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
   const [selectedDate] = useSelectedDate()

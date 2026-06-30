@@ -45,6 +45,14 @@ export const Detail = styled(Box)({
   minWidth: 0,
 })
 
+// Row of small chips for tag lists (file types, geo tags).
+export const ChipRow = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: theme.spacing(0.5),
+  marginTop: theme.spacing(0.25),
+}))
+
 export const Footer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',

@@ -19,8 +19,8 @@ export type RequestSummary = {
   files: RequestFile[]
 }
 
-// The draft state owned by a feature-specific `use*Draft` hook and consumed by
-// the admin editor. Both features return this exact shape.
+// The draft state owned by `useRequestDraft` and consumed by the admin editor.
+// Both features return this exact shape.
 export type RequestDraft = {
   statusDraft: RequestStatus
   noteDraft: string

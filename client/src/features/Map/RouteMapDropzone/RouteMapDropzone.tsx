@@ -15,7 +15,6 @@ import { useGeoLayers } from '../../../common/geo/useGeoLayers'
 import { useNotification } from '../../../common/hooks/useNotification'
 import { useSelectedDate } from '../../../common/hooks/useSelectedDate'
 import { todayKey } from '../../../common/utils/date'
-import type { MapProps } from '../../../common/components/Map/Map.types'
 import type { GeoLayer } from '../../../common/geo/geo.types'
 import { useRouteForDate, useSaveRoute } from '../queries/useRoute'
 import { useIsAdmin } from '../../Auth/hooks/useIsAdmin'
@@ -29,12 +28,7 @@ import {
   LayerPopover,
   RouteMapRoot,
 } from './RouteMapDropzone.styles'
-
-export interface RouteMapDropzoneProps
-  extends Omit<MapProps, 'layers' | 'editable' | 'onLayersChange'> {
-  name?: string
-  onSave?: (layers: GeoLayer[]) => void
-}
+import type { RouteMapDropzoneProps } from './RouteMapDropzone.types'
 
 // Stable empty baseline so the reset effect doesn't fire every render while no
 // route is loaded.

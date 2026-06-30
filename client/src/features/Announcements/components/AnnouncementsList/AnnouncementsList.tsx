@@ -1,22 +1,10 @@
-import { useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
-import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import CampaignRoundedIcon from '@mui/icons-material/CampaignRounded'
-import type { Announcement } from '../../Announcements.types'
+import { FeedStatus } from '../../../../common/components/FeedStatus/FeedStatus'
+import { useInfiniteScrollSentinel } from '../../../../common/hooks/useInfiniteScrollSentinel'
 import { AnnouncementItem } from '../AnnouncementItem/AnnouncementItem'
-import { Header, List, Sentinel, StatusRow } from '../../Announcements.styles'
-
-type AnnouncementsListProps = {
-  items: Announcement[]
-  isLoading: boolean
-  isError: boolean
-  refetch: () => void
-  hasNextPage: boolean
-  isFetchingNextPage: boolean
-  fetchNextPage: () => void
-}
+import { Header, List, Sentinel } from '../../Announcements.styles'
+import type { AnnouncementsListProps } from './AnnouncementsList.types'
 
 /**
  * Read-only, newest-first announcements feed (header + cursor-paginated list
@@ -32,14 +20,11 @@ export const AnnouncementsList = ({
   isFetchingNextPage,
   fetchNextPage,
 }: AnnouncementsListProps) => {
-  // Fetch the next (older) page when the bottom sentinel nears the viewport.
-  const { ref: sentinelRef, inView } = useInView({ rootMargin: '200px' })
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage()
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+  const { sentinelRef } = useInfiniteScrollSentinel({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
 
   return (
     <>
@@ -53,32 +38,15 @@ export const AnnouncementsList = ({
           <AnnouncementItem key={announcement.id} announcement={announcement} />
         ))}
 
-        {isLoading && (
-          <StatusRow>
-            <CircularProgress size={22} />
-          </StatusRow>
-        )}
-
-        {isError && !isLoading && (
-          <StatusRow sx={{ flexDirection: 'column', gap: 1 }}>
-            <Typography variant="body2">Failed to load announcements.</Typography>
-            <Button size="small" onClick={() => refetch()}>
-              Retry
-            </Button>
-          </StatusRow>
-        )}
-
-        {!isLoading && !isError && items.length === 0 && (
-          <StatusRow>
-            <Typography variant="body2">No announcements yet.</Typography>
-          </StatusRow>
-        )}
-
-        {isFetchingNextPage && (
-          <StatusRow>
-            <CircularProgress size={20} />
-          </StatusRow>
-        )}
+        <FeedStatus
+          isLoading={isLoading}
+          isError={isError}
+          isEmpty={items.length === 0}
+          isFetchingNextPage={isFetchingNextPage}
+          onRetry={refetch}
+          errorMessage="Failed to load announcements."
+          emptyMessage="No announcements yet."
+        />
 
         {hasNextPage && <Sentinel ref={sentinelRef} />}
       </List>
