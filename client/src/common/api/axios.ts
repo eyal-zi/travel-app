@@ -2,8 +2,8 @@ import axios from "axios";
 import {
   AUTH_UNAUTHENTICATED_EVENT,
   AUTH_UNAUTHORIZED_EVENT,
-} from "../../features/Auth/authEvents";
-import { clearToken, getToken } from "../../features/Auth/tokenStorage";
+} from "../../features/Auth/utils/authEvents";
+import { clearToken, getToken } from "../../features/Auth/utils/tokenStorage";
 
 // No default Content-Type: axios infers it per request
 // (application/json for plain objects, multipart/form-data with the

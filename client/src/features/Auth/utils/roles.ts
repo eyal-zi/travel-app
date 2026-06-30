@@ -1,4 +1,4 @@
-import type { AuthUser } from './auth.types'
+import type { AuthUser } from '../auth.types'
 
 // Single source of truth for the admin-role check, shared by the RequireAdmin
 // route guard and role-aware UI (e.g. the home-page feature boxes). The server

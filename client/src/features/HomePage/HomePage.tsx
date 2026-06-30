@@ -9,8 +9,8 @@ import { RouteMapDropzone } from '../Map/RouteMapDropzone/RouteMapDropzone'
 import { PdfDropzone } from '../PdfViewer/PdfDropzone'
 import { WeatherWidget } from '../Weather/WeatherWidget'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
-import { useAuth } from '../Auth/AuthContext'
-import { isAdmin } from '../Auth/roles'
+import { useAuth } from '../Auth/context/AuthContext'
+import { isAdmin } from '../Auth/utils/roles'
 import {
   AnnouncementsContainer,
   Brand,

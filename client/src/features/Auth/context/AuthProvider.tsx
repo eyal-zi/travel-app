@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { AuthContext } from './AuthContext'
-import { authService } from './authService'
+import { authService } from '../services/authService'
 import {
   AUTH_UNAUTHENTICATED_EVENT,
   AUTH_UNAUTHORIZED_EVENT,
-} from './authEvents'
-import type { AuthStatus, AuthUser } from './auth.types'
-import { decodeJwt } from './decodeJwt'
-import { MOCK_EXTERNAL_TOKEN } from './mockExternalToken'
-import { clearToken, getToken, setToken } from './tokenStorage'
+} from '../utils/authEvents'
+import type { AuthStatus, AuthUser } from '../auth.types'
+import { decodeJwt } from '../utils/decodeJwt'
+import { MOCK_EXTERNAL_TOKEN } from '../utils/mockExternalToken'
+import { clearToken, getToken, setToken } from '../utils/tokenStorage'
 
 // How long to wait for the SSO popup to post its message before giving up.
 const SSO_TIMEOUT_MS = 30_000

@@ -16,7 +16,7 @@ import {
   useSaveWeather,
   useDeleteWeather,
 } from '../queries/useWeather'
-import { useIsAdmin } from '../../Auth/useIsAdmin'
+import { useIsAdmin } from '../../Auth/hooks/useIsAdmin'
 import { ImageDropzone } from './components/ImageDropzone/ImageDropzone'
 import {
   DeleteButton,

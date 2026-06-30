@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../../AuthContext'
-import { isAdmin } from '../../roles'
+import { useAuth } from '../../context/AuthContext'
+import { isAdmin } from '../../utils/roles'
 
 // Guards admin-only routes. It renders inside the AuthGuard, so by the time it
 // runs the user is already authenticated; non-admins are sent back to the home

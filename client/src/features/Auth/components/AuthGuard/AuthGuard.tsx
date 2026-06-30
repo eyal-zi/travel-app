@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
-import { useAuth } from '../../AuthContext'
+import { useAuth } from '../../context/AuthContext'
 import { UnauthorizedPage } from '../UnauthorizedPage/UnauthorizedPage'
 import { CenteredScreen, StatusStack } from './AuthGuard.styles'
 

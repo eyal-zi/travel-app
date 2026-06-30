@@ -1,4 +1,4 @@
-import type { AuthUser } from './auth.types'
+import type { AuthUser } from '../auth.types'
 
 // Decode the (untrusted) payload of a JWT for display/routing only. The server
 // verifies the signature on every request; we never rely on this for security.

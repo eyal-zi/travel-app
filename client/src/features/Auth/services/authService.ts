@@ -1,5 +1,5 @@
-import api from '../../common/api/axios'
-import type { AuthUser } from './auth.types'
+import api from '../../../common/api/axios'
+import type { AuthUser } from '../auth.types'
 
 export interface SignInResponse {
   // Our app JWT — replaces the external token in storage.

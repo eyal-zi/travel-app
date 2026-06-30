@@ -2,7 +2,7 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import BlockRoundedIcon from '@mui/icons-material/BlockRounded'
-import { useAuth } from '../../AuthContext'
+import { useAuth } from '../../context/AuthContext'
 import {
   Card,
   CardStack,

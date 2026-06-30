@@ -18,7 +18,7 @@ import { todayKey } from '../../../common/utils/date'
 import type { MapProps } from '../../../common/components/Map/Map.types'
 import type { GeoLayer } from '../../../common/geo/geo.types'
 import { useRouteForDate, useSaveRoute } from '../queries/useRoute'
-import { useIsAdmin } from '../../Auth/useIsAdmin'
+import { useIsAdmin } from '../../Auth/hooks/useIsAdmin'
 import type { Route } from '../types/route.type'
 import {
   ActionBar,

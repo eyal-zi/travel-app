@@ -1,7 +1,7 @@
 import { useAnnouncements } from './queries/useAnnouncements'
 import { AnnouncementsList } from './components/AnnouncementsList/AnnouncementsList'
 import { AnnouncementComposer } from './components/AnnouncementComposer/AnnouncementComposer'
-import { useIsAdmin } from '../Auth/useIsAdmin'
+import { useIsAdmin } from '../Auth/hooks/useIsAdmin'
 import { Root } from './Announcements.styles'
 
 export const Announcements = () => {
