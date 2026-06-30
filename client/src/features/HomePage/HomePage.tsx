@@ -9,12 +9,13 @@ import { RouteMapDropzone } from '../Map/RouteMapDropzone/RouteMapDropzone'
 import { PdfDropzone } from '../PdfViewer/PdfDropzone'
 import { WeatherWidget } from '../Weather/WeatherWidget'
 import { ColorModeToggle } from '../../theme/ColorModeToggle'
+import { useAuth } from '../Auth/AuthContext'
+import { isAdmin } from '../Auth/roles'
 import {
   AnnouncementsContainer,
   Brand,
   BrandMark,
   CalendarContainer,
-  CardSubtitle,
   GradientActionCard,
   HeaderControls,
   MapContainer,
@@ -29,6 +30,8 @@ import {
 
 export const HomePage = () => {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const admin = isAdmin(user)
 
   return (
     <PageRoot>
@@ -67,26 +70,30 @@ export const HomePage = () => {
           <AnnouncementsContainer>
             <Announcements />
           </AnnouncementsContainer>
-          <GradientActionCard tone="primary" onClick={() => navigate('/request-trip')}>
+          <GradientActionCard
+            tone="primary"
+            onClick={() =>
+              navigate(admin ? '/admin/trip-requests' : '/request-trip')
+            }
+          >
             <FlightTakeoffRoundedIcon />
             <TextColumn spacing={0}>
               <Typography variant="subtitle1" noWrap>
                 Request a trip
               </Typography>
-              <CardSubtitle variant="body2" noWrap>
-                Start planning a new itinerary
-              </CardSubtitle>
             </TextColumn>
           </GradientActionCard>
-          <GradientActionCard tone="secondary" onClick={() => navigate('/large-file-request')}>
+          <GradientActionCard
+            tone="secondary"
+            onClick={() =>
+              navigate(admin ? '/admin/file-requests' : '/large-file-request')
+            }
+          >
             <DatasetRoundedIcon />
             <TextColumn spacing={0}>
               <Typography variant="subtitle1" noWrap>
                 Large file request
               </Typography>
-              <CardSubtitle variant="body2" noWrap>
-                Search files by type, accuracy and area
-              </CardSubtitle>
             </TextColumn>
           </GradientActionCard>
         </RightColumn>

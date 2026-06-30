@@ -6,6 +6,7 @@ import type { SignOptions } from 'jsonwebtoken';
 import { GroupsGuard } from '../../common/auth/groups.guard';
 import { JwtAuthGuard } from '../../common/auth/jwt-auth.guard';
 import { JwtStrategy } from '../../common/auth/jwt.strategy';
+import { RolesGuard } from '../../common/auth/roles.guard';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
@@ -25,9 +26,11 @@ import { AuthService } from './auth.service';
     AuthService,
     JwtStrategy,
     // Global authentication, then authorization. Order matters: JwtAuthGuard
-    // populates request.user that GroupsGuard reads.
+    // populates request.user that GroupsGuard and RolesGuard read. GroupsGuard
+    // gates app access; RolesGuard enforces per-route @Roles(...).
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: GroupsGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
 export class AuthModule {}

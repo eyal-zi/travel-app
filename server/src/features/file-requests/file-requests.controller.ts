@@ -13,6 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from '../../common/auth/roles.decorator';
 import { FileRequestsService } from './file-requests.service';
 import { CreateFileRequestDto } from './dto/create-file-request.dto';
 import { FindFileRequestsDto } from './dto/find-file-requests.dto';
@@ -41,6 +42,7 @@ export class FileRequestsController {
 
   // Admin update: change the status and/or the admin note (both optional).
   @Patch(':id')
+  @Roles('admin')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateFileRequestDto,
@@ -50,6 +52,7 @@ export class FileRequestsController {
 
   // Admin attaches a file (any type) to a request. Multipart "file" part.
   @Post(':id/files')
+  @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
   addFile(
     @Param('id', ParseUUIDPipe) id: string,
@@ -60,6 +63,7 @@ export class FileRequestsController {
 
   // Admin removes a previously attached file.
   @Delete(':id/files/:fileId')
+  @Roles('admin')
   @HttpCode(204)
   removeFile(
     @Param('id', ParseUUIDPipe) id: string,

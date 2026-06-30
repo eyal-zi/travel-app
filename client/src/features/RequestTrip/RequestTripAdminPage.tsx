@@ -3,20 +3,21 @@ import Typography from '@mui/material/Typography'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded'
 import { useNavigate } from 'react-router-dom'
-import { FileRequestsList } from '../FileRequest/components/FileRequestsList/FileRequestsList'
+import { TripRequestsList } from './components/TripRequestsList/TripRequestsList'
 import {
   HeaderText,
   PageHeader,
   PageRoot,
   Shell,
-} from '../FileRequest/FileRequest.styles'
+} from './RequestTrip.styles'
 
 /**
- * Admin surface for triaging file requests. Reuses the shared FileRequestsList
- * in `admin` mode so reviewers can filter by status, respond, and attach files.
- * Intentionally unlinked — reachable only by navigating to /admin/file-requests.
+ * Admin surface for triaging trip requests. Reuses the shared TripRequestsList
+ * in `admin` mode so reviewers can filter by status and move requests through
+ * the workflow. Reached from the home "Request a trip" box when the signed-in
+ * user is an admin; the /admin/* routes are protected by the RequireAdmin guard.
  */
-export const FileRequestAdminPage = () => {
+export const RequestTripAdminPage = () => {
   const navigate = useNavigate()
 
   return (
@@ -32,14 +33,14 @@ export const FileRequestAdminPage = () => {
           </IconButton>
           <AdminPanelSettingsRoundedIcon color="primary" />
           <HeaderText>
-            <Typography variant="h5">File request admin</Typography>
+            <Typography variant="h5">Trip request admin</Typography>
             <Typography variant="body2" color="text.secondary">
-              Review incoming file requests, respond and attach files.
+              Review incoming requests and update their status.
             </Typography>
           </HeaderText>
         </PageHeader>
 
-        <FileRequestsList admin />
+        <TripRequestsList admin />
       </Shell>
     </PageRoot>
   )

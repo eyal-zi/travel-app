@@ -13,6 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from '../../common/auth/roles.decorator';
 import { TripRequestsService } from './trip-requests.service';
 import { CreateTripRequestDto } from './dto/create-trip-request.dto';
 import { FindTripRequestsDto } from './dto/find-trip-requests.dto';
@@ -41,6 +42,7 @@ export class TripRequestsController {
 
   // Admin update: change the status and/or the admin note (both optional).
   @Patch(':id')
+  @Roles('admin')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTripRequestDto,
@@ -50,6 +52,7 @@ export class TripRequestsController {
 
   // Admin attaches a file (any type) to a request. Multipart "file" part.
   @Post(':id/files')
+  @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
   addFile(
     @Param('id', ParseUUIDPipe) id: string,
@@ -60,6 +63,7 @@ export class TripRequestsController {
 
   // Admin removes a previously attached file.
   @Delete(':id/files/:fileId')
+  @Roles('admin')
   @HttpCode(204)
   removeFile(
     @Param('id', ParseUUIDPipe) id: string,
