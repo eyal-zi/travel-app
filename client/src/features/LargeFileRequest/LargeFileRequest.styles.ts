@@ -86,13 +86,13 @@ export const FormCard = styled('form')(({ theme }) => ({
   flexDirection: 'column',
   gap: theme.spacing(1.5),
   padding: theme.spacing(2.5),
+  // Scroll as a safety net at every size (not just md down) so a short laptop
+  // viewport can never let the map overrun the Search action — the flex
+  // children still fill the column when everything fits.
+  overflowY: 'auto',
   ...scrollbar(theme),
   [theme.breakpoints.down('md')]: {
     flex: 'none',
-    overflowY: 'auto',
-  },
-  [theme.breakpoints.down('sm')]: {
-    padding: theme.spacing(2.5),
   },
 }))
 
@@ -116,8 +116,9 @@ export const MapFrame = styled(Box)(({ theme }) => ({
   flex: 1,
   // Scale the map's height floor with the viewport so it shrinks on short
   // laptop screens (instead of forcing the card past the viewport) while still
-  // flexing to fill spare height on tall monitors.
-  minHeight: 'clamp(260px, 38svh, 460px)',
+  // flexing to fill spare height on tall monitors. Kept low enough that the
+  // fields + map + Search action fit a laptop column without overlapping.
+  minHeight: 'clamp(200px, 30svh, 460px)',
   borderRadius: 12,
   overflow: 'hidden',
   border: `1px solid ${theme.palette.divider}`,
