@@ -35,6 +35,7 @@ export const CalendarToolbar = ({
   onNext,
   onToday,
   onAddEvent,
+  canAdd,
 }: CalendarToolbarProps) => {
   const [selectedDate] = useSelectedDate()
   const formattedDate = selectedDate?.split('-').reverse().join('-')
@@ -77,11 +78,13 @@ export const CalendarToolbar = ({
           ))}
         </ViewToggle>
 
-        <Tooltip title="Add event">
-          <AddButton size="small" onClick={onAddEvent} aria-label="Add event">
-            <AddRoundedIcon fontSize="small" />
-          </AddButton>
-        </Tooltip>
+        {canAdd && (
+          <Tooltip title="Add event">
+            <AddButton size="small" onClick={onAddEvent} aria-label="Add event">
+              <AddRoundedIcon fontSize="small" />
+            </AddButton>
+          </Tooltip>
+        )}
       </Controls>
     </ToolbarRoot>
   )

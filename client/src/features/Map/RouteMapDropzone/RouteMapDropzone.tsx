@@ -18,6 +18,7 @@ import { todayKey } from '../../../common/utils/date'
 import type { MapProps } from '../../../common/components/Map/Map.types'
 import type { GeoLayer } from '../../../common/geo/geo.types'
 import { useRouteForDate, useSaveRoute } from '../queries/useRoute'
+import { useIsAdmin } from '../../Auth/useIsAdmin'
 import type { Route } from '../types/route.type'
 import {
   ActionBar,
@@ -59,6 +60,7 @@ export const RouteMapDropzone = ({
   zoom,
 }: RouteMapDropzoneProps) => {
   const [selectedDate] = useSelectedDate()
+  const canEdit = useIsAdmin()
   const { notification, notifyError, notifySuccess, close } = useNotification()
   const { layers, addFromFiles, remove, reset, replace } = useGeoLayers(notifyError)
   const [saving, setSaving] = useState(false)
@@ -125,6 +127,7 @@ export const RouteMapDropzone = ({
       <MapEditor
         center={center}
         zoom={zoom}
+        editable={canEdit}
         layers={layers}
         onLayersChange={replace}
         onAddFiles={addFromFiles}
@@ -157,11 +160,13 @@ export const RouteMapDropzone = ({
                     <ListItem
                       key={layer.id}
                       secondaryAction={
-                        <Tooltip title="Delete layer">
-                          <IconButton edge="end" size="small" onClick={() => handleDelete(layer.id)}>
-                            <DeleteOutlineRoundedIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                        canEdit ? (
+                          <Tooltip title="Delete layer">
+                            <IconButton edge="end" size="small" onClick={() => handleDelete(layer.id)}>
+                              <DeleteOutlineRoundedIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        ) : null
                       }
                     >
                       <LayerListItemIcon>
@@ -179,7 +184,7 @@ export const RouteMapDropzone = ({
           </>
         )}
 
-        {pending && (
+        {canEdit && pending && (
           <ActionBar>
             <ActionButton
               variant="contained"

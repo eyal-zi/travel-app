@@ -16,6 +16,7 @@ import {
   useSaveWeather,
   useDeleteWeather,
 } from '../queries/useWeather'
+import { useIsAdmin } from '../../Auth/useIsAdmin'
 import { ImageDropzone } from './components/ImageDropzone/ImageDropzone'
 import {
   DeleteButton,
@@ -32,6 +33,7 @@ type WeatherModalProps = {
 export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
   const [selectedDate] = useSelectedDate()
   const date = selectedDate ?? todayKey()
+  const canEdit = useIsAdmin()
 
   const [file, setFile] = useState<File | null>(null)
   const { notification, notifyError, notifySuccess, close } = useNotification()
@@ -96,22 +98,25 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
               onFileChange={setFile}
               imageUrl={existingUrl}
               loading={isLoading}
+              readOnly={!canEdit}
             />
           </DropzoneWrapper>
         </DialogContent>
 
         <DialogActions>
-          {existingUrl && (
+          {existingUrl && canEdit && (
             <DeleteButton onClick={handleDelete} disabled={busy}>
               {deleteWeather.isPending ? 'Deleting…' : 'Delete'}
             </DeleteButton>
           )}
           <Button onClick={onClose} color="inherit" disabled={busy}>
-            Cancel
+            {canEdit ? 'Cancel' : 'Close'}
           </Button>
-          <Button variant="contained" onClick={handleSave} disabled={!file || busy}>
-            {saveWeather.isPending ? 'Saving…' : 'Save'}
-          </Button>
+          {canEdit && (
+            <Button variant="contained" onClick={handleSave} disabled={!file || busy}>
+              {saveWeather.isPending ? 'Saving…' : 'Save'}
+            </Button>
+          )}
         </DialogActions>
       </StyledDialog>
 

@@ -15,6 +15,7 @@ export const FileDropzone = ({
   minHeight,
   idlePrompt = 'Drag a file here, or click to browse',
   activePrompt = 'Drop the file to add it',
+  readOnly = false,
   renderPreview,
 }: FileDropzoneProps) => {
   const [preview, setPreview] = useState<string | null>(null)
@@ -47,37 +48,33 @@ export const FileDropzone = ({
   })
 
   // A freshly picked file wins; otherwise fall back to the existing remote file.
-  // Either way the frame stays a drop target so it can be swapped out.
   const displayedSrc = preview ?? fileUrl
 
-  if (displayedSrc) {
-    return (
+  // Single render tree: the preview (editable keeps it a drop target to swap the
+  // file; watch-only just shows it), the loading spinner, or — when empty — a
+  // watch-only placeholder or the upload prompt.
+  return displayedSrc ? (
+    readOnly ? (
+      <PreviewFrame minHeight={minHeight}>{renderPreview(displayedSrc)}</PreviewFrame>
+    ) : (
       <PreviewFrame {...getRootProps()} minHeight={minHeight}>
         <input {...getInputProps()} />
         {renderPreview(displayedSrc)}
       </PreviewFrame>
     )
-  }
-
-  if (loading) {
-    return (
-      <LoadingFrame minHeight={minHeight}>
-        <CircularProgress />
-      </LoadingFrame>
-    )
-  }
-
-  return (
-    <DropPrompt
-      {...getRootProps()}
-      isDragActive={isDragActive}
-      minHeight={minHeight}
-    >
+  ) : loading ? (
+    <LoadingFrame minHeight={minHeight}>
+      <CircularProgress />
+    </LoadingFrame>
+  ) : readOnly ? (
+    <DropPrompt isDragActive={false} minHeight={minHeight}>
+      <Typography variant="body1">Nothing to show yet</Typography>
+    </DropPrompt>
+  ) : (
+    <DropPrompt {...getRootProps()} isDragActive={isDragActive} minHeight={minHeight}>
       <input {...getInputProps()} />
       <CloudUploadRoundedIcon />
-      <Typography variant="body1">
-        {isDragActive ? activePrompt : idlePrompt}
-      </Typography>
+      <Typography variant="body1">{isDragActive ? activePrompt : idlePrompt}</Typography>
     </DropPrompt>
   )
 }

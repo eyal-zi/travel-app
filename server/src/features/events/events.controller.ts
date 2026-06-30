@@ -9,6 +9,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { Roles } from '../../common/auth/roles.decorator';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { EventsService } from './events.service';
@@ -28,16 +29,19 @@ export class EventsController {
   }
 
   @Post()
+  @Roles('admin')
   create(@Body() dto: CreateEventDto) {
     return this.eventsService.create(dto);
   }
 
   @Put(':id')
+  @Roles('admin')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateEventDto) {
     return this.eventsService.update(id, dto);
   }
 
   @Delete(':id')
+  @Roles('admin')
   @HttpCode(204)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.eventsService.remove(id);

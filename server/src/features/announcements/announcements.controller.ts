@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Roles } from '../../common/auth/roles.decorator';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { AnnouncementsService } from './announcements.service';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
@@ -15,6 +16,7 @@ export class AnnouncementsController {
   }
 
   @Post()
+  @Roles('admin')
   create(@Body() dto: CreateAnnouncementDto) {
     return this.announcementsService.create(dto);
   }

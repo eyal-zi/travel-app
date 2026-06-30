@@ -24,6 +24,7 @@ export const MapEditor = ({
   onCloseNotification = noop,
   loading = false,
   dragPrompt = DEFAULT_PROMPT,
+  editable = true,
   center,
   zoom,
   children,
@@ -35,12 +36,13 @@ export const MapEditor = ({
     accept: acceptedFileTypes,
     noClick: true,
     noKeyboard: true,
+    disabled: !editable,
   })
 
   return (
     <DropzoneRoot {...getRootProps()}>
       <input {...getInputProps()} />
-      <Map center={center} zoom={zoom} layers={layers} editable onLayersChange={onLayersChange} />
+      <Map center={center} zoom={zoom} layers={layers} editable={editable} onLayersChange={onLayersChange} />
 
       {isDragActive && <DragOverlay>{dragPrompt}</DragOverlay>}
       {loading && <DragOverlay>Loading map…</DragOverlay>}

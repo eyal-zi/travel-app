@@ -18,6 +18,9 @@ export interface MapEditorProps {
   loading?: boolean
   // Overlay text shown while dragging a file over the map.
   dragPrompt?: string
+  // When false, the map is watch-only: the draw/edit/delete toolbar is hidden
+  // and file drag-and-drop is disabled. Defaults to true (fully editable).
+  editable?: boolean
   center?: LatLngTuple
   zoom?: number
   // Overlays rendered on top of the map (Save/Cancel bar, clear chip, layer list…).

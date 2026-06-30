@@ -10,6 +10,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { Roles } from '../../common/auth/roles.decorator';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { RouteDateQueryDto } from './dto/route-date-query.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
@@ -30,6 +31,7 @@ export class RoutesController {
   }
 
   @Delete()
+  @Roles('admin')
   @HttpCode(204)
   removeByDate(@Query() query: RouteDateQueryDto) {
     return this.routesService.removeByDate(query.date);
@@ -41,16 +43,19 @@ export class RoutesController {
   }
 
   @Post()
+  @Roles('admin')
   create(@Body() dto: CreateRouteDto) {
     return this.routesService.create(dto);
   }
 
   @Put(':id')
+  @Roles('admin')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateRouteDto) {
     return this.routesService.update(id, dto);
   }
 
   @Delete(':id')
+  @Roles('admin')
   @HttpCode(204)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.routesService.remove(id);

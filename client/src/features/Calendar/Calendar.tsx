@@ -15,6 +15,7 @@ import type { DateClickArg } from '@fullcalendar/interaction'
 import { differenceInCalendarDays, format } from 'date-fns'
 import { useSelectedDate } from '../../common/hooks/useSelectedDate'
 import { Notification } from '../../common/components/Notification/Notification'
+import { useIsAdmin } from '../Auth/useIsAdmin'
 import { CalendarRoot, EventContent, StyledCalendarWrapper } from './Calendar.styles'
 import { getMarkingIcon, resolveEventAppearance } from './eventStyles'
 import { EventDialog } from './components/EventDialog/EventDialog'
@@ -30,6 +31,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
   const calendarRef = useRef<FullCalendar>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [selectedDate, setSelectedDate] = useSelectedDate()
+  const canEdit = useIsAdmin()
 
   const {
     events,
@@ -140,6 +142,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
         onNext={() => getApi()?.next()}
         onToday={() => getApi()?.today()}
         onAddEvent={() => openCreate()}
+        canAdd={canEdit}
       />
 
       <StyledCalendarWrapper ref={wrapperRef}>
@@ -151,9 +154,9 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
           headerToolbar={false}
           height="100%"
           events={fcEvents}
-          selectable
+          selectable={canEdit}
           selectMirror
-          editable
+          editable={canEdit}
           dayMaxEvents={false}
           eventDisplay="block"
           eventContent={renderEventContent}
@@ -163,7 +166,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
           dayCellClassNames={(arg) =>
             selectedDate && format(arg.date, DATE_FMT) === selectedDate ? ['selected-day'] : []
           }
-          eventClick={handleEventClick}
+          eventClick={canEdit ? handleEventClick : undefined}
           eventDrop={moveEvent}
           eventResize={moveEvent}
           datesSet={(arg) => {

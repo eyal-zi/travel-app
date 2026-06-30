@@ -14,6 +14,9 @@ export type FileDropzoneProps = {
   minHeight?: number
   idlePrompt?: string
   activePrompt?: string
+  // When true, render watch-only: no click/drag upload affordance — just the
+  // preview, or a passive placeholder when there's no file.
+  readOnly?: boolean
   // Renders the picked/existing file. `src` is the object-URL preview when a new
   // file is selected, otherwise the existing remote URL.
   renderPreview: (src: string) => ReactNode

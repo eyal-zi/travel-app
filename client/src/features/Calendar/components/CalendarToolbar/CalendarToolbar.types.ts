@@ -8,4 +8,6 @@ export interface CalendarToolbarProps {
   onNext: () => void
   onToday: () => void
   onAddEvent: () => void
+  // Whether to show the "Add event" button (admins only).
+  canAdd: boolean
 }

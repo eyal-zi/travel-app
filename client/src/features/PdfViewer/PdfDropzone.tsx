@@ -6,6 +6,7 @@ import { UploadedTag } from '../../common/components/UploadedTag/UploadedTag'
 import { useNotification } from '../../common/hooks/useNotification'
 import { useSelectedDate } from '../../common/hooks/useSelectedDate'
 import { todayKey } from '../../common/utils/date'
+import { useIsAdmin } from '../Auth/useIsAdmin'
 import { PdfViewer } from './PdfViewer'
 import { usePdfForDate, useSavePdf, useDeletePdf } from './queries/usePdf'
 import { DeleteButton, PdfRoot } from './PdfDropzone.styles'
@@ -19,6 +20,7 @@ import { DeleteButton, PdfRoot } from './PdfDropzone.styles'
 export const PdfDropzone = () => {
   const [selectedDate] = useSelectedDate()
   const date = selectedDate ?? todayKey()
+  const canEdit = useIsAdmin()
 
   // The picked file drives the preview while the upload is in flight; afterwards
   // the cached record's signed URL takes over.
@@ -54,7 +56,7 @@ export const PdfDropzone = () => {
   return (
     <PdfRoot>
       <UploadedTag date={uploadedAt} />
-      {existingUrl && !file && (
+      {existingUrl && !file && canEdit && (
         <DeleteButton
           onClick={handleDelete}
           disabled={deletePdf.isPending}
@@ -73,6 +75,7 @@ export const PdfDropzone = () => {
         accept={{ 'application/pdf': ['.pdf'] }}
         idlePrompt="Drag a PDF here, or click to browse"
         activePrompt="Drop the PDF to add it"
+        readOnly={!canEdit}
         renderPreview={(src) => <PdfViewer url={src} />}
       />
 

@@ -31,9 +31,7 @@ export class GroupsGuard implements CanActivate {
     const user = request.user as AuthenticatedUser | undefined;
     const groups = user?.groups ?? [];
     if (!groups.includes(requiredGroup)) {
-      throw new ForbiddenException(
-        `Missing required group "${requiredGroup}"`,
-      );
+      throw new ForbiddenException(`Missing required group "${requiredGroup}"`);
     }
     return true;
   }

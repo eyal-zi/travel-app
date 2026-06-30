@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from '../../common/auth/roles.decorator';
 import { CreatePdfDto } from './dto/create-pdf.dto';
 import { FindPdfDto } from './dto/find-pdf.dto';
 import { PdfService } from './pdf.service';
@@ -30,6 +31,7 @@ export class PdfController {
   // Multipart upload: a "file" part plus a "date" field. Uploads the PDF to S3
   // and returns the stored record with a signed URL.
   @Post()
+  @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
   create(
     @UploadedFile(
@@ -46,6 +48,7 @@ export class PdfController {
   // Soft-deletes the stored PDF for a given date so the view falls back to the
   // closest preceding date. A no-op (still 204) if that date had no PDF.
   @Delete()
+  @Roles('admin')
   @HttpCode(204)
   remove(@Query() query: FindPdfDto) {
     return this.pdfService.softDeleteByDate(query.date);

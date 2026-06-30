@@ -1,6 +1,7 @@
 import { useAnnouncements } from './queries/useAnnouncements'
 import { AnnouncementsList } from './components/AnnouncementsList/AnnouncementsList'
 import { AnnouncementComposer } from './components/AnnouncementComposer/AnnouncementComposer'
+import { useIsAdmin } from '../Auth/useIsAdmin'
 import { Root } from './Announcements.styles'
 
 export const Announcements = () => {
@@ -17,6 +18,7 @@ export const Announcements = () => {
     postError,
     resetPostError,
   } = useAnnouncements()
+  const canPost = useIsAdmin()
 
   return (
     <Root>
@@ -29,12 +31,14 @@ export const Announcements = () => {
         isFetchingNextPage={isFetchingNextPage}
         fetchNextPage={fetchNextPage}
       />
-      <AnnouncementComposer
-        onSend={add}
-        isPosting={isPosting}
-        postError={postError}
-        resetPostError={resetPostError}
-      />
+      {canPost && (
+        <AnnouncementComposer
+          onSend={add}
+          isPosting={isPosting}
+          postError={postError}
+          resetPostError={resetPostError}
+        />
+      )}
     </Root>
   )
 }
