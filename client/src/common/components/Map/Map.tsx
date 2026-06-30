@@ -23,6 +23,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
+// Leaflet's attribution control ships with a default "Leaflet" prefix. Setting
+// the prefix to false here strips it at runtime (robust to HMR reusing the map
+// instance, where the `attributionControl` creation-time prop wouldn't re-apply).
+const HideAttribution = () => {
+  const map = useMap()
+  useEffect(() => {
+    map.attributionControl?.setPrefix(false)
+  }, [map])
+  return null
+}
+
 const FitBounds = ({ layers }: { layers: GeoLayer[] }) => {
   const map = useMap()
   // Fit on load and when layers are added/removed, but not on every geometry
@@ -54,10 +65,8 @@ export const Map = ({
     <MapRoot>
       <MapContainer center={center} zoom={zoom} scrollWheelZoom worldCopyJump zoomControl={false}
       >
-        <TileLayer
-          url={import.meta.env.VITE_MAP_TILE_URL}
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+        <HideAttribution />
+        <TileLayer url={import.meta.env.VITE_MAP_TILE_URL} />
         {/* Editable mode renders shapes into a Geoman-managed group instead of
             the read-only GeoJSON layers, so the two never fight over the DOM. */}
         {editable ? (

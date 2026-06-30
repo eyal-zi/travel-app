@@ -1,33 +1,9 @@
-import type { ReactNode } from 'react'
 import { useDropzone } from 'react-dropzone'
-import type { LatLngTuple } from 'leaflet'
 import { Map } from '../Map/Map'
 import { Notification } from '../Notification/Notification'
 import { acceptedFileTypes } from '../../geo/parsers'
-import type { Notification as NotificationData } from '../../hooks/useNotification'
-import type { GeoLayer } from '../../geo/geo.types'
 import { DragOverlay, DropzoneRoot } from './MapEditor.styles'
-
-export interface MapEditorProps {
-  // The layers to display/edit. The caller owns this state.
-  layers: GeoLayer[]
-  // Toolbar draw/edit/delete edits report the full new layer set here.
-  onLayersChange: (layers: GeoLayer[]) => void
-  // Dropped geo files (KML/SHP/CSV/Excel) are handed off here for parsing.
-  onAddFiles: (files: File[]) => void | Promise<unknown>
-  // Transient notification surfaced over the map (parse/save/load feedback),
-  // owned by the caller via `useNotification`.
-  notification?: NotificationData | null
-  onCloseNotification?: () => void
-  // Shows a "Loading map…" overlay while the caller fetches the baseline.
-  loading?: boolean
-  // Overlay text shown while dragging a file over the map.
-  dragPrompt?: string
-  center?: LatLngTuple
-  zoom?: number
-  // Overlays rendered on top of the map (Save/Cancel bar, clear chip, layer list…).
-  children?: ReactNode
-}
+import type { MapEditorProps } from './MapEditor.types'
 
 const DEFAULT_PROMPT = 'Drop a KML, SHP, CSV or Excel file to add it to the map'
 const noop = () => {}
