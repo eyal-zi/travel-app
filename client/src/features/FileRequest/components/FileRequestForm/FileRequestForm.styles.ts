@@ -40,11 +40,14 @@ export const FormSide = styled(Box)(({ theme }) => ({
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: 'relative',
   flex: 1,
-  minHeight: 500,
+  // Scale the map's height floor with the viewport so it shrinks on short
+  // laptop screens (instead of forcing the card past the viewport) while still
+  // flexing to fill spare height on tall monitors.
+  minHeight: 'clamp(260px, 38svh, 500px)',
   borderRadius: 12,
   overflow: 'hidden',
   border: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.down('md')]: {
-    minHeight: 420,
+    minHeight: 'clamp(260px, 48svh, 420px)',
   },
 }))

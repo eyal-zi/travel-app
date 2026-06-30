@@ -114,13 +114,16 @@ export const MapField = styled(Field)({
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: 'relative',
   flex: 1,
-  minHeight: 460,
+  // Scale the map's height floor with the viewport so it shrinks on short
+  // laptop screens (instead of forcing the card past the viewport) while still
+  // flexing to fill spare height on tall monitors.
+  minHeight: 'clamp(260px, 38svh, 460px)',
   borderRadius: 12,
   overflow: 'hidden',
   border: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.down('md')]: {
     flex: 'none',
-    height: 400,
+    minHeight: 'clamp(260px, 48svh, 400px)',
   },
 }))
 
