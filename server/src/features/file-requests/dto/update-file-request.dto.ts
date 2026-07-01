@@ -6,7 +6,8 @@ import {
 
 // Body for an admin update. Both fields are optional: an admin can advance the
 // workflow `status`, write/clear the `adminNote` (an empty string clears it), or
-// both at once. Files are attached via the separate /files endpoints.
+// both at once. A fulfilling large file is created via the separate /respond
+// endpoint.
 export class UpdateFileRequestDto {
   @IsOptional()
   @IsIn(requestStatus.enumValues)

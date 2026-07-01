@@ -1,4 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+import { extname } from 'path';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   and,
   between,
@@ -21,7 +23,9 @@ import {
   keysetCondition,
   type Page,
 } from '../../common/pagination/keyset';
-import { largeFiles } from './large-files.schema';
+import { S3Service } from '../../common/storage/s3.service';
+import { largeFileFiles, largeFiles } from './large-files.schema';
+import { CreateLargeFileDto } from './dto/create-large-file.dto';
 import { SearchLargeFilesDto } from './dto/search-large-files.dto';
 
 // A search hit: the stored metadata plus its footprint as GeoJSON.
@@ -37,13 +41,35 @@ export interface LargeFileResult {
   createdAt: string;
 }
 
+// The metadata row shape shared by the search query and the create path (geometry
+// already parsed to GeoJSON, createdAt still a Date) — mapped to LargeFileResult
+// by `toResult`.
+interface LargeFileRow {
+  id: string;
+  name: string;
+  fileType: string;
+  accuracy: number;
+  country: string | null;
+  coverageDate: string | null;
+  sizeBytes: number;
+  geometry: Geometry;
+  createdAt: Date;
+}
+
 export type LargeFilePage = Page<LargeFileResult>;
 
 const DEFAULT_LIMIT = 20;
 
+const LARGE_FILE_BUCKET = process.env.S3_LARGE_FILE_BUCKET ?? 'large-files';
+
 @Injectable()
 export class LargeFilesService {
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+  private readonly logger = new Logger(LargeFilesService.name);
+
+  constructor(
+    @Inject(DRIZZLE) private readonly db: DrizzleDB,
+    private readonly s3: S3Service,
+  ) {}
 
   // Newest-first page of large files matching the given filters. Accuracy is an
   // inclusive ±1 band, file types an IN-list, and the area an intersection test.
@@ -67,17 +93,7 @@ export class LargeFilesService {
     ];
 
     const rows = await this.db
-      .select({
-        id: largeFiles.id,
-        name: largeFiles.name,
-        fileType: largeFiles.fileType,
-        accuracy: largeFiles.accuracy,
-        country: largeFiles.country,
-        coverageDate: largeFiles.coverageDate,
-        sizeBytes: largeFiles.sizeBytes,
-        createdAt: largeFiles.createdAt,
-        geometry: sql<string>`ST_AsGeoJSON(${largeFiles.geom})`,
-      })
+      .select(this.resultColumns())
       .from(largeFiles)
       .where(and(...conditions))
       .orderBy(desc(largeFiles.createdAt), desc(largeFiles.id))
@@ -88,7 +104,103 @@ export class LargeFilesService {
       id: row.id,
     }));
 
-    const items: LargeFileResult[] = page.items.map((row) => ({
+    return {
+      items: page.items.map((row) => this.toResult(row)),
+      nextCursor: page.nextCursor,
+    };
+  }
+
+  // Creates a large file from admin-supplied metadata plus the uploaded file.
+  // The file is stored in S3 and recorded in `large_file_files` (joined on read);
+  // the footprint is written as a PostGIS geometry via ST_GeomFromGeoJSON. Returns
+  // the record as a search-style result so callers can render it immediately.
+  async create(
+    dto: CreateLargeFileDto,
+    file: Express.Multer.File,
+  ): Promise<LargeFileResult> {
+    const geometry = this.toSingleGeometry(dto.area);
+
+    const [row] = await this.db
+      .insert(largeFiles)
+      .values({
+        name: dto.name,
+        fileType: dto.fileType,
+        accuracy: dto.accuracy,
+        country: dto.country ?? null,
+        coverageDate: dto.coverageDate ?? null,
+        sizeBytes: file.size,
+        geom: sql`ST_SetSRID(ST_GeomFromGeoJSON(${JSON.stringify(geometry)}), 4326)`,
+      })
+      .returning({ id: largeFiles.id, createdAt: largeFiles.createdAt });
+
+    const key = `${randomUUID()}${extname(file.originalname)}`;
+    await this.s3.uploadFile({
+      key,
+      body: file.buffer,
+      bucket: LARGE_FILE_BUCKET,
+      contentType: file.mimetype,
+    });
+
+    await this.db.insert(largeFileFiles).values({
+      largeFileId: row.id,
+      fileKey: key,
+      fileName: file.originalname,
+      contentType: file.mimetype,
+    });
+
+    this.logger.log(`Created large file ${row.id}`);
+    return this.toResult({
+      id: row.id,
+      name: dto.name,
+      fileType: dto.fileType,
+      accuracy: dto.accuracy,
+      country: dto.country ?? null,
+      coverageDate: dto.coverageDate ?? null,
+      sizeBytes: file.size,
+      geometry,
+      createdAt: row.createdAt,
+    });
+  }
+
+  // Loads large files by id as search-style results, keyed by id. Used to enrich
+  // fulfilled file requests with their linked large file in one query.
+  async findResultsByIds(
+    ids: string[],
+  ): Promise<Map<string, LargeFileResult>> {
+    if (ids.length === 0) return new Map();
+    const rows = await this.db
+      .select(this.resultColumns())
+      .from(largeFiles)
+      .where(inArray(largeFiles.id, ids));
+    return new Map(rows.map((row) => [row.id, this.toResult(row)]));
+  }
+
+  // The column selection shared by every read: metadata plus the footprint as
+  // GeoJSON text (parsed by `toResult`).
+  private resultColumns() {
+    return {
+      id: largeFiles.id,
+      name: largeFiles.name,
+      fileType: largeFiles.fileType,
+      accuracy: largeFiles.accuracy,
+      country: largeFiles.country,
+      coverageDate: largeFiles.coverageDate,
+      sizeBytes: largeFiles.sizeBytes,
+      createdAt: largeFiles.createdAt,
+      geometry: sql<string>`ST_AsGeoJSON(${largeFiles.geom})`,
+    } as const;
+  }
+
+  // Maps a DB row (geometry as GeoJSON string or already-parsed object) to the
+  // API result shape.
+  private toResult(
+    row: (Omit<LargeFileRow, 'geometry'> & { geometry: string }) | LargeFileRow,
+  ): LargeFileResult {
+    const geometry =
+      typeof row.geometry === 'string'
+        ? (JSON.parse(row.geometry) as Geometry)
+        : row.geometry;
+    return {
       id: row.id,
       name: row.name,
       fileType: row.fileType,
@@ -96,11 +208,20 @@ export class LargeFilesService {
       country: row.country,
       coverageDate: row.coverageDate,
       sizeBytes: row.sizeBytes,
-      geometry: JSON.parse(row.geometry) as Geometry,
+      geometry,
       createdAt: row.createdAt.toISOString(),
-    }));
+    };
+  }
 
-    return { items, nextCursor: page.nextCursor };
+  // Collapses a drawn area (a FeatureCollection) into one geometry to store: the
+  // lone geometry when there is a single feature, otherwise a GeometryCollection.
+  private toSingleGeometry(area: FeatureCollection): Geometry {
+    const geometries = area.features
+      .map((feature) => feature.geometry)
+      .filter((geometry): geometry is Geometry => Boolean(geometry));
+    return geometries.length === 1
+      ? geometries[0]
+      : { type: 'GeometryCollection', geometries };
   }
 
   // Match records intersecting the drawn area. ORs a per-feature ST_Intersects

@@ -70,3 +70,22 @@ export const largeFiles = pgTable(
 
 export type LargeFile = typeof largeFiles.$inferSelect;
 export type NewLargeFile = typeof largeFiles.$inferInsert;
+
+// The single uploaded file backing a large file. Kept in its own table (joined on
+// read) rather than as columns on `large_files` so the searchable metadata row
+// stays clean. One file per large file (unique FK). The file lives in S3 under
+// `fileKey`; the original `fileName`/`contentType` are kept for download.
+export const largeFileFiles = pgTable('large_file_files', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  largeFileId: uuid('large_file_id')
+    .notNull()
+    .unique()
+    .references(() => largeFiles.id, { onDelete: 'cascade' }),
+  fileKey: text('file_key').notNull(),
+  fileName: text('file_name').notNull(),
+  contentType: text('content_type').notNull(),
+  ...creationTimestamp(),
+});
+
+export type LargeFileFile = typeof largeFileFiles.$inferSelect;
+export type NewLargeFileFile = typeof largeFileFiles.$inferInsert;

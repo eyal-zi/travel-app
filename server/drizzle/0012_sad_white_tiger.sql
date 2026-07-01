@@ -1,0 +1,1 @@
+DROP TABLE "file_request_files" CASCADE;

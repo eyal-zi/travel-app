@@ -4,6 +4,7 @@
 import type { FeatureCollection } from 'geojson'
 import type { SelectOption } from '../../common/types'
 import type { RequestStatus } from '../../common/requests/requestStatus'
+import type { LargeFileResult } from '../LargeFileRequest/types'
 
 export type CreateFileRequest = {
   tripGoal: string
@@ -22,20 +23,14 @@ export type CreateFileRequest = {
 
 export type FileRequestStatus = RequestStatus
 
-// A file the admin attached to a request, with a short-lived URL to download it.
-export type FileRequestFile = {
-  id: string
-  fileName: string
-  contentType: string
-  signedUrl: string
-}
-
 export type FileRequest = CreateFileRequest & {
   id: string
   status: FileRequestStatus
   // Admin's free-form response, or null until one is written.
   adminNote: string | null
-  files: FileRequestFile[]
+  // The large file created to fulfil this request, rendered to the requester as a
+  // search-style card. Null until an admin responds.
+  largeFile: LargeFileResult | null
   // Username of the requester (shown to admins) and of the admin who last updated
   // the request (shown to the requester). Null until set / user unknown.
   createdByUsername: string | null

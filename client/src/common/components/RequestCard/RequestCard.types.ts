@@ -20,11 +20,19 @@ export type RequestCardProps = {
   open: boolean
   onOpen: () => void
   onClose: () => void
-  draft: RequestDraft
+  // The draft consumed by the default response dialog. Omit when supplying a
+  // feature-specific dialog via `renderDialog`.
+  draft?: RequestDraft
   // When true, the dialog opens in admin mode (status/note/file editor).
   admin?: boolean
   // The feature-specific detail fields rendered inside the card's grid.
   children: ReactNode
+  // When set, renders this instead of the default shared response dialog — used by
+  // file requests, whose response dialog is a large-file creation form.
+  renderDialog?: () => ReactNode
+  // Shows a "File ready" indicator on the card (file requests fulfilled by a
+  // large file, which carry no `files`).
+  fulfilled?: boolean
 }
 
 // A labelled single-value detail field.

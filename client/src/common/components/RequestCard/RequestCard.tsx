@@ -37,10 +37,12 @@ export const RequestCard = ({
   draft,
   admin,
   children,
+  renderDialog,
+  fulfilled,
 }: RequestCardProps) => {
   const status = REQUEST_STATUS_META[request.status] ?? REQUEST_STATUS_META.received
   const hasNote = Boolean(request.adminNote)
-  const fileCount = request.files.length
+  const fileCount = request.files?.length ?? 0
 
   return (
     <>
@@ -103,7 +105,7 @@ export const RequestCard = ({
           </FooterMeta>
 
           {/* Small indicators that the admin has responded. */}
-          {(hasNote || fileCount > 0) && (
+          {(hasNote || fileCount > 0 || fulfilled) && (
             <Indicators>
               {hasNote && (
                 <Chip
@@ -123,18 +125,33 @@ export const RequestCard = ({
                   variant="outlined"
                 />
               )}
+              {fulfilled && (
+                <Chip
+                  icon={<AttachFileRoundedIcon />}
+                  label="File ready"
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              )}
             </Indicators>
           )}
         </Footer>
       </Card>
 
-      <RequestResponseDialog
-        open={open}
-        onClose={onClose}
-        request={request}
-        draft={draft}
-        admin={admin}
-      />
+      {renderDialog ? (
+        renderDialog()
+      ) : (
+        draft && (
+          <RequestResponseDialog
+            open={open}
+            onClose={onClose}
+            request={request}
+            draft={draft}
+            admin={admin}
+          />
+        )
+      )}
     </>
   )
 }

@@ -47,6 +47,8 @@ export const RequestAdminEditor = ({ request, draft }: RequestAdminEditorProps) 
     toggleRemoveExisting,
   } = draft
 
+  const files = request.files ?? []
+
   return (
     <AdminSections>
       <Section>
@@ -98,13 +100,13 @@ export const RequestAdminEditor = ({ request, draft }: RequestAdminEditorProps) 
           Attachments
         </SectionLabel>
 
-        {request.files.length === 0 && stagedFiles.length === 0 && (
+        {files.length === 0 && stagedFiles.length === 0 && (
           <Typography variant="body2" color="text.secondary">
             No files attached.
           </Typography>
         )}
 
-        {request.files.map((file) => {
+        {files.map((file) => {
           const markedForRemoval = removedFileIds.includes(file.id)
           return (
             <FileRow key={file.id}>

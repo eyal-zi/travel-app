@@ -6,7 +6,6 @@ import api from '../../../common/api/axios'
 import type {
   CreateFileRequest,
   FileRequest,
-  FileRequestFile,
   FileRequestPage,
   FileRequestStatus,
 } from '../types'
@@ -27,14 +26,9 @@ export const fileRequestService = {
     payload: { status?: FileRequestStatus; adminNote?: string },
   ) => api.patch<FileRequest>(`/api/file-requests/${id}`, payload),
 
-  // Attaches a file. Multipart "file" part; axios infers the Content-Type and
-  // boundary from the FormData body.
-  addFile: (id: string, file: File) => {
-    const form = new FormData()
-    form.append('file', file)
-    return api.post<FileRequestFile>(`/api/file-requests/${id}/files`, form)
-  },
-
-  removeFile: (id: string, fileId: string) =>
-    api.delete(`/api/file-requests/${id}/files/${fileId}`),
+  // Admin response: creates the fulfilling large file and links it. The FormData
+  // carries the uploaded "file" part plus the large-file metadata fields (with
+  // `area` as a JSON string); axios infers the multipart Content-Type/boundary.
+  respond: (id: string, form: FormData) =>
+    api.post<FileRequest>(`/api/file-requests/${id}/respond`, form),
 }

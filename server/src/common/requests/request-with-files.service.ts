@@ -47,59 +47,60 @@ export interface RequestUpdate {
   adminNote?: string;
 }
 
-// Tables and columns the shared queries touch. They are typed loosely
-// (PgTable/PgColumn) because the base is reused across two table sets; the concrete
-// row types arrive through the TRequest/TFile generics and results are asserted to
-// them at the (few) query boundaries below.
-export interface RequestServiceConfig {
+// Tables and columns the base (file-agnostic) queries touch. Typed loosely
+// (PgTable/PgColumn) because the base is reused across feature table sets; the
+// concrete row types arrive through the TRequest generic and results are asserted
+// to them at the (few) query boundaries below.
+export interface RequestBaseConfig {
   requestTable: PgTable;
-  fileTable: PgTable;
   idColumn: PgColumn;
   createdAtColumn: PgColumn;
   statusColumn: PgColumn;
   // FK columns to `users.id`: who submitted the request and who last updated it.
   createdByColumn: PgColumn;
   updatedByColumn: PgColumn;
-  fileForeignKeyColumn: PgColumn;
-  fileCreatedAtColumn: PgColumn;
-  fileIdColumn: PgColumn;
   // The users table and its id/username columns, joined to resolve the created-by
   // and updated-by usernames on read.
   userTable: PgTable;
   userIdColumn: PgColumn;
   userNameColumn: PgColumn;
-  bucket: string;
   // Singular label for log lines and 404 messages, e.g. "Trip request".
   label: string;
 }
 
+// Adds the file-collection tables/bucket the file-attach behaviour needs.
+export interface RequestServiceConfig extends RequestBaseConfig {
+  fileTable: PgTable;
+  fileForeignKeyColumn: PgColumn;
+  fileCreatedAtColumn: PgColumn;
+  fileIdColumn: PgColumn;
+  bucket: string;
+}
+
 const DEFAULT_LIMIT = 20;
 
-// Shared implementation for the trip-request and file-request features, which are
-// identical apart from their tables, S3 bucket and labels: a newest-first keyset
-// page of requests (each carrying its admin note and attached files), create, an
-// admin status/note update, and file attach/remove. A subclass supplies `config`.
-export abstract class RequestWithFilesService<
+// Shared implementation for the request features (trip requests, file requests):
+// a newest-first keyset page of requests with resolved usernames, create, and an
+// admin status/note update. Subclasses supply `config` and may override `enrich`
+// to attach feature-specific data (e.g. files, a linked large file) on read.
+export abstract class RequestService<
   TRequest extends RequestRow,
-  TFile extends RequestFileRow,
   TCreate,
+  TItem = TRequest & RequestUsernames,
 > {
   protected readonly logger = new Logger(this.constructor.name);
 
-  protected abstract readonly config: RequestServiceConfig;
+  protected abstract readonly config: RequestBaseConfig;
 
-  constructor(
-    protected readonly db: DrizzleDB,
-    protected readonly s3: S3Service,
-  ) {}
+  constructor(protected readonly db: DrizzleDB) {}
 
   // Newest-first page, optionally filtered by status. Fetches limit + 1 rows to
-  // tell whether an older page exists, then trims and exposes the keyset cursor.
+  // tell whether an older page exists, then trims, enriches and exposes the cursor.
   async findPage(
     limit = DEFAULT_LIMIT,
     cursor?: string,
     status?: RequestStatus,
-  ): Promise<Page<WithFiles<TRequest, TFile>>> {
+  ): Promise<Page<TItem>> {
     const {
       requestTable,
       createdAtColumn,
@@ -141,8 +142,17 @@ export abstract class RequestWithFilesService<
       createdAt: row.createdAt,
       id: row.id,
     }));
-    const items = await this.attachFiles(page.items);
+    const items = await this.enrich(page.items);
     return { items, nextCursor: page.nextCursor };
+  }
+
+  // Attaches feature-specific data to a page of requests on read. The base only
+  // resolves usernames, so the default is the identity; subclasses override to add
+  // files, a linked record, etc.
+  protected async enrich(
+    rows: (TRequest & RequestUsernames)[],
+  ): Promise<TItem[]> {
+    return rows as unknown as TItem[];
   }
 
   // `status` is omitted from the insert so it falls back to the column default.
@@ -190,6 +200,56 @@ export abstract class RequestWithFilesService<
     }
     this.logger.log(`Updated ${this.lowerLabel} ${id}`);
     return row;
+  }
+
+  protected async ensureExists(id: string): Promise<void> {
+    const [row] = (await this.db
+      .select({ id: this.config.idColumn })
+      .from(this.config.requestTable)
+      .where(eq(this.config.idColumn, id))
+      .limit(1)) as { id: string }[];
+    if (!row) {
+      throw new NotFoundException(`${this.config.label} ${id} not found`);
+    }
+  }
+
+  // JS field name (e.g. "tripRequestId") of a column on a table — used to set a
+  // column by name on insert/update and to read one back off a row when grouping.
+  protected columnName(table: PgTable, column: PgColumn): string {
+    const columns = getTableColumns(table);
+    const name = Object.keys(columns).find((key) => columns[key] === column);
+    if (!name) {
+      throw new Error('Configured column not found on table');
+    }
+    return name;
+  }
+
+  protected get lowerLabel(): string {
+    return this.config.label.toLowerCase();
+  }
+}
+
+// Extends the base with an admin-attached file collection: files are grouped onto
+// each request on read (via the overridden `enrich`), and can be attached/removed
+// individually. A subclass supplies `config` (including the file table and bucket).
+export abstract class RequestWithFilesService<
+  TRequest extends RequestRow,
+  TFile extends RequestFileRow,
+  TCreate,
+> extends RequestService<TRequest, TCreate, WithFiles<TRequest, TFile>> {
+  protected abstract readonly config: RequestServiceConfig;
+
+  constructor(
+    db: DrizzleDB,
+    protected readonly s3: S3Service,
+  ) {
+    super(db);
+  }
+
+  protected async enrich(
+    rows: (TRequest & RequestUsernames)[],
+  ): Promise<WithFiles<TRequest, TFile>[]> {
+    return this.attachFiles(rows);
   }
 
   // Attaches a file to a request. Stored under a uuid-based S3 key (keeping the
@@ -245,17 +305,6 @@ export abstract class RequestWithFilesService<
     this.logger.log(`Removed file ${fileId} from ${this.lowerLabel} ${id}`);
   }
 
-  protected async ensureExists(id: string): Promise<void> {
-    const [row] = (await this.db
-      .select({ id: this.config.idColumn })
-      .from(this.config.requestTable)
-      .where(eq(this.config.idColumn, id))
-      .limit(1)) as { id: string }[];
-    if (!row) {
-      throw new NotFoundException(`${this.config.label} ${id} not found`);
-    }
-  }
-
   // Loads the files for a set of requests in one query and groups them onto each
   // request. Signed URLs are generated locally (no network) and download as the
   // original filename.
@@ -301,20 +350,5 @@ export abstract class RequestWithFilesService<
       `attachment; filename="${file.fileName}"`,
     );
     return { ...file, signedUrl };
-  }
-
-  // JS field name (e.g. "tripRequestId") of a column on a table — used to set a
-  // column by name on insert/update and to read one back off a row when grouping.
-  private columnName(table: PgTable, column: PgColumn): string {
-    const columns = getTableColumns(table);
-    const name = Object.keys(columns).find((key) => columns[key] === column);
-    if (!name) {
-      throw new Error('Configured column not found on table');
-    }
-    return name;
-  }
-
-  private get lowerLabel(): string {
-    return this.config.label.toLowerCase();
   }
 }

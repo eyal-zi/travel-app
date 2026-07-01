@@ -1,8 +1,9 @@
 import { index, jsonb, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import type { FeatureCollection } from 'geojson';
-import { creationTimestamp, timestamps } from '../../common/database/columns';
+import { timestamps } from '../../common/database/columns';
 import { requestStatus } from '../../common/database/enums';
 import { users } from '../auth/users.schema';
+import { largeFiles } from '../large-files/large-files.schema';
 
 // A request from a user asking the admin to produce a new file for a trip.
 // Like trip requests, rows are created via POST and carry a workflow `status`
@@ -38,6 +39,9 @@ export const fileRequests = pgTable(
     // The admin who last updated the request (status/note). Joined to `users` on
     // read so the requester can see who handled it. Null until an admin updates it.
     updatedBy: uuid('updated_by').references(() => users.id),
+    // The large file created to fulfil this request, if any. Set when an admin
+    // responds; joined on read so the requester sees it as a search-style card.
+    largeFileId: uuid('large_file_id').references(() => largeFiles.id),
     ...timestamps(),
   },
   (table) => [
@@ -51,20 +55,3 @@ export const fileRequests = pgTable(
 
 export type FileRequest = typeof fileRequests.$inferSelect;
 export type NewFileRequest = typeof fileRequests.$inferInsert;
-
-// Files an admin attaches to a file request as part of their response. A request
-// can have any number of these (many-to-one). Files are stored in S3 under
-// `fileKey`; we keep the original `fileName`/`contentType` for download.
-export const fileRequestFiles = pgTable('file_request_files', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  fileRequestId: uuid('file_request_id')
-    .notNull()
-    .references(() => fileRequests.id, { onDelete: 'cascade' }),
-  fileKey: text('file_key').notNull(),
-  fileName: text('file_name').notNull(),
-  contentType: text('content_type').notNull(),
-  ...creationTimestamp(),
-});
-
-export type FileRequestFile = typeof fileRequestFiles.$inferSelect;
-export type NewFileRequestFile = typeof fileRequestFiles.$inferInsert;

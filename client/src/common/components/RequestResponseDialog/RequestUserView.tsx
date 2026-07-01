@@ -27,6 +27,7 @@ type RequestUserViewProps = {
 /** Read-only requester view: the admin's response note and downloadable files. */
 export const RequestUserView = ({ request }: RequestUserViewProps) => {
   const hasNote = Boolean(request.adminNote)
+  const files = request.files ?? []
 
   return (
     <UserSections>
@@ -62,10 +63,10 @@ export const RequestUserView = ({ request }: RequestUserViewProps) => {
 
       <Section>
         <SectionLabel variant="overline" color="text.secondary">
-          Attachments{request.files.length > 0 ? ` · ${request.files.length}` : ''}
+          Attachments{files.length > 0 ? ` · ${files.length}` : ''}
         </SectionLabel>
-        {request.files.length > 0 ? (
-          request.files.map((file) => (
+        {files.length > 0 ? (
+          files.map((file) => (
             <FileCard
               key={file.id}
               component="a"

@@ -16,7 +16,9 @@ export type RequestSummary = {
   tripGoal: string
   status: RequestStatus
   adminNote: string | null
-  files: RequestFile[]
+  // Admin-attached files (trip requests). Optional: file requests fulfil via a
+  // linked large file instead, so they omit this.
+  files?: RequestFile[]
   // Username of the requester (shown to admins) and of the admin who last handled
   // the request (shown to the requester). Null until set / user unknown.
   createdByUsername: string | null

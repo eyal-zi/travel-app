@@ -6,14 +6,15 @@ import {
 } from '../../../../common/components/RequestCard/RequestCardFields'
 import { useOpenRequestId } from '../../../../common/hooks/useOpenRequestId'
 import { LARGE_FILE_TYPE_OPTIONS } from '../../../../common/constants/fileTypes'
-import { useFileRequestDraft } from '../FileRequestResponseDialog/useFileRequestDraft'
+import { useFileRequestResponseDraft } from '../FileRequestResponseDialog/useFileRequestResponseDraft'
+import { FileRequestResponseDialog } from '../FileRequestResponseDialog/FileRequestResponseDialog'
 import { GEO_OPTIONS } from '../../types'
 import type { FileRequestItemProps } from './FileRequestItem.types'
 
 export const FileRequestItem = ({ request, admin }: FileRequestItemProps) => {
   const { openId, openRequest, closeRequest } = useOpenRequestId()
   const open = openId === request.id
-  const draft = useFileRequestDraft(request, open)
+  const draft = useFileRequestResponseDraft(request, open)
 
   const areaCount = request.area.features.length
 
@@ -23,8 +24,17 @@ export const FileRequestItem = ({ request, admin }: FileRequestItemProps) => {
       open={open}
       onOpen={() => openRequest(request.id)}
       onClose={closeRequest}
-      draft={draft}
       admin={admin}
+      fulfilled={Boolean(request.largeFile)}
+      renderDialog={() => (
+        <FileRequestResponseDialog
+          open={open}
+          onClose={closeRequest}
+          request={request}
+          draft={draft}
+          admin={admin}
+        />
+      )}
     >
       <Field label="Country" value={request.country} />
       <Field label="Agency" value={request.agency} />
