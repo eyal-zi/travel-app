@@ -12,12 +12,17 @@ import { HeaderText, PageHeader, PageRoot, Shell } from './AdminPageShell.styles
  * when the signed-in user is an admin; the /admin/* routes are protected by the
  * RequireAdmin guard.
  */
-export const AdminPageShell = ({ title, subtitle, children }: AdminPageShellProps) => {
+export const AdminPageShell = ({
+  title,
+  subtitle,
+  maxWidth,
+  children,
+}: AdminPageShellProps) => {
   const navigate = useNavigate()
 
   return (
     <PageRoot>
-      <Shell>
+      <Shell maxWidth={maxWidth}>
         <PageHeader>
           <IconButton
             type="button"

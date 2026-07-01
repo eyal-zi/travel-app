@@ -16,10 +16,13 @@ export const PageRoot = styled(Box)(({ theme }) => ({
 }))
 
 // Centered column holding the header and the admin content, filling the page
-// height so the content below can grow into the remaining space.
-export const Shell = styled(Box)(({ theme }) => ({
+// height so the content below can grow into the remaining space. `maxWidth`
+// defaults to the standard admin width but callers can widen it.
+export const Shell = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'maxWidth',
+})<{ maxWidth?: number }>(({ theme, maxWidth = 1040 }) => ({
   width: '100%',
-  maxWidth: 1040,
+  maxWidth,
   flex: 1,
   minHeight: 0,
   display: 'flex',

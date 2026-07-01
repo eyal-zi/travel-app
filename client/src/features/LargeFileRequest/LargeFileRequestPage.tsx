@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTabParam } from '../../common/hooks/useTabParam'
 import IconButton from '@mui/material/IconButton'
@@ -7,26 +6,15 @@ import Tabs from '@mui/material/Tabs'
 import Typography from '@mui/material/Typography'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import DatasetRoundedIcon from '@mui/icons-material/DatasetRounded'
-import { LargeFileRequestForm } from './components/LargeFileRequestForm/LargeFileRequestForm'
-import { LargeFileResultsList } from './components/LargeFileResultsList/LargeFileResultsList'
+import { LargeFileSearch } from './components/LargeFileSearch/LargeFileSearch'
 import { FileRequestForm } from '../FileRequest/components/FileRequestForm/FileRequestForm'
 import { FileRequestsList } from '../FileRequest/components/FileRequestsList/FileRequestsList'
-import type { AppliedFilters } from './queries/useLargeFileSearch'
-import {
-  HeaderText,
-  PageHeader,
-  PageRoot,
-  ResultsColumn,
-  Shell,
-  Split,
-} from './LargeFileRequest.styles'
+import { HeaderText, PageHeader, PageRoot, Shell } from './LargeFileRequest.styles'
 
 type TabValue = 'search' | 'request' | 'history'
 
 export const LargeFileRequestPage = () => {
   const navigate = useNavigate()
-  // Null until the first search; submitting the form applies a fresh filter set.
-  const [filters, setFilters] = useState<AppliedFilters | null>(null)
   const [tab, setTab] = useTabParam(
     ['search', 'request', 'history'] as const,
     'search',
@@ -58,14 +46,7 @@ export const LargeFileRequestPage = () => {
           <Tab value="history" label="My requests" />
         </Tabs>
 
-        {tab === 'search' && (
-          <Split>
-            <LargeFileRequestForm onSearch={setFilters} />
-            <ResultsColumn>
-              <LargeFileResultsList filters={filters} />
-            </ResultsColumn>
-          </Split>
-        )}
+        {tab === 'search' && <LargeFileSearch />}
         {tab === 'request' && <FileRequestForm />}
         {tab === 'history' && <FileRequestsList />}
       </Shell>
