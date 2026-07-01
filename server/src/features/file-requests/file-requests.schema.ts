@@ -2,6 +2,7 @@ import { index, jsonb, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import type { FeatureCollection } from 'geojson';
 import { creationTimestamp, timestamps } from '../../common/database/columns';
 import { requestStatus } from '../../common/database/enums';
+import { users } from '../auth/users.schema';
 
 // A request from a user asking the admin to produce a new file for a trip.
 // Like trip requests, rows are created via POST and carry a workflow `status`
@@ -25,11 +26,18 @@ export const fileRequests = pgTable(
     // Selected geo tags (terrain/urban/coastal).
     geo: jsonb('geo').$type<string[]>().notNull(),
     notes: text('notes'), // optional free-form notes
+    // The user who submitted the request, captured from the authenticated user on
+    // intake. Joined to `users` on read so admins can see who sent it. Null on
+    // legacy rows created before this was tracked.
+    createdBy: uuid('created_by').references(() => users.id),
     // Workflow status, set server-side. Defaults to "received" on intake.
     status: requestStatus('status').notNull().default('received'),
     // Admin's free-form response to the user. One note per request; overwritten on
     // each save. Null until an admin writes one.
     adminNote: text('admin_note'),
+    // The admin who last updated the request (status/note). Joined to `users` on
+    // read so the requester can see who handled it. Null until an admin updates it.
+    updatedBy: uuid('updated_by').references(() => users.id),
     ...timestamps(),
   },
   (table) => [

@@ -39,6 +39,18 @@ const SUBJECTS = [
   'soil survey',
   'bathymetry',
 ];
+const COUNTRIES = [
+  'France',
+  'Brazil',
+  'Japan',
+  'Kenya',
+  'Norway',
+  'Canada',
+  'Peru',
+  'Australia',
+  'India',
+  'Morocco',
+];
 
 const rand = (min: number, max: number) => Math.random() * (max - min) + min;
 const randInt = (min: number, max: number) => Math.floor(rand(min, max + 1));
@@ -68,6 +80,14 @@ const randomFileType = (): string =>
   // ~80% one of the fixed options, ~20% a free-text "other" value.
   Math.random() < 0.8 ? pick(LARGE_FILE_TYPES) : pick(OTHER_TYPES);
 
+// A random 'YYYY-MM-DD' coverage date within the last ~3 years, so the
+// start/end date filter has a spread of values to match against.
+const randomCoverageDate = (): string => {
+  const now = Date.now();
+  const threeYears = 3 * 365 * 24 * 60 * 60 * 1000;
+  return new Date(now - rand(0, threeYears)).toISOString().slice(0, 10);
+};
+
 async function main(): Promise<void> {
   const { DATABASE_URL } = process.env;
   if (!DATABASE_URL) {
@@ -86,13 +106,23 @@ async function main(): Promise<void> {
       const fileType = randomFileType();
       const name = `${pick(REGIONS)} ${pick(SUBJECTS)} #${i + 1}`;
       const accuracy = randInt(0, 15);
+      const country = pick(COUNTRIES);
+      const coverageDate = randomCoverageDate();
       const sizeBytes = randInt(5_000_000, 5_000_000_000);
       const footprint = randomFootprint();
 
       await client.query(
-        `INSERT INTO "large_files" ("name", "file_type", "accuracy", "size_bytes", "geom")
-         VALUES ($1, $2, $3, $4, ST_SetSRID(ST_GeomFromGeoJSON($5), 4326))`,
-        [name, fileType, accuracy, sizeBytes, JSON.stringify(footprint)],
+        `INSERT INTO "large_files" ("name", "file_type", "accuracy", "country", "coverage_date", "size_bytes", "geom")
+         VALUES ($1, $2, $3, $4, $5, $6, ST_SetSRID(ST_GeomFromGeoJSON($7), 4326))`,
+        [
+          name,
+          fileType,
+          accuracy,
+          country,
+          coverageDate,
+          sizeBytes,
+          JSON.stringify(footprint),
+        ],
       );
     }
 

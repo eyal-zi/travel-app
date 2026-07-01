@@ -1,6 +1,7 @@
 import {
   bigint,
   customType,
+  date,
   index,
   integer,
   pgTable,
@@ -45,6 +46,12 @@ export const largeFiles = pgTable(
     fileType: text('file_type').notNull(),
     // Confidence score 0..15. Search matches records within ±1 of the query.
     accuracy: integer('accuracy').notNull(),
+    // Country the file covers. Nullable so the column can be added to existing
+    // rows; search filters by exact match when provided. Null rows never match.
+    country: text('country'),
+    // The date the file's data covers, as a 'YYYY-MM-DD' calendar date (no time
+    // component). Search filters by an inclusive start/end range on this.
+    coverageDate: date('coverage_date'),
     sizeBytes: bigint('size_bytes', { mode: 'number' }).notNull(),
     // The record's footprint, a PostGIS geometry in WGS84 (SRID 4326).
     geom: geometry('geom').notNull(),

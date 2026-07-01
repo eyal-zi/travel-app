@@ -95,3 +95,10 @@ export const RequestedRow = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(0.75),
 }))
+
+// Stacks the "Requested" and "By <requester>" rows on the left of the footer.
+export const FooterMeta = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.25),
+}))

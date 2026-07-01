@@ -46,10 +46,13 @@ export class AnnouncementsService {
     }));
   }
 
-  async create(dto: CreateAnnouncementDto): Promise<Announcement> {
+  async create(
+    dto: CreateAnnouncementDto,
+    author: string,
+  ): Promise<Announcement> {
     const [announcement] = await this.db
       .insert(announcements)
-      .values({ text: dto.text, author: 'System' })
+      .values({ text: dto.text, author })
       .returning();
     this.logger.log(`Created announcement ${announcement.id}`);
     return announcement;

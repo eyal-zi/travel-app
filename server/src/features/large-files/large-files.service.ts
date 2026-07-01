@@ -1,5 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, between, desc, inArray, or, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  between,
+  desc,
+  eq,
+  gte,
+  inArray,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 import type { FeatureCollection, Geometry } from 'geojson';
 import {
   DRIZZLE,
@@ -19,6 +30,8 @@ export interface LargeFileResult {
   name: string;
   fileType: string;
   accuracy: number;
+  country: string | null;
+  coverageDate: string | null;
   sizeBytes: number;
   geometry: Geometry;
   createdAt: string;
@@ -47,6 +60,9 @@ export class LargeFilesService {
       dto.fileTypes?.length
         ? inArray(largeFiles.fileType, dto.fileTypes)
         : undefined,
+      dto.country ? eq(largeFiles.country, dto.country) : undefined,
+      dto.startDate ? gte(largeFiles.coverageDate, dto.startDate) : undefined,
+      dto.endDate ? lte(largeFiles.coverageDate, dto.endDate) : undefined,
       this.areaCondition(dto.area),
     ];
 
@@ -56,6 +72,8 @@ export class LargeFilesService {
         name: largeFiles.name,
         fileType: largeFiles.fileType,
         accuracy: largeFiles.accuracy,
+        country: largeFiles.country,
+        coverageDate: largeFiles.coverageDate,
         sizeBytes: largeFiles.sizeBytes,
         createdAt: largeFiles.createdAt,
         geometry: sql<string>`ST_AsGeoJSON(${largeFiles.geom})`,
@@ -75,6 +93,8 @@ export class LargeFilesService {
       name: row.name,
       fileType: row.fileType,
       accuracy: row.accuracy,
+      country: row.country,
+      coverageDate: row.coverageDate,
       sizeBytes: row.sizeBytes,
       geometry: JSON.parse(row.geometry) as Geometry,
       createdAt: row.createdAt.toISOString(),

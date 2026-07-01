@@ -8,6 +8,7 @@ import {
   type RequestServiceConfig,
 } from '../../common/requests/request-with-files.service';
 import { S3Service } from '../../common/storage/s3.service';
+import { users } from '../auth/users.schema';
 import { CreateFileRequestDto } from './dto/create-file-request.dto';
 import {
   fileRequestFiles,
@@ -28,9 +29,14 @@ export class FileRequestsService extends RequestWithFilesService<
     idColumn: fileRequests.id,
     createdAtColumn: fileRequests.createdAt,
     statusColumn: fileRequests.status,
+    createdByColumn: fileRequests.createdBy,
+    updatedByColumn: fileRequests.updatedBy,
     fileForeignKeyColumn: fileRequestFiles.fileRequestId,
     fileCreatedAtColumn: fileRequestFiles.createdAt,
     fileIdColumn: fileRequestFiles.id,
+    userTable: users,
+    userIdColumn: users.id,
+    userNameColumn: users.username,
     bucket: process.env.S3_FILE_REQUEST_BUCKET ?? 'file-request-files',
     label: 'File request',
   };

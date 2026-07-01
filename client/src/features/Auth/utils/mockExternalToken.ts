@@ -45,4 +45,3 @@ export const MOCK_EXTERNAL_USER_TOKEN =
 
 // Default mock token used in development (currently Admin)
 export const MOCK_EXTERNAL_TOKEN = MOCK_EXTERNAL_USER_TOKEN;
-

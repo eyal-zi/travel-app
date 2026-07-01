@@ -14,9 +14,8 @@ export const Card = styled(Box)(({ theme }) => ({
 
 export const Meta = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'baseline',
-  gap: theme.spacing(1),
-  flexWrap: 'wrap',
+  flexDirection: 'column',
+  gap: theme.spacing(0.25),
 }))
 
 // Announcement body, preserving the author's line breaks.

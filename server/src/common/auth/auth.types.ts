@@ -18,6 +18,9 @@ export interface UserClaims {
 // IdP uniqueId); the rest mirror the profile plus the derived role.
 export interface AppJwtPayload extends UserClaims {
   sub: string;
+  // Our own `users.id` (PK), distinct from `uniqueId` (the IdP identifier). Used
+  // to stamp created-by/updated-by foreign keys on rows this user writes.
+  id: string;
   role: UserRole;
 }
 

@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { extname } from 'path';
 import { Logger, NotFoundException } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, inArray } from 'drizzle-orm';
-import type { PgColumn, PgTable } from 'drizzle-orm/pg-core';
+import { alias, type PgColumn, type PgTable } from 'drizzle-orm/pg-core';
 import type { DrizzleDB } from '../database/database.constants';
 import type { RequestStatus } from '../database/enums';
 import { buildPage, keysetCondition, type Page } from '../pagination/keyset';
@@ -26,10 +26,20 @@ export interface RequestFileRow {
 // A file plus a short-lived presigned URL the client can download it from.
 export type WithSignedUrl<TFile> = TFile & { signedUrl: string };
 
-// A request enriched with its admin-attached files (each carrying a download URL).
-export type WithFiles<TRequest, TFile> = TRequest & {
-  files: WithSignedUrl<TFile>[];
-};
+// The usernames resolved (via join) from a request's created-by/updated-by user
+// foreign keys, so clients can show who submitted and who last handled a request
+// without exposing the raw ids. Null when unset or the user no longer exists.
+export interface RequestUsernames {
+  createdByUsername: string | null;
+  updatedByUsername: string | null;
+}
+
+// A request enriched with its admin-attached files (each carrying a download URL)
+// and the created-by/updated-by usernames.
+export type WithFiles<TRequest, TFile> = TRequest &
+  RequestUsernames & {
+    files: WithSignedUrl<TFile>[];
+  };
 
 // The fields an admin may change on a request.
 export interface RequestUpdate {
@@ -47,9 +57,17 @@ export interface RequestServiceConfig {
   idColumn: PgColumn;
   createdAtColumn: PgColumn;
   statusColumn: PgColumn;
+  // FK columns to `users.id`: who submitted the request and who last updated it.
+  createdByColumn: PgColumn;
+  updatedByColumn: PgColumn;
   fileForeignKeyColumn: PgColumn;
   fileCreatedAtColumn: PgColumn;
   fileIdColumn: PgColumn;
+  // The users table and its id/username columns, joined to resolve the created-by
+  // and updated-by usernames on read.
+  userTable: PgTable;
+  userIdColumn: PgColumn;
+  userNameColumn: PgColumn;
   bucket: string;
   // Singular label for log lines and 404 messages, e.g. "Trip request".
   label: string;
@@ -82,12 +100,34 @@ export abstract class RequestWithFilesService<
     cursor?: string,
     status?: RequestStatus,
   ): Promise<Page<WithFiles<TRequest, TFile>>> {
-    const { requestTable, createdAtColumn, idColumn, statusColumn } =
-      this.config;
+    const {
+      requestTable,
+      createdAtColumn,
+      idColumn,
+      statusColumn,
+      createdByColumn,
+      updatedByColumn,
+      userTable,
+    } = this.config;
+
+    // Join the users table twice (once per FK) to resolve the usernames without
+    // exposing the raw ids. Left joins so a request survives a missing/deleted user.
+    const createdByUser = alias(userTable, 'created_by_user');
+    const updatedByUser = alias(userTable, 'updated_by_user');
+    const createdByCols = getTableColumns(createdByUser);
+    const updatedByCols = getTableColumns(updatedByUser);
+    const idField = this.columnName(userTable, this.config.userIdColumn);
+    const nameField = this.columnName(userTable, this.config.userNameColumn);
 
     const rows = (await this.db
-      .select()
+      .select({
+        ...getTableColumns(requestTable),
+        createdByUsername: createdByCols[nameField],
+        updatedByUsername: updatedByCols[nameField],
+      })
       .from(requestTable)
+      .leftJoin(createdByUser, eq(createdByColumn, createdByCols[idField]))
+      .leftJoin(updatedByUser, eq(updatedByColumn, updatedByCols[idField]))
       .where(
         and(
           keysetCondition(createdAtColumn, idColumn, cursor),
@@ -95,7 +135,7 @@ export abstract class RequestWithFilesService<
         ),
       )
       .orderBy(desc(createdAtColumn), desc(idColumn))
-      .limit(limit + 1)) as unknown as TRequest[];
+      .limit(limit + 1)) as unknown as (TRequest & RequestUsernames)[];
 
     const page = buildPage(rows, limit, (row) => ({
       createdAt: row.createdAt,
@@ -106,21 +146,39 @@ export abstract class RequestWithFilesService<
   }
 
   // `status` is omitted from the insert so it falls back to the column default.
-  async create(dto: TCreate): Promise<TRequest> {
+  // `createdBy` stamps the submitting user (from the authenticated request).
+  async create(dto: TCreate, createdBy?: string): Promise<TRequest> {
+    const values: Record<string, unknown> = { ...(dto as object) };
+    if (createdBy) {
+      values[
+        this.columnName(this.config.requestTable, this.config.createdByColumn)
+      ] = createdBy;
+    }
+
     const [row] = (await this.db
       .insert(this.config.requestTable)
-      .values(dto as Record<string, unknown>)
+      .values(values)
       .returning()) as unknown as TRequest[];
     this.logger.log(`Created ${this.lowerLabel} ${row.id}`);
     return row;
   }
 
-  // Admin update: advance `status` and/or set `adminNote`. Only provided fields
-  // change; `updatedAt` bumps automatically via $onUpdate.
-  async update(id: string, patch: RequestUpdate): Promise<TRequest> {
-    const set: RequestUpdate = {};
+  // Admin update: advance `status` and/or set `adminNote`, stamping `updatedBy`
+  // with the acting admin. Only provided fields change; `updatedAt` bumps
+  // automatically via $onUpdate.
+  async update(
+    id: string,
+    patch: RequestUpdate,
+    updatedBy?: string,
+  ): Promise<TRequest> {
+    const set: Record<string, unknown> = {};
     if (patch.status !== undefined) set.status = patch.status;
     if (patch.adminNote !== undefined) set.adminNote = patch.adminNote;
+    if (updatedBy) {
+      set[
+        this.columnName(this.config.requestTable, this.config.updatedByColumn)
+      ] = updatedBy;
+    }
 
     const [row] = (await this.db
       .update(this.config.requestTable)
@@ -154,7 +212,10 @@ export abstract class RequestWithFilesService<
     const [row] = (await this.db
       .insert(this.config.fileTable)
       .values({
-        [this.foreignKeyName]: id,
+        [this.columnName(
+          this.config.fileTable,
+          this.config.fileForeignKeyColumn,
+        )]: id,
         fileKey: key,
         fileName: file.originalname,
         contentType: file.mimetype,
@@ -199,7 +260,7 @@ export abstract class RequestWithFilesService<
   // request. Signed URLs are generated locally (no network) and download as the
   // original filename.
   private async attachFiles(
-    rows: TRequest[],
+    rows: (TRequest & RequestUsernames)[],
   ): Promise<WithFiles<TRequest, TFile>[]> {
     if (rows.length === 0) return [];
 
@@ -214,7 +275,10 @@ export abstract class RequestWithFilesService<
       )
       .orderBy(desc(this.config.fileCreatedAtColumn))) as unknown as TFile[];
 
-    const fkName = this.foreignKeyName;
+    const fkName = this.columnName(
+      this.config.fileTable,
+      this.config.fileForeignKeyColumn,
+    );
     const filesByRequest = new Map<string, WithSignedUrl<TFile>[]>();
     for (const file of fileRows) {
       const parentId = (file as Record<string, unknown>)[fkName] as string;
@@ -239,15 +303,13 @@ export abstract class RequestWithFilesService<
     return { ...file, signedUrl };
   }
 
-  // JS field name (e.g. "tripRequestId") of the configured FK column — used to set
-  // it on insert and read it back off a row when grouping.
-  private get foreignKeyName(): string {
-    const columns = getTableColumns(this.config.fileTable);
-    const name = Object.keys(columns).find(
-      (key) => columns[key] === this.config.fileForeignKeyColumn,
-    );
+  // JS field name (e.g. "tripRequestId") of a column on a table — used to set a
+  // column by name on insert/update and to read one back off a row when grouping.
+  private columnName(table: PgTable, column: PgColumn): string {
+    const columns = getTableColumns(table);
+    const name = Object.keys(columns).find((key) => columns[key] === column);
     if (!name) {
-      throw new Error('Configured foreign-key column not found on file table');
+      throw new Error('Configured column not found on table');
     }
     return name;
   }

@@ -36,6 +36,10 @@ export type FileRequest = CreateFileRequest & {
   // Admin's free-form response, or null until one is written.
   adminNote: string | null
   files: FileRequestFile[]
+  // Username of the requester (shown to admins) and of the admin who last updated
+  // the request (shown to the requester). Null until set / user unknown.
+  createdByUsername: string | null
+  updatedByUsername: string | null
   createdAt: string
   updatedAt: string
 }

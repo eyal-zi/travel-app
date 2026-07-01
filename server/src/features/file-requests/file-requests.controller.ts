@@ -13,7 +13,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CurrentUser } from '../../common/auth/current-user.decorator';
 import { Roles } from '../../common/auth/roles.decorator';
+import type { AuthenticatedUser } from '../../common/auth/auth.types';
 import { FileRequestsService } from './file-requests.service';
 import { CreateFileRequestDto } from './dto/create-file-request.dto';
 import { FindFileRequestsDto } from './dto/find-file-requests.dto';
@@ -36,8 +38,11 @@ export class FileRequestsController {
   }
 
   @Post()
-  create(@Body() dto: CreateFileRequestDto) {
-    return this.fileRequestsService.create(dto);
+  create(
+    @Body() dto: CreateFileRequestDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.fileRequestsService.create(dto, user.id);
   }
 
   // Admin update: change the status and/or the admin note (both optional).
@@ -46,8 +51,9 @@ export class FileRequestsController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateFileRequestDto,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.fileRequestsService.update(id, dto);
+    return this.fileRequestsService.update(id, dto, user.id);
   }
 
   // Admin attaches a file (any type) to a request. Multipart "file" part.

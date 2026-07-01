@@ -1,6 +1,7 @@
 import { index, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { creationTimestamp, timestamps } from '../../common/database/columns';
 import { requestStatus } from '../../common/database/enums';
+import { users } from '../auth/users.schema';
 
 // A trip request submitted by a user describing what they want out of a trip.
 // Intake-only for now: rows are created via POST and carry a workflow `status`
@@ -18,11 +19,18 @@ export const tripRequests = pgTable(
     landmark: text('landmark').notNull(),
     timeDivision: text('time_division').notNull(),
     notes: text('notes'), // optional free-form notes
+    // The user who submitted the request, captured from the authenticated user on
+    // intake. Joined to `users` on read so admins can see who sent it. Null on
+    // legacy rows created before this was tracked.
+    createdBy: uuid('created_by').references(() => users.id),
     // Workflow status, set server-side. Defaults to "received" on intake.
     status: requestStatus('status').notNull().default('received'),
     // Admin's free-form response to the user. One note per request; overwritten on
     // each save. Null until an admin writes one.
     adminNote: text('admin_note'),
+    // The admin who last updated the request (status/note). Joined to `users` on
+    // read so the requester can see who handled it. Null until an admin updates it.
+    updatedBy: uuid('updated_by').references(() => users.id),
     ...timestamps(),
   },
   (table) => [

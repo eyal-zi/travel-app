@@ -1,6 +1,7 @@
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import MyLocationRoundedIcon from '@mui/icons-material/MyLocationRounded'
+import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded'
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded'
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded'
 import { formatBytes, formatDay } from '../../../../common/utils/format'
@@ -26,7 +27,7 @@ export const LargeFileResultItem = ({ file }: LargeFileResultItemProps) => (
           {file.name}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {formatDay(file.createdAt)}
+          {file.coverageDate ? formatDay(file.coverageDate) : 'Date not available'}
         </Typography>
       </TitleBlock>
       <Chip
@@ -38,6 +39,12 @@ export const LargeFileResultItem = ({ file }: LargeFileResultItemProps) => (
     </CardTop>
 
     <MetaRow>
+      <MetaItem>
+        <PlaceRoundedIcon />
+        <Typography variant="body2">
+          {file.country ?? 'Unknown country'}
+        </Typography>
+      </MetaItem>
       <MetaItem>
         <MyLocationRoundedIcon />
         <Typography variant="body2">Accuracy {file.accuracy}</Typography>

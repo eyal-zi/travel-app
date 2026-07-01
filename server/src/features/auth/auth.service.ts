@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { eq } from 'drizzle-orm';
 import type { AppJwtPayload, UserClaims } from '../../common/auth/auth.types';
 import {
   DRIZZLE,
@@ -121,6 +120,7 @@ export class AuthService {
   private signAppToken(user: User): Promise<string> {
     const payload: AppJwtPayload = {
       sub: user.uniqueId,
+      id: user.id,
       uniqueId: user.uniqueId,
       username: user.username ?? '',
       groups: user.groups,

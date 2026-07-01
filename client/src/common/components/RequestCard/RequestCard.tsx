@@ -3,7 +3,9 @@ import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded'
+import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded'
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded'
+import UpdateRoundedIcon from '@mui/icons-material/UpdateRounded'
 import { REQUEST_STATUS_META } from '../../requests/requestStatus'
 import { RequestResponseDialog } from '../RequestResponseDialog/RequestResponseDialog'
 import type { RequestCardProps } from './RequestCard.types'
@@ -13,6 +15,7 @@ import {
   Detail,
   DetailGrid,
   Footer,
+  FooterMeta,
   GoalTitle,
   Indicators,
   NotesText,
@@ -69,12 +72,35 @@ export const RequestCard = ({
         )}
 
         <Footer>
-          <RequestedRow>
-            <ScheduleRoundedIcon />
-            <Typography variant="caption">
-              Requested {format(new Date(request.createdAt), 'PP p')}
-            </Typography>
-          </RequestedRow>
+          <FooterMeta>
+            <RequestedRow>
+              <ScheduleRoundedIcon />
+              <Typography variant="caption">
+                Requested {format(new Date(request.createdAt), 'PP p')}
+              </Typography>
+            </RequestedRow>
+
+            {/* Admins see who submitted the request. */}
+            {admin && request.createdByUsername && (
+              <RequestedRow>
+                <PersonOutlineRoundedIcon />
+                <Typography variant="caption">
+                  By {request.createdByUsername}
+                </Typography>
+              </RequestedRow>
+            )}
+
+            {/* Requesters see who last handled it and when. */}
+            {!admin && request.updatedByUsername && (
+              <RequestedRow>
+                <UpdateRoundedIcon />
+                <Typography variant="caption">
+                  Updated by {request.updatedByUsername} ·{' '}
+                  {format(new Date(request.updatedAt), 'PP p')}
+                </Typography>
+              </RequestedRow>
+            )}
+          </FooterMeta>
 
           {/* Small indicators that the admin has responded. */}
           {(hasNote || fileCount > 0) && (

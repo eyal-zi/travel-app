@@ -17,6 +17,12 @@ export type RequestSummary = {
   status: RequestStatus
   adminNote: string | null
   files: RequestFile[]
+  // Username of the requester (shown to admins) and of the admin who last handled
+  // the request (shown to the requester). Null until set / user unknown.
+  createdByUsername: string | null
+  updatedByUsername: string | null
+  // When the request was last updated — shown alongside `updatedByUsername`.
+  updatedAt: string
 }
 
 // The draft state owned by `useRequestDraft` and consumed by the admin editor.

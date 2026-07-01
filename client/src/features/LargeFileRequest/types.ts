@@ -20,6 +20,11 @@ export const ACCURACY_MAX = 15
 export type LargeFileSearch = {
   fileTypes?: string[]
   accuracy?: number
+  // Exact country match; omit to match any country.
+  country?: string
+  // Inclusive coverage-date range, each as 'YYYY-MM-DD'.
+  startDate?: string
+  endDate?: string
   area?: FeatureCollection
   cursor?: string
   limit?: number
@@ -31,6 +36,10 @@ export type LargeFileResult = {
   name: string
   fileType: string
   accuracy: number
+  // Country the file covers, or null when unknown.
+  country: string | null
+  // Coverage date as 'YYYY-MM-DD', or null when unknown.
+  coverageDate: string | null
   sizeBytes: number
   geometry: Geometry
   createdAt: string

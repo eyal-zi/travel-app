@@ -1,8 +1,10 @@
+import { format } from 'date-fns'
 import Typography from '@mui/material/Typography'
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded'
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded'
 import FolderOpenRoundedIcon from '@mui/icons-material/FolderOpenRounded'
+import UpdateRoundedIcon from '@mui/icons-material/UpdateRounded'
 import type { RequestSummary } from './RequestResponseDialog.types'
 import {
   EmptyState,
@@ -11,6 +13,7 @@ import {
   FileIconBadge,
   FileName,
   NoteCard,
+  ResponseByline,
   ResponseNoteText,
   Section,
   SectionLabel,
@@ -43,6 +46,17 @@ export const RequestUserView = ({ request }: RequestUserViewProps) => {
               You'll see a message here once it's ready.
             </Typography>
           </EmptyState>
+        )}
+        {/* Who last handled the request and when, so the requester knows who to
+            follow up with. */}
+        {request.updatedByUsername && (
+          <ResponseByline>
+            <UpdateRoundedIcon />
+            <Typography variant="caption">
+              Updated by {request.updatedByUsername} ·{' '}
+              {format(new Date(request.updatedAt), 'PP p')}
+            </Typography>
+          </ResponseByline>
         )}
       </Section>
 

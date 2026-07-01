@@ -13,7 +13,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CurrentUser } from '../../common/auth/current-user.decorator';
 import { Roles } from '../../common/auth/roles.decorator';
+import type { AuthenticatedUser } from '../../common/auth/auth.types';
 import { TripRequestsService } from './trip-requests.service';
 import { CreateTripRequestDto } from './dto/create-trip-request.dto';
 import { FindTripRequestsDto } from './dto/find-trip-requests.dto';
@@ -36,8 +38,11 @@ export class TripRequestsController {
   }
 
   @Post()
-  create(@Body() dto: CreateTripRequestDto) {
-    return this.tripRequestsService.create(dto);
+  create(
+    @Body() dto: CreateTripRequestDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.tripRequestsService.create(dto, user.id);
   }
 
   // Admin update: change the status and/or the admin note (both optional).
@@ -46,8 +51,9 @@ export class TripRequestsController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTripRequestDto,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.tripRequestsService.update(id, dto);
+    return this.tripRequestsService.update(id, dto, user.id);
   }
 
   // Admin attaches a file (any type) to a request. Multipart "file" part.

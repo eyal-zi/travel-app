@@ -173,6 +173,16 @@ export const ResponseNoteText = styled(Typography)({
   lineHeight: 1.6,
 })
 
+// Attribution row under the response: which admin last handled the request and
+// when. A subtle, icon-led meta line kept distinct from the response body.
+export const ResponseByline = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.75),
+  color: theme.palette.text.secondary,
+  '& svg': { fontSize: 16 },
+}))
+
 // Clickable file tile, rendered as an anchor (component="a") with a hover lift.
 // Typed with BoxProps<'a'> so the polymorphic `component`/`href`/`target`/`rel`
 // props type-check on the styled Box.

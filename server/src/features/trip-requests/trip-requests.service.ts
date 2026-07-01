@@ -8,6 +8,7 @@ import {
   type RequestServiceConfig,
 } from '../../common/requests/request-with-files.service';
 import { S3Service } from '../../common/storage/s3.service';
+import { users } from '../auth/users.schema';
 import { CreateTripRequestDto } from './dto/create-trip-request.dto';
 import {
   tripRequestFiles,
@@ -28,9 +29,14 @@ export class TripRequestsService extends RequestWithFilesService<
     idColumn: tripRequests.id,
     createdAtColumn: tripRequests.createdAt,
     statusColumn: tripRequests.status,
+    createdByColumn: tripRequests.createdBy,
+    updatedByColumn: tripRequests.updatedBy,
     fileForeignKeyColumn: tripRequestFiles.tripRequestId,
     fileCreatedAtColumn: tripRequestFiles.createdAt,
     fileIdColumn: tripRequestFiles.id,
+    userTable: users,
+    userIdColumn: users.id,
+    userNameColumn: users.username,
     bucket: process.env.S3_TRIP_REQUEST_BUCKET ?? 'trip-request-files',
     label: 'Trip request',
   };
