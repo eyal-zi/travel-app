@@ -9,17 +9,16 @@ import Typography from '@mui/material/Typography'
 export const ToolbarRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: theme.spacing(1.5),
-  flexWrap: 'wrap',
+  gap: theme.spacing(1),
+  flexWrap: 'nowrap',
   paddingBlockEnd: theme.spacing(0.5),
 }))
 
 export const TitleGroup = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'baseline',
+  alignItems: 'center',
   gap: theme.spacing(1),
-  flex: 1,
-  minWidth: 0,
+  flexShrink: 0,
 }))
 
 export const PeriodTitle = styled(Typography)(({ theme }) => ({

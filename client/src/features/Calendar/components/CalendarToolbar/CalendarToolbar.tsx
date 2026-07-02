@@ -14,7 +14,6 @@ import {
   AddButton,
   Controls,
   NavGroup,
-  PeriodTitle,
   SelectedChip,
   TitleGroup,
   TodayButton,
@@ -25,16 +24,14 @@ import type { CalendarView } from '../../Calendar.types'
 import type { CalendarToolbarProps } from './CalendarToolbar.types'
 import { useSelectedDate } from '../../../../common/hooks/useSelectedDate'
 
-const VIEW_LABELS: Record<CalendarView, string> = {
+const VIEW_LABELS: Partial<Record<CalendarView, string>> = {
   dayGridMonth: 'Month',
   timeGridWeek: 'Week',
-  timeGridDay: 'Day',
 }
 
 const VIEW_ORDER = Object.keys(VIEW_LABELS) as CalendarView[]
 
 export const CalendarToolbar = ({
-  title,
   view,
   onViewChange,
   onPrev,
@@ -59,7 +56,6 @@ export const CalendarToolbar = ({
   return (
     <ToolbarRoot>
       <TitleGroup>
-        <PeriodTitle variant="h6">{title}</PeriodTitle>
         {formattedDate && <SelectedChip color="primary" size="small" label={formattedDate} />}
       </TitleGroup>
 

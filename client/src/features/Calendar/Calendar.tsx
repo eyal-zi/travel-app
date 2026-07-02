@@ -47,7 +47,6 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
   } = useCalendarEvents()
 
   const [view, setView] = useState<CalendarView>(initialView)
-  const [title, setTitle] = useState('')
 
   const getApi = () => calendarRef.current?.getApi()
 
@@ -135,7 +134,6 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
   return (
     <CalendarRoot elevation={0}>
       <CalendarToolbar
-        title={title}
         view={view}
         onViewChange={changeView}
         onPrev={() => getApi()?.prev()}
@@ -170,7 +168,6 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
           eventDrop={moveEvent}
           eventResize={moveEvent}
           datesSet={(arg) => {
-            setTitle(arg.view.title)
             setView(arg.view.type as CalendarView)
           }}
         />
