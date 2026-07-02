@@ -140,7 +140,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
         onViewChange={changeView}
         onPrev={() => getApi()?.prev()}
         onNext={() => getApi()?.next()}
-        onToday={() => getApi()?.today()}
+        onGoToDate={(date) => getApi()?.gotoDate(date)}
         onAddEvent={() => openCreate()}
         canAdd={canEdit}
       />

@@ -1,9 +1,15 @@
+import { useRef, useState } from 'react'
 import IconButton from '@mui/material/IconButton'
 import ToggleButton from '@mui/material/ToggleButton'
 import Tooltip from '@mui/material/Tooltip'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { format, parseISO } from 'date-fns'
 import {
   AddButton,
   Controls,
@@ -33,12 +39,22 @@ export const CalendarToolbar = ({
   onViewChange,
   onPrev,
   onNext,
-  onToday,
+  onGoToDate,
   onAddEvent,
   canAdd,
 }: CalendarToolbarProps) => {
-  const [selectedDate] = useSelectedDate()
+  const [selectedDate, setSelectedDate] = useSelectedDate()
   const formattedDate = selectedDate?.split('-').reverse().join('-')
+
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const jumpButtonRef = useRef<HTMLButtonElement>(null)
+
+  const handlePickDate = (date: Date | null) => {
+    if (!date || Number.isNaN(date.getTime())) return
+    onGoToDate(date)
+    setSelectedDate(format(date, 'yyyy-MM-dd'))
+    setPickerOpen(false)
+  }
 
   return (
     <ToolbarRoot>
@@ -54,9 +70,31 @@ export const CalendarToolbar = ({
               <ChevronLeftRoundedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <TodayButton variant="outlined" color="inherit" size="small" onClick={onToday}>
-            Today
-          </TodayButton>
+          <Tooltip title="Jump to date">
+            <TodayButton
+              ref={jumpButtonRef}
+              variant="outlined"
+              color="inherit"
+              size="small"
+              startIcon={<CalendarMonthRoundedIcon fontSize="small" />}
+              onClick={() => setPickerOpen(true)}
+            >
+              Jump to
+            </TodayButton>
+          </Tooltip>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              open={pickerOpen}
+              onClose={() => setPickerOpen(false)}
+              value={selectedDate ? parseISO(selectedDate) : new Date()}
+              onChange={handlePickDate}
+              slots={{ field: () => null }}
+              slotProps={{
+                popper: { anchorEl: () => jumpButtonRef.current },
+                actionBar: { actions: ['today'] },
+              }}
+            />
+          </LocalizationProvider>
           <Tooltip title="Next">
             <IconButton size="small" onClick={onNext} aria-label="Next period">
               <ChevronRightRoundedIcon fontSize="small" />
