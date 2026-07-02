@@ -9,10 +9,8 @@ import {
   type RequestBaseConfig,
   type RequestUsernames,
 } from '../../common/requests/request-with-files.service';
-import {
-  LargeFilesService,
-  type LargeFileResult,
-} from '../large-files/large-files.service';
+import { LargeFilesService } from '../large-files/large-files.service';
+import type { LargeFileResult } from '../large-files/types';
 import { users } from '../auth/users.schema';
 import { CreateFileRequestDto } from './dto/create-file-request.dto';
 import { RespondFileRequestDto } from './dto/respond-file-request.dto';

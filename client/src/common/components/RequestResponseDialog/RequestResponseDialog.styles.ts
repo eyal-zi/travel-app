@@ -3,6 +3,7 @@ import { styled, alpha } from '@mui/material/styles'
 import Box, { type BoxProps } from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Dialog from '@mui/material/Dialog'
+import Divider from '@mui/material/Divider'
 import DialogTitle from '@mui/material/DialogTitle'
 import Link from '@mui/material/Link'
 import ToggleButton from '@mui/material/ToggleButton'
@@ -12,14 +13,16 @@ import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
 // MUI palette colours a workflow status can map to (see REQUEST_STATUS_META).
 type StatusColor = 'info' | 'warning' | 'success'
 
-export const StyledDialog = styled(Dialog)(({ theme }) => ({
+export const StyledDialog = styled(Dialog, {
+  shouldForwardProp: (prop) => prop !== 'width',
+})<{ width?: number }>(({ theme, width = 480 }) => ({
   '& .MuiBackdrop-root': {
     backdropFilter: 'blur(4px)',
     backgroundColor: alpha(theme.palette.common.black, 0.5),
   },
   '& .MuiDialog-paper': {
     width: '100%',
-    maxWidth: 480,
+    maxWidth: width,
     // Bound the frame to the viewport and lay its sections out as a column so the
     // title/actions stay put and only the content scrolls.
     maxHeight: 'calc(100% - 64px)',
@@ -92,6 +95,12 @@ export const UserSections = styled(Section)(({ theme }) => ({
 
 export const AdminSections = styled(Section)(({ theme }) => ({
   gap: theme.spacing(2),
+}))
+
+// Divider between admin sections; pulled tighter so the attachments sit closer
+// to the fields above it than the default section gap allows.
+export const SectionDivider = styled(Divider)(({ theme }) => ({
+  marginBlock: theme.spacing(-1),
 }))
 
 // Overline heading introducing a section.

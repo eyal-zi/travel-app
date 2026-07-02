@@ -21,42 +21,17 @@ import {
 import {
   buildPage,
   keysetCondition,
-  type Page,
 } from '../../common/pagination/keyset';
 import { S3Service } from '../../common/storage/s3.service';
 import { largeFileFiles, largeFiles } from './large-files.schema';
 import { CreateLargeFileDto } from './dto/create-large-file.dto';
 import { SearchLargeFilesDto } from './dto/search-large-files.dto';
+import {
+  LargeFilePage,
+  LargeFileResult,
+  LargeFileRow,
+} from './types';
 
-// A search hit: the stored metadata plus its footprint as GeoJSON.
-export interface LargeFileResult {
-  id: string;
-  name: string;
-  fileType: string;
-  accuracy: number;
-  country: string | null;
-  coverageDate: string | null;
-  sizeBytes: number;
-  geometry: Geometry;
-  createdAt: string;
-}
-
-// The metadata row shape shared by the search query and the create path (geometry
-// already parsed to GeoJSON, createdAt still a Date) — mapped to LargeFileResult
-// by `toResult`.
-interface LargeFileRow {
-  id: string;
-  name: string;
-  fileType: string;
-  accuracy: number;
-  country: string | null;
-  coverageDate: string | null;
-  sizeBytes: number;
-  geometry: Geometry;
-  createdAt: Date;
-}
-
-export type LargeFilePage = Page<LargeFileResult>;
 
 const DEFAULT_LIMIT = 20;
 

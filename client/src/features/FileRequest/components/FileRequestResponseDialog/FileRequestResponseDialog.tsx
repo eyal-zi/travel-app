@@ -48,8 +48,11 @@ import {
 import {
   Field,
   FieldHeader,
-  FieldWide,
+  FieldSpan2,
+  FormColumn,
   FormGrid,
+  MainSplit,
+  MapColumn,
   MapFrame,
 } from './FileRequestResponseDialog.styles'
 import type {
@@ -110,143 +113,146 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
         </ToggleButtonGroup>
       </Section>
 
-      <Section>
-        <SectionLabel variant="overline" color="text.secondary">
-          Response
-        </SectionLabel>
-        <TextField
-          multiline
-          minRows={2}
-          maxRows={5}
-          size="small"
-          fullWidth
-          placeholder="Write a note for the requester… (leave empty to remove it)"
-          value={note}
-          disabled={saving}
-          onChange={(event) => setNote(event.target.value)}
-        />
-      </Section>
-
       <Divider />
 
-      <Section>
-        <SectionLabel variant="overline" color="text.secondary">
-          Large file
-        </SectionLabel>
-        <FormGrid>
-          <FieldWide>
-            <Typography variant="subtitle2">Name</Typography>
+      <MainSplit>
+        <FormColumn>
+          <Section>
+            <SectionLabel variant="overline" color="text.secondary">
+              Response
+            </SectionLabel>
             <TextField
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="e.g. Alpine elevation 2025"
+              multiline
+              minRows={2}
+              maxRows={5}
               size="small"
               fullWidth
+              placeholder="Write a note for the requester… (leave empty to remove it)"
+              value={note}
               disabled={saving}
+              onChange={(event) => setNote(event.target.value)}
             />
-          </FieldWide>
+          </Section>
 
-          <Field>
-            <Typography variant="subtitle2">File type</Typography>
-            <TextField
-              select
-              value={typeValue}
-              onChange={(event) => setTypeValue(event.target.value)}
-              size="small"
-              fullWidth
-              disabled={saving}
-            >
-              {LARGE_FILE_TYPE_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-              <MenuItem value={OTHER_FILE_TYPE}>Other…</MenuItem>
-            </TextField>
-            {typeValue === OTHER_FILE_TYPE && (
-              <TextField
-                value={otherType}
-                onChange={(event) => setOtherType(event.target.value)}
-                placeholder="Custom file type"
-                size="small"
-                fullWidth
-                disabled={saving}
-              />
-            )}
-          </Field>
+          <Section>
+            <FormGrid>
+              <FieldSpan2>
+                <Typography variant="subtitle2">Name</Typography>
+                <TextField
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="e.g. Alpine elevation 2025"
+                  size="small"
+                  fullWidth
+                  disabled={saving}
+                />
+              </FieldSpan2>
 
-          <Field>
-            <FieldHeader>
-              <Typography variant="subtitle2">Accuracy</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {accuracy}
-              </Typography>
-            </FieldHeader>
-            <Slider
-              value={accuracy}
-              onChange={(_event, value) => setAccuracy(value as number)}
-              min={ACCURACY_MIN}
-              max={ACCURACY_MAX}
-              step={1}
-              valueLabelDisplay="auto"
-              disabled={saving}
+              <Field>
+                <Typography variant="subtitle2">File type</Typography>
+                <TextField
+                  select
+                  value={typeValue}
+                  onChange={(event) => setTypeValue(event.target.value)}
+                  size="small"
+                  fullWidth
+                  disabled={saving}
+                >
+                  {LARGE_FILE_TYPE_OPTIONS.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                  <MenuItem value={OTHER_FILE_TYPE}>Other…</MenuItem>
+                </TextField>
+                {typeValue === OTHER_FILE_TYPE && (
+                  <TextField
+                    value={otherType}
+                    onChange={(event) => setOtherType(event.target.value)}
+                    placeholder="Custom file type"
+                    size="small"
+                    fullWidth
+                    disabled={saving}
+                  />
+                )}
+              </Field>
+
+              <Field>
+                <FieldHeader>
+                  <Typography variant="subtitle2">Accuracy</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {accuracy}
+                  </Typography>
+                </FieldHeader>
+                <Slider
+                  value={accuracy}
+                  onChange={(_event, value) => setAccuracy(value as number)}
+                  min={ACCURACY_MIN}
+                  max={ACCURACY_MAX}
+                  step={1}
+                  valueLabelDisplay="auto"
+                  disabled={saving}
+                />
+              </Field>
+
+              <Field>
+                <Typography variant="subtitle2">Country</Typography>
+                <TextField
+                  value={country}
+                  onChange={(event) => setCountry(event.target.value)}
+                  placeholder="Optional"
+                  size="small"
+                  fullWidth
+                  disabled={saving}
+                />
+              </Field>
+
+              <Field>
+                <Typography variant="subtitle2">Coverage date</Typography>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    format="dd/MM/yyyy"
+                    value={coverageDate}
+                    onChange={setCoverageDate}
+                    disabled={saving}
+                    slotProps={{
+                      textField: { size: 'small', fullWidth: true },
+                    }}
+                  />
+                </LocalizationProvider>
+              </Field>
+            </FormGrid>
+          </Section>
+
+          <Section>
+            <SectionLabel variant="overline" color="text.secondary">
+              File
+            </SectionLabel>
+            <FileDropzone
+              file={file}
+              onFileChange={setFile}
+              accept={{}}
+              minHeight={100}
+              idlePrompt="Drag the file here, or click to browse"
+              renderPreview={() => (
+                <Typography variant="body2">{file?.name}</Typography>
+              )}
             />
-          </Field>
+          </Section>
+        </FormColumn>
 
-          <Field>
-            <Typography variant="subtitle2">Country</Typography>
-            <TextField
-              value={country}
-              onChange={(event) => setCountry(event.target.value)}
-              placeholder="Optional"
-              size="small"
-              fullWidth
-              disabled={saving}
+        <MapColumn>
+          <SectionLabel variant="overline" color="text.secondary">
+            Footprint
+          </SectionLabel>
+          <MapFrame>
+            <GeoFilterMap
+              onChange={setAreaLayers}
+              prompt="Drop a KML, SHP, CSV or Excel file to set the footprint"
             />
-          </Field>
-
-          <Field>
-            <Typography variant="subtitle2">Coverage date</Typography>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                format="dd/MM/yyyy"
-                value={coverageDate}
-                onChange={setCoverageDate}
-                disabled={saving}
-                slotProps={{ textField: { size: 'small', fullWidth: true } }}
-              />
-            </LocalizationProvider>
-          </Field>
-        </FormGrid>
-      </Section>
-
-      <Section>
-        <SectionLabel variant="overline" color="text.secondary">
-          Footprint
-        </SectionLabel>
-        <MapFrame>
-          <GeoFilterMap
-            onChange={setAreaLayers}
-            prompt="Drop a KML, SHP, CSV or Excel file to set the footprint"
-          />
-        </MapFrame>
-      </Section>
-
-      <Section>
-        <SectionLabel variant="overline" color="text.secondary">
-          File
-        </SectionLabel>
-        <FileDropzone
-          file={file}
-          onFileChange={setFile}
-          accept={{}}
-          minHeight={90}
-          idlePrompt="Drag the file here, or click to browse"
-          renderPreview={() => (
-            <Typography variant="body2">{file?.name}</Typography>
-          )}
-        />
-      </Section>
+          </MapFrame>
+        </MapColumn>
+      </MainSplit>
     </AdminSections>
   )
 }
@@ -260,7 +266,9 @@ const RequesterView = ({ request }: { request: FileRequest }) => (
       </SectionLabel>
       {request.adminNote ? (
         <NoteCard>
-          <ResponseNoteText variant="body2">{request.adminNote}</ResponseNoteText>
+          <ResponseNoteText variant="body2">
+            {request.adminNote}
+          </ResponseNoteText>
         </NoteCard>
       ) : (
         <EmptyState>
@@ -313,12 +321,17 @@ export const FileRequestResponseDialog = ({
         open={open}
         onClose={saving ? undefined : onClose}
         scroll="paper"
+        width={admin ? 1200 : undefined}
       >
         <DialogTitleBar component="div">
           <DialogHeader>
             <TitleColumn>
               <DialogGoalTitle variant="h6">{request.tripGoal}</DialogGoalTitle>
-              <StatusChip label={status.label} color={status.color} size="small" />
+              <StatusChip
+                label={status.label}
+                color={status.color}
+                size="small"
+              />
             </TitleColumn>
             <IconButton
               onClick={onClose}

@@ -1,4 +1,3 @@
-import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
@@ -21,6 +20,7 @@ import {
   FileLink,
   FileRow,
   Section,
+  SectionDivider,
   SectionLabel,
   StagedFileIcon,
   StagedFileName,
@@ -93,7 +93,7 @@ export const RequestAdminEditor = ({ request, draft }: RequestAdminEditorProps) 
         />
       </Section>
 
-      <Divider />
+      <SectionDivider />
 
       <Section>
         <SectionLabel variant="overline" color="text.secondary">
