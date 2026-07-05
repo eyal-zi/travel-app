@@ -46,7 +46,9 @@ export const CalendarToolbar = ({
   const [pickerOpen, setPickerOpen] = useState(false)
   const jumpButtonRef = useRef<HTMLButtonElement>(null)
 
-  const handlePickDate = (date: Date | null) => {
+  // Commit only once the full date is accepted (day picked); onChange fires on
+  // each intermediate view step (year, then month) and must not jump the calendar.
+  const handleAcceptDate = (date: Date | null) => {
     if (!date || Number.isNaN(date.getTime())) return
     onGoToDate(date)
     setSelectedDate(format(date, 'yyyy-MM-dd'))
@@ -83,7 +85,7 @@ export const CalendarToolbar = ({
               open={pickerOpen}
               onClose={() => setPickerOpen(false)}
               value={selectedDate ? parseISO(selectedDate) : new Date()}
-              onChange={handlePickDate}
+              onAccept={handleAcceptDate}
               slots={{ field: () => null }}
               slotProps={{
                 popper: { anchorEl: () => jumpButtonRef.current },
