@@ -1,22 +1,15 @@
+import Autocomplete from '@mui/material/Autocomplete'
 import Checkbox from '@mui/material/Checkbox'
-import Chip from '@mui/material/Chip'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import ListItemText from '@mui/material/ListItemText'
-import MenuItem from '@mui/material/MenuItem'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import Select, { type SelectChangeEvent } from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import { OTHER_FILE_TYPE } from '../../constants/fileTypes'
-import { ChipRow, OtherFieldWrap } from './MultiSelectField.styles'
-import { parseOtherValues } from './MultiSelectField.utils'
+import { GroupHeader, GroupItems } from './MultiSelectField.styles'
 import type { MultiSelectFieldProps } from './MultiSelectField.types'
 
 /**
- * A reusable multi-select with chip display and an optional "Other…" free-text
- * input rendered inside the menu. Shared by the large-file search and the
- * new-file request forms.
+ * A searchable multi-select built on MUI Autocomplete: type to filter, selected
+ * values show as chips, and options carrying a `group` are shown under a group
+ * header. With `allowCustom`, arbitrary typed values can be added (freeSolo) and
+ * live in `value` alongside the listed options. Shared by the large-file search
+ * and the new-file request forms.
  */
 export const MultiSelectField = ({
   label,
@@ -25,97 +18,63 @@ export const MultiSelectField = ({
   onChange,
   emptyText = 'Any',
   disabled,
-  allowOther = false,
-  otherText = '',
-  onOtherTextChange,
-  otherLabel = 'Other…',
-  otherPlaceholder = 'e.g. geotiff, netcdf',
-  otherHelperText = 'Comma-separated, included alongside the selected options.',
+  allowCustom = false,
+  helperText,
 }: MultiSelectFieldProps) => {
-  const allOptions = allowOther
-    ? [...options, { value: OTHER_FILE_TYPE, label: otherLabel }]
-    : options
-
+  const optionValues = options.map((option) => option.value)
   const labelFor = (item: string) =>
-    allOptions.find((option) => option.value === item)?.label ?? item
+    options.find((option) => option.value === item)?.label ?? item
 
-  const handleChange = (event: SelectChangeEvent<string[]>) => {
-    const next = event.target.value
-    onChange(typeof next === 'string' ? next.split(',') : next)
-  }
-
-  // Flat list of menu children; the "Other" input is injected right after its
-  // option. Kept flat (not nested arrays) so Select's value typing stays intact.
-  const menuItems = allOptions.flatMap((option) => {
-    const items = [
-      <MenuItem key={option.value} value={option.value}>
-        <Checkbox checked={value.includes(option.value)} />
-        <ListItemText primary={option.label} />
-      </MenuItem>,
-    ]
-    if (
-      allowOther &&
-      option.value === OTHER_FILE_TYPE &&
-      value.includes(OTHER_FILE_TYPE)
-    ) {
-      items.push(
-        // Lives inside the menu, so we stop key/click events from reaching the
-        // Select (which would otherwise close the menu, type-ahead, or move focus).
-        <OtherFieldWrap
-          key={`${option.value}-input`}
-          onClickCapture={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-        >
-          <TextField
-            fullWidth
-            size="small"
-            autoFocus
-            label={otherLabel}
-            value={otherText}
-            onChange={(event) => onOtherTextChange?.(event.target.value)}
-            placeholder={otherPlaceholder}
-            helperText={otherHelperText}
-          />
-        </OtherFieldWrap>,
-      )
-    }
-    return items
-  })
+  // Only group when the options actually declare groups; otherwise Autocomplete
+  // would render an empty header for the ungrouped list.
+  const hasGroups = options.some((option) => option.group)
+  const groupFor = (item: string) =>
+    options.find((option) => option.value === item)?.group ?? ''
 
   return (
-    <FormControl fullWidth disabled={disabled}>
-      <InputLabel shrink>{label}</InputLabel>
-      <Select
-        multiple
-        displayEmpty
-        value={value}
-        onChange={handleChange}
-        input={<OutlinedInput notched label={label} />}
-        renderValue={(selected) =>
-          selected.length === 0 ? (
-            <Typography component="span" color="text.secondary">
-              {emptyText}
-            </Typography>
-          ) : (
-            <ChipRow>
-              {selected.flatMap((item) => {
-                // Show the typed custom values as chips instead of "Other…".
-                if (allowOther && item === OTHER_FILE_TYPE) {
-                  const customs = parseOtherValues(otherText)
-                  return customs.length
-                    ? customs.map((custom) => (
-                        <Chip key={`other-${custom}`} size="small" label={custom} />
-                      ))
-                    : [<Chip key={item} size="small" label={labelFor(item)} />]
-                }
-                return [<Chip key={item} size="small" label={labelFor(item)} />]
-              })}
-            </ChipRow>
-          )
-        }
-      >
-        {menuItems}
-      </Select>
-    </FormControl>
+    <Autocomplete
+      multiple
+      fullWidth
+      disableCloseOnSelect
+      freeSolo={allowCustom}
+      disabled={disabled}
+      options={optionValues}
+      value={value}
+      onChange={(_event, next) => onChange(next as string[])}
+      getOptionLabel={labelFor}
+      groupBy={hasGroups ? groupFor : undefined}
+      renderGroup={
+        hasGroups
+          ? (params) => (
+              <li key={params.key}>
+                {/* Ungrouped options report an empty group — skip the header and
+                    keep them flush-left; grouped options are indented so they
+                    read as belonging under their header. */}
+                {params.group && <GroupHeader>{params.group}</GroupHeader>}
+                <GroupItems indented={Boolean(params.group)}>
+                  {params.children}
+                </GroupItems>
+              </li>
+            )
+          : undefined
+      }
+      renderOption={(props, option, { selected }) => {
+        const { key, ...liProps } = props
+        return (
+          <li key={key} {...liProps}>
+            <Checkbox size="small" checked={selected} sx={{ mr: 1 }} />
+            {labelFor(option)}
+          </li>
+        )
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={label}
+          placeholder={value.length === 0 ? emptyText : undefined}
+          helperText={helperText}
+        />
+      )}
+    />
   )
 }

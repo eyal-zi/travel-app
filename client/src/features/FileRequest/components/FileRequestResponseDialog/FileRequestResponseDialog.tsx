@@ -4,7 +4,6 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
-import MenuItem from '@mui/material/MenuItem'
 import Slider from '@mui/material/Slider'
 import TextField from '@mui/material/TextField'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
@@ -23,6 +22,8 @@ import {
   LARGE_FILE_TYPE_OPTIONS,
   OTHER_FILE_TYPE,
 } from '../../../../common/constants/fileTypes'
+import { SelectField } from '../../../../common/components/SelectField/SelectField'
+import type { SelectOption } from '../../../../common/types'
 import {
   REQUEST_STATUSES,
   REQUEST_STATUS_META,
@@ -60,6 +61,13 @@ import type {
   FileRequestResponseDialogProps,
 } from './FileRequestResponseDialog.types'
 import type { FileRequest } from '../../types'
+
+// File-type choices for the admin select, with the "Other…" sentinel appended
+// so picking it reveals the custom-type text field below.
+const FILE_TYPE_OPTIONS: SelectOption[] = [
+  ...LARGE_FILE_TYPE_OPTIONS,
+  { value: OTHER_FILE_TYPE, label: 'Other…' },
+]
 
 /** Admin large-file form: status, note, and the metadata + file that fulfil the request. */
 const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
@@ -150,21 +158,12 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
 
               <Field>
                 <Typography variant="subtitle2">File type</Typography>
-                <TextField
-                  select
+                <SelectField
                   value={typeValue}
-                  onChange={(event) => setTypeValue(event.target.value)}
-                  size="small"
-                  fullWidth
+                  onChange={setTypeValue}
+                  options={FILE_TYPE_OPTIONS}
                   disabled={saving}
-                >
-                  {LARGE_FILE_TYPE_OPTIONS.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                  <MenuItem value={OTHER_FILE_TYPE}>Other…</MenuItem>
-                </TextField>
+                />
                 {typeValue === OTHER_FILE_TYPE && (
                   <TextField
                     value={otherType}

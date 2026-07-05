@@ -9,7 +9,6 @@ import { isValid as isValidDate } from 'date-fns'
 import type { FeatureCollection } from 'geojson'
 import { GeoFilterMap } from '../../../../common/components/GeoFilterMap/GeoFilterMap'
 import { MultiSelectField } from '../../../../common/components/MultiSelectField/MultiSelectField'
-import { mergeOtherValues } from '../../../../common/components/MultiSelectField/MultiSelectField.utils'
 import { Notification } from '../../../../common/components/Notification/Notification'
 import { useNotification } from '../../../../common/hooks/useNotification'
 import { serializeDate } from '../../../../common/utils/date'
@@ -57,7 +56,6 @@ export const FileRequestForm = () => {
 
   const [values, setValues] = useState<FormState>(INITIAL_STATE)
   const [fileTypes, setFileTypes] = useState<string[]>([])
-  const [otherTypes, setOtherTypes] = useState('')
   const [geo, setGeo] = useState<string[]>([])
   const [areaLayers, setAreaLayers] = useState<GeoLayer[]>([])
   const [showErrors, setShowErrors] = useState(false)
@@ -66,7 +64,6 @@ export const FileRequestForm = () => {
     setValues((prev) => ({ ...prev, [key]: value }))
 
   const areaFeatures = areaLayers.flatMap((layer) => layer.data.features)
-  const resolvedFileTypes = mergeOtherValues(fileTypes, otherTypes)
 
   const endBeforeStart =
     Boolean(values.startDate && values.endDate) &&
@@ -76,7 +73,7 @@ export const FileRequestForm = () => {
 
   const textRequired = (value: string) => showErrors && value.trim().length === 0
   const areaMissing = showErrors && areaFeatures.length === 0
-  const fileTypesMissing = showErrors && resolvedFileTypes.length === 0
+  const fileTypesMissing = showErrors && fileTypes.length === 0
   const geoMissing = showErrors && geo.length === 0
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -90,7 +87,7 @@ export const FileRequestForm = () => {
       filledDates &&
       !endBeforeStart &&
       areaFeatures.length > 0 &&
-      resolvedFileTypes.length > 0 &&
+      fileTypes.length > 0 &&
       geo.length > 0
 
     if (!valid) {
@@ -110,7 +107,7 @@ export const FileRequestForm = () => {
       startDate: serializeDate(values.startDate),
       endDate: serializeDate(values.endDate),
       area,
-      fileTypes: resolvedFileTypes,
+      fileTypes: fileTypes,
       geo,
       // Notes are optional — omit when blank rather than sending an empty string.
       ...(values.notes.trim() ? { notes: values.notes.trim() } : {}),
@@ -121,7 +118,6 @@ export const FileRequestForm = () => {
       notifySuccess('File request submitted!')
       setValues(INITIAL_STATE)
       setFileTypes([])
-      setOtherTypes('')
       setGeo([])
       setAreaLayers([])
       setShowErrors(false)
@@ -217,11 +213,8 @@ export const FileRequestForm = () => {
                     options={LARGE_FILE_TYPE_OPTIONS}
                     value={fileTypes}
                     onChange={setFileTypes}
-                    allowOther
-                    otherText={otherTypes}
-                    onOtherTextChange={setOtherTypes}
-                    otherLabel="Other file types"
-                    otherHelperText="Comma-separated, included alongside the selected types."
+                    allowCustom
+                    helperText="Pick from the list or type your own and press Enter."
                   />
                   {fileTypesMissing && (
                     <FormHelperText error>

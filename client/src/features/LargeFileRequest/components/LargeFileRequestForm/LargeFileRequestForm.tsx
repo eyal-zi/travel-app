@@ -11,7 +11,6 @@ import { isValid as isValidDate } from "date-fns";
 import type { FeatureCollection } from "geojson";
 import { GeoFilterMap } from "../../../../common/components/GeoFilterMap/GeoFilterMap";
 import { MultiSelectField } from "../../../../common/components/MultiSelectField/MultiSelectField";
-import { mergeOtherValues } from "../../../../common/components/MultiSelectField/MultiSelectField.utils";
 import { LARGE_FILE_TYPE_OPTIONS } from "../../../../common/constants/fileTypes";
 import { serializeDate } from "../../../../common/utils/date";
 import type { AppliedFilters } from "../../queries/useLargeFileSearch";
@@ -44,7 +43,6 @@ export const LargeFileRequestForm = ({
   searching,
 }: LargeFileRequestFormProps) => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [otherText, setOtherText] = useState("");
   const [accuracy, setAccuracy] = useState(DEFAULT_ACCURACY);
   const [country, setCountry] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -61,7 +59,7 @@ export const LargeFileRequestForm = ({
     event.preventDefault();
     if (endBeforeStart) return;
 
-    const fileTypes = mergeOtherValues(selectedTypes, otherText);
+    const fileTypes = selectedTypes;
     const trimmedCountry = country.trim();
     const start = serializeDate(startDate);
     const end = serializeDate(endDate);
@@ -92,11 +90,8 @@ export const LargeFileRequestForm = ({
             options={LARGE_FILE_TYPE_OPTIONS}
             value={selectedTypes}
             onChange={setSelectedTypes}
-            allowOther
-            otherText={otherText}
-            onOtherTextChange={setOtherText}
-            otherLabel="Other file types"
-            otherHelperText="Comma-separated, matched alongside the selected types."
+            allowCustom
+            helperText="Pick from the list or type your own and press Enter."
           />
         </FieldWide>
 
