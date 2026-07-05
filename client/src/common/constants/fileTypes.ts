@@ -19,3 +19,42 @@ export const LARGE_FILE_TYPE_OPTIONS: SelectOption[] = [
 // Sentinel option that reveals a free-text input; its typed values are sent
 // alongside the fixed selections.
 export const OTHER_FILE_TYPE = 'other'
+
+// Maps common file extensions to the fixed large-file type values. Extensions
+// not listed here fall back to the "Other…" option, carrying the raw extension
+// as its custom label.
+const EXTENSION_TO_FILE_TYPE: Record<string, string> = {
+  geojson: 'geojson',
+  json: 'geojson',
+  shp: 'shapefile',
+  kml: 'kml',
+  csv: 'csv',
+  xls: 'excel',
+  xlsx: 'excel',
+}
+
+// Splits a file name into its base (without extension) and lower-cased
+// extension. Leading-dot files ("no name") and names without a dot yield an
+// empty extension.
+export const splitFileName = (
+  fileName: string,
+): { base: string; extension: string } => {
+  const dot = fileName.lastIndexOf('.')
+  if (dot <= 0) return { base: fileName, extension: '' }
+  return {
+    base: fileName.slice(0, dot),
+    extension: fileName.slice(dot + 1).toLowerCase(),
+  }
+}
+
+export type InferredFileType = { typeValue: string; otherType: string }
+
+// Resolves a file extension to the file-type select's value. Known extensions
+// map to a fixed option; anything else becomes "Other…" with the extension
+// prefilled as the custom type.
+export const inferFileType = (extension: string): InferredFileType => {
+  const known = EXTENSION_TO_FILE_TYPE[extension]
+  return known
+    ? { typeValue: known, otherType: '' }
+    : { typeValue: OTHER_FILE_TYPE, otherType: extension }
+}

@@ -159,7 +159,7 @@ export const LargeFileRequestForm = ({
         <Typography variant="subtitle2">
           Search area{" "}
           <Typography component="span" variant="body2" color="text.secondary">
-            — drop a KML, SHP, CSV or Excel file on the map.
+            — drop a KML, GeoJSON, SHP, CSV or Excel file on the map.
           </Typography>
         </Typography>
         <MapFrame>

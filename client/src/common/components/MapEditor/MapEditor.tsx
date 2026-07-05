@@ -5,7 +5,7 @@ import { acceptedFileTypes } from '../../geo/parsers'
 import { DragOverlay, DropzoneRoot } from './MapEditor.styles'
 import type { MapEditorProps } from './MapEditor.types'
 
-const DEFAULT_PROMPT = 'Drop a KML, SHP, CSV or Excel file to add it to the map'
+const DEFAULT_PROMPT = 'Drop a KML, GeoJSON, SHP, CSV or Excel file to add it to the map'
 const noop = () => {}
 
 /**

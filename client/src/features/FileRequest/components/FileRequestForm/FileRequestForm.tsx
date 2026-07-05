@@ -258,12 +258,12 @@ export const FileRequestForm = () => {
           <FormSide>
             <SectionLabel variant="overline">Request area</SectionLabel>
             <SectionHint variant="body2">
-              Drop a KML, SHP, CSV or Excel file on the map to define the area.
+              Drop a KML, GeoJSON, SHP, CSV or Excel file on the map to define the area.
             </SectionHint>
             <MapFrame>
               <GeoFilterMap
                 onChange={setAreaLayers}
-                prompt="Drop a KML, SHP, CSV or Excel file to set the request area"
+                prompt="Drop a KML, GeoJSON, SHP, CSV or Excel file to set the request area"
               />
             </MapFrame>
             {areaMissing && (

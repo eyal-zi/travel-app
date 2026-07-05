@@ -14,9 +14,13 @@ import FolderOpenRoundedIcon from '@mui/icons-material/FolderOpenRounded'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { useRef } from 'react'
 import { Notification } from '../../../../common/components/Notification/Notification'
 import { FileDropzone } from '../../../../common/components/FileDropzone/FileDropzone'
-import { GeoFilterMap } from '../../../../common/components/GeoFilterMap/GeoFilterMap'
+import {
+  GeoFilterMap,
+  type GeoFilterMapHandle,
+} from '../../../../common/components/GeoFilterMap/GeoFilterMap'
 import { LargeFileResultItem } from '../../../LargeFileRequest/components/LargeFileResultItem/LargeFileResultItem'
 import {
   LARGE_FILE_TYPE_OPTIONS,
@@ -93,6 +97,14 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
     setAreaLayers,
     setFile,
   } = draft
+
+  // Picking the fulfilling file also renders it on the footprint map. The map
+  // parses it and notifies on its own if the format isn't supported.
+  const mapRef = useRef<GeoFilterMapHandle>(null)
+  const handleFileChange = (next: File) => {
+    setFile(next)
+    mapRef.current?.addFiles([next])
+  }
 
   return (
     <AdminSections>
@@ -229,7 +241,7 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
             </SectionLabel>
             <FileDropzone
               file={file}
-              onFileChange={setFile}
+              onFileChange={handleFileChange}
               accept={{}}
               minHeight={100}
               idlePrompt="Drag the file here, or click to browse"
@@ -246,8 +258,9 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
           </SectionLabel>
           <MapFrame>
             <GeoFilterMap
+              ref={mapRef}
               onChange={setAreaLayers}
-              prompt="Drop a KML, SHP, CSV or Excel file to set the footprint"
+              prompt="Drop a KML, GeoJSON, SHP, CSV or Excel file to set the footprint"
             />
           </MapFrame>
         </MapColumn>

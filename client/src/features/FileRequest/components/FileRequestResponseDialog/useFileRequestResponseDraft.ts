@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { FeatureCollection } from 'geojson'
 import { useNotification } from '../../../../common/hooks/useNotification'
 import { serializeDate } from '../../../../common/utils/date'
-import { OTHER_FILE_TYPE } from '../../../../common/constants/fileTypes'
+import {
+  OTHER_FILE_TYPE,
+  inferFileType,
+  splitFileName,
+} from '../../../../common/constants/fileTypes'
 import type { RequestStatus } from '../../../../common/requests/requestStatus'
 import type { GeoLayer } from '../../../../common/geo/geo.types'
 import { useRespondFileRequest } from '../../queries/useRespondFileRequest'
@@ -56,6 +60,18 @@ export const useFileRequestResponseDraft = (
       setFile(null)
     }
   }
+
+  // Picking a file drives the metadata: fill the name from the file's base name
+  // and the type from its extension, mapping unknown extensions to "Other…".
+  const setFileAndAutofill = useCallback((next: File) => {
+    setFile(next)
+    const { base, extension } = splitFileName(next.name)
+    setName(base)
+    const { typeValue: inferredType, otherType: inferredOther } =
+      inferFileType(extension)
+    setTypeValue(inferredType)
+    setOtherType(inferredOther)
+  }, [])
 
   const fileType = typeValue === OTHER_FILE_TYPE ? otherType.trim() : typeValue
   // Merge every drawn layer's features into one footprint FeatureCollection.
@@ -117,7 +133,7 @@ export const useFileRequestResponseDraft = (
     setCountry,
     setCoverageDate,
     setAreaLayers,
-    setFile,
+    setFile: setFileAndAutofill,
     submit,
     notification,
     closeNotification: close,

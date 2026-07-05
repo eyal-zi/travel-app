@@ -4,6 +4,7 @@ import { parseKml } from './kml'
 import { parseShpFile } from './shp'
 import { parseCsv } from './csv'
 import { parseExcel } from './excel'
+import { parseGeoJson } from './geojson'
 
 interface GeoFormat {
   parse: (file: File) => Promise<FeatureCollection>
@@ -19,6 +20,16 @@ const FORMATS: Record<string, GeoFormat> = {
   shp: {
     parse: parseShpFile,
     accept: { 'application/octet-stream': ['.shp'] },
+  },
+  geojson: {
+    parse: parseGeoJson,
+    accept: { 'application/geo+json': ['.geojson'], 'application/json': ['.json'] },
+  },
+  // parseFile dispatches by extension, so .json needs its own entry. Its accept map
+  // is already covered by the geojson entry above, so leave it empty to avoid duplicates.
+  json: {
+    parse: parseGeoJson,
+    accept: {},
   },
   csv: {
     parse: parseCsv,

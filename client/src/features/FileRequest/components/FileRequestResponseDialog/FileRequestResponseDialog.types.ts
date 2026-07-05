@@ -29,7 +29,7 @@ export type FileRequestResponseDraft = {
   setCountry: (value: string) => void
   setCoverageDate: (value: Date | null) => void
   setAreaLayers: (layers: GeoLayer[]) => void
-  setFile: (file: File | null) => void
+  setFile: (file: File) => void
   submit: () => Promise<boolean>
   notification: Notification | null
   closeNotification: () => void
