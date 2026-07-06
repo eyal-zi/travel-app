@@ -17,6 +17,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useRef } from 'react'
 import { Notification } from '../../../../common/components/Notification/Notification'
 import { FileDropzone } from '../../../../common/components/FileDropzone/FileDropzone'
+import { isParseable } from '../../../../common/geo/parsers'
 import {
   GeoFilterMap,
   type GeoFilterMapHandle,
@@ -98,12 +99,13 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
     setFile,
   } = draft
 
-  // Picking the fulfilling file also renders it on the footprint map. The map
-  // parses it and notifies on its own if the format isn't supported.
+  // Picking the fulfilling file also renders its footprint on the map when the
+  // format is parseable (e.g. GeoTIFF's extent). Formats with no browser parser
+  // (e.g. ECW) upload normally and keep a hand-drawn footprint.
   const mapRef = useRef<GeoFilterMapHandle>(null)
   const handleFileChange = (next: File) => {
     setFile(next)
-    mapRef.current?.addFiles([next])
+    if (isParseable(next)) mapRef.current?.addFiles([next])
   }
 
   return (
@@ -260,7 +262,7 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
             <GeoFilterMap
               ref={mapRef}
               onChange={setAreaLayers}
-              prompt="Drop a KML, GeoJSON, SHP, CSV or Excel file to set the footprint"
+              prompt="Drop a KML, GeoJSON, SHP, CSV, Excel or GeoTIFF file to set the footprint"
             />
           </MapFrame>
         </MapColumn>

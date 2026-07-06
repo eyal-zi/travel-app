@@ -4,13 +4,17 @@
 import type { SelectOption } from '../types'
 
 // The fixed file-type choices. GeoJSON and Shapefile are grouped under a
-// "Vector" subheader; the rest render at the top level. The values stay flat, so
-// existing label lookups and the request/upload payloads are unchanged.
+// "Vector" subheader, TIFF and ECW under an "Orthophoto" subheader; the rest
+// render at the top level. The values stay flat, so existing label lookups and
+// the request/upload payloads are unchanged.
 export const VECTOR_FILE_TYPE_GROUP = 'Vector'
+export const ORTHOPHOTO_FILE_TYPE_GROUP = 'Orthophoto'
 
 export const LARGE_FILE_TYPE_OPTIONS: SelectOption[] = [
   { value: 'geojson', label: 'GeoJSON', group: VECTOR_FILE_TYPE_GROUP },
   { value: 'shapefile', label: 'Shapefile', group: VECTOR_FILE_TYPE_GROUP },
+  { value: 'tiff', label: 'TIFF', group: ORTHOPHOTO_FILE_TYPE_GROUP },
+  { value: 'ecw', label: 'ECW', group: ORTHOPHOTO_FILE_TYPE_GROUP },
   { value: 'kml', label: 'KML' },
   { value: 'csv', label: 'CSV' },
   { value: 'excel', label: 'Excel' },
@@ -27,6 +31,9 @@ const EXTENSION_TO_FILE_TYPE: Record<string, string> = {
   geojson: 'geojson',
   json: 'geojson',
   shp: 'shapefile',
+  tiff: 'tiff',
+  tif: 'tiff',
+  ecw: 'ecw',
   kml: 'kml',
   csv: 'csv',
   xls: 'excel',

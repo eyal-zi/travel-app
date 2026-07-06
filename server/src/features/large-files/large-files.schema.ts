@@ -27,6 +27,8 @@ export const geometry = customType<{ data: Geometry; driverData: string }>({
 export const LARGE_FILE_TYPES = [
   'geojson',
   'shapefile',
+  'tiff',
+  'ecw',
   'kml',
   'csv',
   'excel',

@@ -5,6 +5,7 @@ import { parseShpFile } from './shp'
 import { parseCsv } from './csv'
 import { parseExcel } from './excel'
 import { parseGeoJson } from './geojson'
+import { parseGeoTiff } from './geotiff'
 
 interface GeoFormat {
   parse: (file: File) => Promise<FeatureCollection>
@@ -54,6 +55,17 @@ const FORMATS: Record<string, GeoFormat> = {
     parse: parseExcel,
     accept: {},
   },
+  // GeoTIFF: only the header is read to derive the footprint (see ./geotiff).
+  tiff: {
+    parse: parseGeoTiff,
+    accept: { 'image/tiff': ['.tif', '.tiff'] },
+  },
+  // parseFile dispatches by extension, so .tif needs its own entry. Its accept
+  // map is already covered by the tiff entry above, so leave it empty.
+  tif: {
+    parse: parseGeoTiff,
+    accept: {},
+  },
 }
 
 const extensionOf = (filename: string) => filename.split('.').pop()?.toLowerCase() ?? ''
@@ -70,3 +82,9 @@ export const acceptedFileTypes: Accept = Object.values(FORMATS).reduce<Accept>(
   (merged, { accept }) => ({ ...merged, ...accept }),
   {},
 )
+
+// Whether a file can be turned into map layers by parseFile. Lets callers skip
+// pushing unparseable uploads (e.g. ECW, which has no browser parser) onto the
+// map instead of surfacing an "Unsupported file type" error.
+export const isParseable = (file: File): boolean =>
+  extensionOf(file.name) in FORMATS
