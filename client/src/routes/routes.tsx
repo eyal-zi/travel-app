@@ -41,10 +41,6 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: '/admin',
-            element: <Navigate to="/admin/trip-requests" replace />,
-          },
-          {
             path: '/admin/trip-requests',
             element: <RequestTripAdminPage />,
           },
