@@ -3,8 +3,7 @@ import type { FeatureCollection } from 'geojson'
 import { useNotification } from '../../../../common/hooks/useNotification'
 import { serializeDate } from '../../../../common/utils/date'
 import {
-  OTHER_FILE_TYPE,
-  inferFileType,
+  inferFileTypeValue,
   splitFileName,
 } from '../../../../common/constants/fileTypes'
 import type { RequestStatus } from '../../../../common/requests/requestStatus'
@@ -32,8 +31,7 @@ export const useFileRequestResponseDraft = (
   const [statusDraft, setStatusDraft] = useState<RequestStatus>(request.status)
   const [note, setNote] = useState(request.adminNote ?? '')
   const [name, setName] = useState('')
-  const [typeValue, setTypeValue] = useState('')
-  const [otherType, setOtherType] = useState('')
+  const [fileType, setFileType] = useState('')
   const [accuracy, setAccuracy] = useState(DEFAULT_ACCURACY)
   const [country, setCountry] = useState('')
   const [coverageDate, setCoverageDate] = useState<Date | null>(null)
@@ -51,8 +49,7 @@ export const useFileRequestResponseDraft = (
       setStatusDraft(request.status)
       setNote(request.adminNote ?? '')
       setName('')
-      setTypeValue('')
-      setOtherType('')
+      setFileType('')
       setAccuracy(DEFAULT_ACCURACY)
       setCountry('')
       setCoverageDate(null)
@@ -62,24 +59,20 @@ export const useFileRequestResponseDraft = (
   }
 
   // Picking a file drives the metadata: fill the name from the file's base name
-  // and the type from its extension, mapping unknown extensions to "Other…".
+  // and the type from its extension (unknown extensions become a custom value).
   const setFileAndAutofill = useCallback((next: File) => {
     setFile(next)
     const { base, extension } = splitFileName(next.name)
     setName(base)
-    const { typeValue: inferredType, otherType: inferredOther } =
-      inferFileType(extension)
-    setTypeValue(inferredType)
-    setOtherType(inferredOther)
+    setFileType(inferFileTypeValue(extension))
   }, [])
 
-  const fileType = typeValue === OTHER_FILE_TYPE ? otherType.trim() : typeValue
   // Merge every drawn layer's features into one footprint FeatureCollection.
   const features = areaLayers.flatMap((layer) => layer.data.features)
   const canSave =
     !saving &&
     Boolean(name.trim()) &&
-    Boolean(fileType) &&
+    Boolean(fileType.trim()) &&
     Boolean(file) &&
     features.length > 0
 
@@ -91,7 +84,7 @@ export const useFileRequestResponseDraft = (
       const form = new FormData()
       form.append('file', file)
       form.append('name', name.trim())
-      form.append('fileType', fileType)
+      form.append('fileType', fileType.trim())
       form.append('accuracy', String(accuracy))
       const trimmedCountry = country.trim()
       if (trimmedCountry) form.append('country', trimmedCountry)
@@ -116,8 +109,7 @@ export const useFileRequestResponseDraft = (
     statusDraft,
     note,
     name,
-    typeValue,
-    otherType,
+    fileType,
     accuracy,
     country,
     coverageDate,
@@ -127,8 +119,7 @@ export const useFileRequestResponseDraft = (
     setStatus: setStatusDraft,
     setNote,
     setName,
-    setTypeValue,
-    setOtherType,
+    setFileType,
     setAccuracy,
     setCountry,
     setCoverageDate,

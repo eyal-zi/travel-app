@@ -23,12 +23,8 @@ import {
   type GeoFilterMapHandle,
 } from '../../../../common/components/GeoFilterMap/GeoFilterMap'
 import { LargeFileResultItem } from '../../../LargeFileRequest/components/LargeFileResultItem/LargeFileResultItem'
-import {
-  LARGE_FILE_TYPE_OPTIONS,
-  OTHER_FILE_TYPE,
-} from '../../../../common/constants/fileTypes'
-import { SelectField } from '../../../../common/components/SelectField/SelectField'
-import type { SelectOption } from '../../../../common/types'
+import { LARGE_FILE_TYPE_OPTIONS } from '../../../../common/constants/fileTypes'
+import { MultiSelectField } from '../../../../common/components/MultiSelectField/MultiSelectField'
 import {
   REQUEST_STATUSES,
   REQUEST_STATUS_META,
@@ -67,21 +63,13 @@ import type {
 } from './FileRequestResponseDialog.types'
 import type { FileRequest } from '../../types'
 
-// File-type choices for the admin select, with the "Other…" sentinel appended
-// so picking it reveals the custom-type text field below.
-const FILE_TYPE_OPTIONS: SelectOption[] = [
-  ...LARGE_FILE_TYPE_OPTIONS,
-  { value: OTHER_FILE_TYPE, label: 'Other…' },
-]
-
 /** Admin large-file form: status, note, and the metadata + file that fulfil the request. */
 const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
   const {
     statusDraft,
     note,
     name,
-    typeValue,
-    otherType,
+    fileType,
     accuracy,
     country,
     coverageDate,
@@ -90,8 +78,7 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
     setStatus,
     setNote,
     setName,
-    setTypeValue,
-    setOtherType,
+    setFileType,
     setAccuracy,
     setCountry,
     setCoverageDate,
@@ -172,22 +159,18 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
 
               <Field>
                 <Typography variant="subtitle2">File type</Typography>
-                <SelectField
-                  value={typeValue}
-                  onChange={setTypeValue}
-                  options={FILE_TYPE_OPTIONS}
+                <MultiSelectField
+                  label=""
+                  emptyText="Select a file type"
+                  options={LARGE_FILE_TYPE_OPTIONS}
+                  // The fulfilling file has a single type — single-select mode.
+                  multiple={false}
+                  value={fileType ? [fileType] : []}
+                  onChange={(values) => setFileType(values[0] ?? '')}
+                  allowCustom
                   disabled={saving}
+                  helperText="Pick from the list or type your own and press Enter."
                 />
-                {typeValue === OTHER_FILE_TYPE && (
-                  <TextField
-                    value={otherType}
-                    onChange={(event) => setOtherType(event.target.value)}
-                    placeholder="Custom file type"
-                    size="small"
-                    fullWidth
-                    disabled={saving}
-                  />
-                )}
               </Field>
 
               <Field>

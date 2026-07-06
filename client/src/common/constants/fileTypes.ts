@@ -4,17 +4,20 @@
 import type { SelectOption } from '../types'
 
 // The fixed file-type choices. GeoJSON and Shapefile are grouped under a
-// "Vector" subheader, TIFF and ECW under an "Orthophoto" subheader; the rest
-// render at the top level. The values stay flat, so existing label lookups and
-// the request/upload payloads are unchanged.
+// "Vector" subheader, TIFF and ECW under an "Orthophoto" subheader, OSGB under
+// a "Photorealistic" subheader; the rest render at the top level. The values
+// stay flat, so existing label lookups and the request/upload payloads are
+// unchanged.
 export const VECTOR_FILE_TYPE_GROUP = 'Vector'
 export const ORTHOPHOTO_FILE_TYPE_GROUP = 'Orthophoto'
+export const PHOTOREALISTIC_FILE_TYPE_GROUP = 'Photorealistic'
 
 export const LARGE_FILE_TYPE_OPTIONS: SelectOption[] = [
   { value: 'geojson', label: 'GeoJSON', group: VECTOR_FILE_TYPE_GROUP },
   { value: 'shapefile', label: 'Shapefile', group: VECTOR_FILE_TYPE_GROUP },
   { value: 'tiff', label: 'TIFF', group: ORTHOPHOTO_FILE_TYPE_GROUP },
   { value: 'ecw', label: 'ECW', group: ORTHOPHOTO_FILE_TYPE_GROUP },
+  { value: 'osgb', label: 'OSGB', group: PHOTOREALISTIC_FILE_TYPE_GROUP },
   { value: 'kml', label: 'KML' },
   { value: 'csv', label: 'CSV' },
   { value: 'excel', label: 'Excel' },
@@ -34,6 +37,7 @@ const EXTENSION_TO_FILE_TYPE: Record<string, string> = {
   tiff: 'tiff',
   tif: 'tiff',
   ecw: 'ecw',
+  osgb: 'osgb',
   kml: 'kml',
   csv: 'csv',
   xls: 'excel',
@@ -54,14 +58,8 @@ export const splitFileName = (
   }
 }
 
-export type InferredFileType = { typeValue: string; otherType: string }
-
-// Resolves a file extension to the file-type select's value. Known extensions
-// map to a fixed option; anything else becomes "Other…" with the extension
-// prefilled as the custom type.
-export const inferFileType = (extension: string): InferredFileType => {
-  const known = EXTENSION_TO_FILE_TYPE[extension]
-  return known
-    ? { typeValue: known, otherType: '' }
-    : { typeValue: OTHER_FILE_TYPE, otherType: extension }
-}
+// Resolves a file extension to a file-type value. Known extensions map to a
+// fixed option; anything else falls back to the raw extension as a custom value
+// (the autocomplete accepts arbitrary typed values via freeSolo).
+export const inferFileTypeValue = (extension: string): string =>
+  EXTENSION_TO_FILE_TYPE[extension] ?? extension

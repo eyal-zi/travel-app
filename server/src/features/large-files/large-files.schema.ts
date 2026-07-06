@@ -29,6 +29,7 @@ export const LARGE_FILE_TYPES = [
   'shapefile',
   'tiff',
   'ecw',
+  'osgb',
   'kml',
   'csv',
   'excel',

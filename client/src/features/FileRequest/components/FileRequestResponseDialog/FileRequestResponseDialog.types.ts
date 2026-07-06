@@ -11,9 +11,9 @@ export type FileRequestResponseDraft = {
   statusDraft: RequestStatus
   note: string
   name: string
-  // The selected file-type option (or OTHER_FILE_TYPE, which reveals `otherType`).
-  typeValue: string
-  otherType: string
+  // The file type of the fulfilling file: a fixed option value or an arbitrary
+  // custom value typed into the autocomplete (freeSolo).
+  fileType: string
   accuracy: number
   country: string
   coverageDate: Date | null
@@ -23,8 +23,7 @@ export type FileRequestResponseDraft = {
   setStatus: (status: RequestStatus) => void
   setNote: (note: string) => void
   setName: (name: string) => void
-  setTypeValue: (value: string) => void
-  setOtherType: (value: string) => void
+  setFileType: (value: string) => void
   setAccuracy: (value: number) => void
   setCountry: (value: string) => void
   setCoverageDate: (value: Date | null) => void
