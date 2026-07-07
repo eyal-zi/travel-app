@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded'
 import FolderOpenRoundedIcon from '@mui/icons-material/FolderOpenRounded'
+import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded'
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
@@ -19,6 +21,7 @@ import { useRef } from 'react'
 import { Notification } from '../../../../common/components/Notification/Notification'
 import { FileDropzone } from '../../../../common/components/FileDropzone/FileDropzone'
 import { isParseable } from '../../../../common/geo/parsers'
+import { formatBytes } from '../../../../common/utils/format'
 import {
   GeoFilterMap,
   type GeoFilterMapHandle,
@@ -55,8 +58,10 @@ import {
   FormColumn,
   FormGrid,
   MainSplit,
+  FileMeta,
   MapColumn,
   MapFrame,
+  SelectedFile,
   UploadStatus,
 } from './FileRequestResponseDialog.styles'
 import type {
@@ -66,7 +71,13 @@ import type {
 import type { FileRequest } from '../../types'
 
 /** Admin large-file form: status, note, and the metadata + file that fulfil the request. */
-const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
+const AdminForm = ({
+  draft,
+  request,
+}: {
+  draft: FileRequestResponseDraft
+  request: FileRequest
+}) => {
   const {
     statusDraft,
     note,
@@ -87,6 +98,7 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
     setCoverageDate,
     setAreaLayers,
     setFile,
+    clearFile,
   } = draft
 
   // Picking the fulfilling file also renders its footprint on the map when the
@@ -227,16 +239,37 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
             <SectionLabel variant="overline" color="text.secondary">
               File
             </SectionLabel>
-            <FileDropzone
-              file={file}
-              onFileChange={handleFileChange}
-              accept={{}}
-              minHeight={100}
-              idlePrompt="Drag the file here, or click to browse"
-              renderPreview={() => (
-                <Typography variant="body2">{file?.name}</Typography>
-              )}
-            />
+            {file ? (
+              <SelectedFile>
+                <InsertDriveFileRoundedIcon className="file-icon" />
+                <FileMeta>
+                  <Typography variant="body2" noWrap title={file.name}>
+                    {file.name}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {formatBytes(file.size)}
+                  </Typography>
+                </FileMeta>
+                <IconButton
+                  onClick={clearFile}
+                  disabled={saving}
+                  size="small"
+                  color="error"
+                  aria-label="Remove file"
+                >
+                  <DeleteOutlineRoundedIcon fontSize="small" />
+                </IconButton>
+              </SelectedFile>
+            ) : (
+              <FileDropzone
+                file={null}
+                onFileChange={handleFileChange}
+                accept={{}}
+                minHeight={100}
+                idlePrompt="Drag the file here, or click to browse"
+                renderPreview={() => null}
+              />
+            )}
             {uploadProgress !== null && (
               <UploadStatus>
                 <Typography variant="caption" color="text.secondary">
@@ -259,6 +292,7 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
             <GeoFilterMap
               ref={mapRef}
               onChange={setAreaLayers}
+              initialGeometry={request.largeFile?.geometry ?? null}
               prompt="Drop a KML, GeoJSON, SHP, CSV, Excel or GeoTIFF file to set the footprint"
             />
           </MapFrame>
@@ -366,7 +400,7 @@ export const FileRequestResponseDialog = ({
 
         <DialogContent dividers>
           {admin ? (
-            <AdminForm draft={draft} />
+            <AdminForm draft={draft} request={request} />
           ) : (
             <RequesterView request={request} />
           )}

@@ -69,6 +69,33 @@ export const UploadStatus = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(1),
 }))
 
+// The picked file shown as a compact card (in place of the dropzone) once a file
+// is selected: a leading file icon, the name + size, and a trailing remove button
+// that clears the file and brings the dropzone back.
+export const SelectedFile = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+  padding: theme.spacing(1, 1, 1, 1.5),
+  borderRadius: 12,
+  border: `1px solid ${theme.palette.divider}`,
+  backgroundColor: theme.palette.action.hover,
+  '& > .file-icon': {
+    fontSize: 28,
+    color: theme.palette.text.secondary,
+    flexShrink: 0,
+  },
+}))
+
+// Name + size column of the selected-file card; min-width 0 lets the name
+// truncate with an ellipsis instead of overflowing the card.
+export const FileMeta = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+  minWidth: 0,
+})
+
 // Frames the embedded footprint map with rounded, clipped corners.
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: 'relative',

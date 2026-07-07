@@ -31,6 +31,8 @@ export type FileRequestResponseDraft = {
   setCoverageDate: (value: Date | null) => void
   setAreaLayers: (layers: GeoLayer[]) => void
   setFile: (file: File) => void
+  // Removes the picked file so the dropzone reappears.
+  clearFile: () => void
   submit: () => Promise<boolean>
   notification: Notification | null
   closeNotification: () => void

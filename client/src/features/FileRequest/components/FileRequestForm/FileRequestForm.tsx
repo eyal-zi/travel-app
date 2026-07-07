@@ -50,9 +50,16 @@ const INITIAL_STATE: FormState = {
   endDate: null,
 }
 
-export const FileRequestForm = () => {
+type FileRequestFormProps = {
+  // Called after a request is successfully created, so the page can take the
+  // user to their requests list. Success feedback is owned by the caller since
+  // this form unmounts on navigation.
+  onSubmitted?: () => void
+}
+
+export const FileRequestForm = ({ onSubmitted }: FileRequestFormProps) => {
   const { submit, isSubmitting } = useCreateFileRequest()
-  const { notification, notifyError, notifySuccess, close } = useNotification()
+  const { notification, notifyError, close } = useNotification()
 
   const [values, setValues] = useState<FormState>(INITIAL_STATE)
   const [fileTypes, setFileTypes] = useState<string[]>([])
@@ -115,12 +122,12 @@ export const FileRequestForm = () => {
 
     try {
       await submit(payload)
-      notifySuccess('File request submitted!')
       setValues(INITIAL_STATE)
       setFileTypes([])
       setGeo([])
       setAreaLayers([])
       setShowErrors(false)
+      onSubmitted?.()
     } catch {
       notifyError("Couldn't submit your file request. Please try again.")
     }

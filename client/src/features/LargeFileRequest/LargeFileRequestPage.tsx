@@ -1,5 +1,8 @@
-import { useNavigate } from 'react-router-dom'
+import { useCallback } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTabParam } from '../../common/hooks/useTabParam'
+import { useNotification } from '../../common/hooks/useNotification'
+import { Notification } from '../../common/components/Notification/Notification'
 import IconButton from '@mui/material/IconButton'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
@@ -19,6 +22,17 @@ export const LargeFileRequestPage = () => {
     ['search', 'request', 'history'] as const,
     'search',
   )
+  const [, setSearchParams] = useSearchParams()
+  const { notification, notifySuccess, close } = useNotification()
+
+  // After a request is submitted, take the user to their requests list filtered
+  // to the freshly-created "Received" items instead of just clearing the form.
+  // Both params go in one update: two separate setters would each start from the
+  // committed URL, so the second would clobber the first's change.
+  const handleRequestSubmitted = useCallback(() => {
+    setSearchParams({ tab: 'history', status: 'received' }, { replace: true })
+    notifySuccess('File request submitted!')
+  }, [setSearchParams, notifySuccess])
 
   return (
     <PageRoot>
@@ -47,9 +61,13 @@ export const LargeFileRequestPage = () => {
         </Tabs>
 
         {tab === 'search' && <LargeFileSearch />}
-        {tab === 'request' && <FileRequestForm />}
+        {tab === 'request' && (
+          <FileRequestForm onSubmitted={handleRequestSubmitted} />
+        )}
         {tab === 'history' && <FileRequestsList />}
       </Shell>
+
+      <Notification notification={notification} onClose={close} />
     </PageRoot>
   )
 }

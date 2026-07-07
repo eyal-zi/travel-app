@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { parseISO } from 'date-fns'
 import type { FeatureCollection } from 'geojson'
 import { useNotification } from '../../../../common/hooks/useNotification'
 import { serializeDate } from '../../../../common/utils/date'
@@ -44,19 +45,26 @@ export const useFileRequestResponseDraft = (
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
 
   // Reseed each time the dialog transitions to open so it starts fresh and drops
-  // abandoned edits. Adjusting state during render is the React-recommended
-  // alternative to an effect here (see useRequestDraft).
+  // abandoned edits. When the request already has a fulfilling large file, seed
+  // the metadata fields from it so a reopened response shows the existing details
+  // instead of a blank form (the footprint and the file bytes live in S3 and
+  // can't be restored — the admin re-drops the file to save again). Adjusting
+  // state during render is the React-recommended alternative to an effect here
+  // (see useRequestDraft).
   const [wasOpen, setWasOpen] = useState(open)
   if (open !== wasOpen) {
     setWasOpen(open)
     if (open) {
+      const largeFile = request.largeFile
       setStatusDraft(request.status)
       setNote(request.adminNote ?? '')
-      setName('')
-      setFileType('')
-      setAccuracy(DEFAULT_ACCURACY)
-      setCountry('')
-      setCoverageDate(null)
+      setName(largeFile?.name ?? '')
+      setFileType(largeFile?.fileType ?? '')
+      setAccuracy(largeFile?.accuracy ?? DEFAULT_ACCURACY)
+      setCountry(largeFile?.country ?? '')
+      setCoverageDate(
+        largeFile?.coverageDate ? parseISO(largeFile.coverageDate) : null,
+      )
       setAreaLayers([])
       setFile(null)
     }
@@ -70,6 +78,10 @@ export const useFileRequestResponseDraft = (
     setName(base)
     setFileType(inferFileTypeValue(extension))
   }, [])
+
+  // Drop the picked file so the dropzone reappears; leaves the autofilled
+  // name/type in place so removing a file doesn't wipe the admin's edits.
+  const clearFile = useCallback(() => setFile(null), [])
 
   // Merge every drawn layer's features into one footprint FeatureCollection.
   const features = areaLayers.flatMap((layer) => layer.data.features)
@@ -143,6 +155,7 @@ export const useFileRequestResponseDraft = (
     setCoverageDate,
     setAreaLayers,
     setFile: setFileAndAutofill,
+    clearFile,
     submit,
     notification,
     closeNotification: close,
