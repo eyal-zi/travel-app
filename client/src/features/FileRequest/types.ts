@@ -23,6 +23,23 @@ export type CreateFileRequest = {
 
 export type FileRequestStatus = RequestStatus
 
+// Admin "respond" payload: the large-file metadata plus a reference to the object
+// the admin already uploaded straight to S3 (`fileKey` + original `fileName`), and
+// the workflow status/note. Sent as JSON — the file itself never goes through the
+// API. `status` defaults to "done" server-side when omitted.
+export type RespondFileRequest = {
+  name: string
+  fileType: string
+  accuracy: number
+  country?: string
+  coverageDate?: string // 'YYYY-MM-DD'
+  area: FeatureCollection
+  status?: FileRequestStatus
+  adminNote?: string
+  fileKey: string
+  fileName: string
+}
+
 export type FileRequest = CreateFileRequest & {
   id: string
   status: FileRequestStatus

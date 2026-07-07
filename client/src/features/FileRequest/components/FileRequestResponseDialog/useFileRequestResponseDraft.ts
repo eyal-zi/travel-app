@@ -9,6 +9,7 @@ import {
 import type { RequestStatus } from '../../../../common/requests/requestStatus'
 import type { GeoLayer } from '../../../../common/geo/geo.types'
 import { useRespondFileRequest } from '../../queries/useRespondFileRequest'
+import { uploadLargeFile } from '../../services/multipartUpload'
 import type { FileRequest } from '../../types'
 import type { FileRequestResponseDraft } from './FileRequestResponseDialog.types'
 
@@ -38,6 +39,9 @@ export const useFileRequestResponseDraft = (
   const [areaLayers, setAreaLayers] = useState<GeoLayer[]>([])
   const [file, setFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
+  // Direct-to-S3 upload progress in [0, 1] while a large file is uploading, else
+  // null (idle, or the quick metadata-only respond step afterwards).
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null)
 
   // Reseed each time the dialog transitions to open so it starts fresh and drops
   // abandoned edits. Adjusting state during render is the React-recommended
@@ -80,27 +84,40 @@ export const useFileRequestResponseDraft = (
     if (!canSave || !file) return false
     setSaving(true)
     try {
-      const area: FeatureCollection = { type: 'FeatureCollection', features }
-      const form = new FormData()
-      form.append('file', file)
-      form.append('name', name.trim())
-      form.append('fileType', fileType.trim())
-      form.append('accuracy', String(accuracy))
-      const trimmedCountry = country.trim()
-      if (trimmedCountry) form.append('country', trimmedCountry)
-      const date = serializeDate(coverageDate)
-      if (date) form.append('coverageDate', date)
-      form.append('area', JSON.stringify(area))
-      form.append('status', statusDraft)
-      form.append('adminNote', note)
+      // Upload the (possibly multi-GB) file straight to S3 first, then send the
+      // metadata referencing the resulting object — no file bytes touch the API.
+      setUploadProgress(0)
+      const uploaded = await uploadLargeFile(file, {
+        onProgress: setUploadProgress,
+      })
+      setUploadProgress(null)
 
-      await respondAsync({ id: request.id, form })
+      const area: FeatureCollection = { type: 'FeatureCollection', features }
+      const trimmedCountry = country.trim()
+      const date = serializeDate(coverageDate)
+
+      await respondAsync({
+        id: request.id,
+        payload: {
+          name: name.trim(),
+          fileType: fileType.trim(),
+          accuracy,
+          ...(trimmedCountry && { country: trimmedCountry }),
+          ...(date && { coverageDate: date }),
+          area,
+          status: statusDraft,
+          adminNote: note,
+          fileKey: uploaded.key,
+          fileName: uploaded.fileName,
+        },
+      })
       notifySuccess('Response sent.')
       return true
     } catch {
       notifyError('Could not send your response. Please try again.')
       return false
     } finally {
+      setUploadProgress(null)
       setSaving(false)
     }
   }
@@ -115,6 +132,7 @@ export const useFileRequestResponseDraft = (
     coverageDate,
     file,
     saving,
+    uploadProgress,
     canSave,
     setStatus: setStatusDraft,
     setNote,

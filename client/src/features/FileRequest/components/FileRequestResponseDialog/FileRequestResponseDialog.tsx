@@ -4,6 +4,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
+import LinearProgress from '@mui/material/LinearProgress'
 import Slider from '@mui/material/Slider'
 import TextField from '@mui/material/TextField'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
@@ -56,6 +57,7 @@ import {
   MainSplit,
   MapColumn,
   MapFrame,
+  UploadStatus,
 } from './FileRequestResponseDialog.styles'
 import type {
   FileRequestResponseDraft,
@@ -75,6 +77,7 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
     coverageDate,
     file,
     saving,
+    uploadProgress,
     setStatus,
     setNote,
     setName,
@@ -234,6 +237,17 @@ const AdminForm = ({ draft }: { draft: FileRequestResponseDraft }) => {
                 <Typography variant="body2">{file?.name}</Typography>
               )}
             />
+            {uploadProgress !== null && (
+              <UploadStatus>
+                <Typography variant="caption" color="text.secondary">
+                  {`Uploading… ${Math.round(uploadProgress * 100)}%`}
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={uploadProgress * 100}
+                />
+              </UploadStatus>
+            )}
           </Section>
         </FormColumn>
 
@@ -304,13 +318,22 @@ export const FileRequestResponseDialog = ({
   draft,
   admin,
 }: FileRequestResponseDialogProps) => {
-  const { saving, canSave, submit, notification, closeNotification } = draft
+  const { saving, uploadProgress, canSave, submit, notification, closeNotification } =
+    draft
   const status =
     REQUEST_STATUS_META[request.status] ?? REQUEST_STATUS_META.received
 
   const handleSave = async () => {
     if (await submit()) onClose()
   }
+
+  // While uploading, the button shows live progress; then the quick metadata save.
+  const saveLabel =
+    uploadProgress !== null
+      ? `Uploading… ${Math.round(uploadProgress * 100)}%`
+      : saving
+        ? 'Saving…'
+        : 'Create file & respond'
 
   return (
     <>
@@ -364,7 +387,7 @@ export const FileRequestResponseDialog = ({
                 ) : undefined
               }
             >
-              {saving ? 'Saving…' : 'Create file & respond'}
+              {saveLabel}
             </Button>
           </DialogActions>
         )}

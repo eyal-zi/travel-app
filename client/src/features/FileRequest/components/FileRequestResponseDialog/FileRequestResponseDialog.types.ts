@@ -19,6 +19,8 @@ export type FileRequestResponseDraft = {
   coverageDate: Date | null
   file: File | null
   saving: boolean
+  // Direct-to-S3 upload progress in [0, 1] while the file uploads, else null.
+  uploadProgress: number | null
   canSave: boolean
   setStatus: (status: RequestStatus) => void
   setNote: (note: string) => void

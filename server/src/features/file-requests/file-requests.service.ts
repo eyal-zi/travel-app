@@ -68,17 +68,20 @@ export class FileRequestsService extends RequestService<
   }
 
   // Admin response: create the large file that fulfils the request from the
-  // uploaded file and metadata, link it, and advance the workflow (status
-  // defaults to "done"). Returns the request with its new large file attached.
+  // already-uploaded object (referenced by `dto.fileKey`) plus its metadata, link
+  // it, and advance the workflow (status defaults to "done"). Returns the request
+  // with its new large file attached.
   async respond(
     id: string,
     dto: RespondFileRequestDto,
-    file: Express.Multer.File,
     updatedBy?: string,
   ): Promise<FileRequestWithLargeFile> {
     await this.ensureExists(id);
 
-    const largeFile = await this.largeFilesService.create(dto, file);
+    const largeFile = await this.largeFilesService.create(dto, {
+      key: dto.fileKey,
+      fileName: dto.fileName,
+    });
 
     const [row] = (await this.db
       .update(fileRequests)

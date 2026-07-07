@@ -11,10 +11,9 @@ import type { FeatureCollection } from 'geojson';
 import { IsFeatureCollection } from '../../../common/validators/is-feature-collection.validator';
 import { IsIsoDate } from '../../../common/validators/is-iso-date.validator';
 
-// Body for creating a large file. Sent as multipart/form-data alongside the
-// uploaded `file` part, so every field arrives as a string: `accuracy` is coerced
-// to a number and `area` is parsed from a JSON string before validation, mirroring
-// how SearchLargeFilesDto coerces its query-style values.
+// Metadata for creating a large file. Sent as JSON now (the file itself is
+// uploaded separately, straight to S3), but `accuracy`/`area` keep their coercion
+// so the DTO also tolerates the string-valued form this used to arrive in.
 export class CreateLargeFileDto {
   @IsString()
   @MinLength(1)

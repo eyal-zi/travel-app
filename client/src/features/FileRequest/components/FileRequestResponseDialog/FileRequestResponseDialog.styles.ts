@@ -60,6 +60,15 @@ export const FieldHeader = styled(Box)({
   alignItems: 'baseline',
 })
 
+// Direct-to-S3 upload progress shown under the dropzone: a caption row above the
+// bar while the file uploads.
+export const UploadStatus = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.5),
+  marginTop: theme.spacing(1),
+}))
+
 // Frames the embedded footprint map with rounded, clipped corners.
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: 'relative',

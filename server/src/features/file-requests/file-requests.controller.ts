@@ -7,10 +7,7 @@ import {
   Patch,
   Post,
   Query,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from '../../common/auth/current-user.decorator';
 import { Roles } from '../../common/auth/roles.decorator';
 import type { AuthenticatedUser } from '../../common/auth/auth.types';
@@ -56,18 +53,17 @@ export class FileRequestsController {
     return this.fileRequestsService.update(id, dto, user.id);
   }
 
-  // Admin response: create the fulfilling large file from the uploaded file plus
-  // the large-file metadata (multipart "file" part + form fields), link it to the
-  // request and advance its status.
+  // Admin response: create the fulfilling large file from the large-file metadata
+  // plus a reference (`fileKey`/`fileName`) to the object the admin already
+  // uploaded straight to S3 via the presigned multipart flow. Links it to the
+  // request and advances its status. This is a plain JSON body — no file bytes.
   @Post(':id/respond')
   @Roles('admin')
-  @UseInterceptors(FileInterceptor('file'))
   respond(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: RespondFileRequestDto,
-    @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.fileRequestsService.respond(id, dto, file, user.id);
+    return this.fileRequestsService.respond(id, dto, user.id);
   }
 }

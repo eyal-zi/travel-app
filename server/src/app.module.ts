@@ -12,6 +12,7 @@ import { AnnouncementsModule } from './features/announcements/announcements.modu
 import { TripRequestsModule } from './features/trip-requests/trip-requests.module';
 import { LargeFilesModule } from './features/large-files/large-files.module';
 import { FileRequestsModule } from './features/file-requests/file-requests.module';
+import { UploadsModule } from './features/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { FileRequestsModule } from './features/file-requests/file-requests.modul
     TripRequestsModule,
     LargeFilesModule,
     FileRequestsModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

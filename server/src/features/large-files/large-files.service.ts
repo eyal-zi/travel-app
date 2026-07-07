@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-import { extname } from 'path';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   and,
@@ -85,15 +83,23 @@ export class LargeFilesService {
     };
   }
 
-  // Creates a large file from admin-supplied metadata plus the uploaded file.
-  // The file is stored in S3 and recorded in `large_file_files` (joined on read);
-  // the footprint is written as a PostGIS geometry via ST_GeomFromGeoJSON. Returns
-  // the record as a search-style result so callers can render it immediately.
+  // Creates a large file from admin-supplied metadata plus an object the admin
+  // already uploaded to S3 via the presigned multipart flow (`source.key`). The
+  // object's real size/type are read back from S3 (not trusted from the client);
+  // the file is recorded in `large_file_files` (joined on read) and the footprint
+  // is written as a PostGIS geometry via ST_GeomFromGeoJSON. Returns the record as
+  // a search-style result so callers can render it immediately.
   async create(
     dto: CreateLargeFileDto,
-    file: Express.Multer.File,
+    source: { key: string; fileName: string },
   ): Promise<LargeFileResult> {
     const geometry = this.toSingleGeometry(dto.area);
+
+    // Authoritative size/type from S3, so a client can't misreport them. Throws
+    // NotFoundException if the object isn't there (e.g. upload never completed).
+    const head = await this.s3.headObject(source.key, LARGE_FILE_BUCKET);
+    const sizeBytes = head.contentLength ?? 0;
+    const contentType = head.contentType ?? 'application/octet-stream';
 
     const [row] = await this.db
       .insert(largeFiles)
@@ -103,24 +109,16 @@ export class LargeFilesService {
         accuracy: dto.accuracy,
         country: dto.country ?? null,
         coverageDate: dto.coverageDate ?? null,
-        sizeBytes: file.size,
+        sizeBytes,
         geom: sql`ST_SetSRID(ST_GeomFromGeoJSON(${JSON.stringify(geometry)}), 4326)`,
       })
       .returning({ id: largeFiles.id, createdAt: largeFiles.createdAt });
 
-    const key = `${randomUUID()}${extname(file.originalname)}`;
-    await this.s3.uploadFile({
-      key,
-      body: file.buffer,
-      bucket: LARGE_FILE_BUCKET,
-      contentType: file.mimetype,
-    });
-
     await this.db.insert(largeFileFiles).values({
       largeFileId: row.id,
-      fileKey: key,
-      fileName: file.originalname,
-      contentType: file.mimetype,
+      fileKey: source.key,
+      fileName: source.fileName,
+      contentType,
     });
 
     this.logger.log(`Created large file ${row.id}`);
@@ -131,7 +129,7 @@ export class LargeFilesService {
       accuracy: dto.accuracy,
       country: dto.country ?? null,
       coverageDate: dto.coverageDate ?? null,
-      sizeBytes: file.size,
+      sizeBytes,
       geometry,
       createdAt: row.createdAt,
     });

@@ -8,6 +8,7 @@ import type {
   FileRequest,
   FileRequestPage,
   FileRequestStatus,
+  RespondFileRequest,
 } from '../types'
 
 export const fileRequestService = {
@@ -26,9 +27,9 @@ export const fileRequestService = {
     payload: { status?: FileRequestStatus; adminNote?: string },
   ) => api.patch<FileRequest>(`/api/file-requests/${id}`, payload),
 
-  // Admin response: creates the fulfilling large file and links it. The FormData
-  // carries the uploaded "file" part plus the large-file metadata fields (with
-  // `area` as a JSON string); axios infers the multipart Content-Type/boundary.
-  respond: (id: string, form: FormData) =>
-    api.post<FileRequest>(`/api/file-requests/${id}/respond`, form),
+  // Admin response: creates the fulfilling large file and links it. The file was
+  // already uploaded straight to S3 (presigned multipart), so this is a plain JSON
+  // payload carrying the large-file metadata plus the object reference (`fileKey`).
+  respond: (id: string, payload: RespondFileRequest) =>
+    api.post<FileRequest>(`/api/file-requests/${id}/respond`, payload),
 }
