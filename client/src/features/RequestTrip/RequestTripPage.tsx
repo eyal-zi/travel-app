@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTabParam } from '../../common/hooks/useTabParam'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
@@ -20,6 +20,7 @@ import {
 export const RequestTripPage = () => {
   const navigate = useNavigate()
   const [tab, setTab] = useTabParam(['form', 'list'] as const, 'form')
+  const [, setSearchParams] = useSearchParams()
 
   return (
     <PageRoot>
@@ -66,7 +67,15 @@ export const RequestTripPage = () => {
 
         {tab === 'form' ? (
           <TripRequestForm
-            onSubmitted={() => setTab('list')}
+            // Land on the list filtered to the just-submitted (received) request.
+            // Both params go in one update: two separate setters would each start
+            // from the committed URL, so the second would clobber the first's change.
+            onSubmitted={() =>
+              setSearchParams(
+                { tab: 'list', status: 'received' },
+                { replace: true },
+              )
+            }
             onCancel={() => navigate('/')}
           />
         ) : (
