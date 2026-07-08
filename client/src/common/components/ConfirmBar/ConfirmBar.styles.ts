@@ -42,23 +42,27 @@ export const Bar = styled(Box, {
 
 
 
-export const SaveButton = styled(Button)(({ theme }) => ({
-  borderRadius: 999,
-  paddingLeft: theme.spacing(2.25),
-  paddingRight: theme.spacing(2.25),
-  fontWeight: 600,
-  boxShadow: 'none',
-  transition: theme.transitions.create(['box-shadow', 'transform'], {
-    duration: theme.transitions.duration.shorter,
-  }),
-  '&:hover': {
-    boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.45)}`,
-    transform: 'translateY(-1px)',
-  },
-  '&:active': {
-    transform: 'translateY(0)',
-  },
-}))
+export const ActionButton = styled(Button)(({ theme, color }) => {
+  const key = typeof color === 'string' && color in theme.palette ? color : 'primary'
+  const glow = (theme.palette[key as 'primary'] ?? theme.palette.primary).main
+  return {
+    borderRadius: 999,
+    paddingLeft: theme.spacing(2.25),
+    paddingRight: theme.spacing(2.25),
+    fontWeight: 600,
+    boxShadow: 'none',
+    transition: theme.transitions.create(['box-shadow', 'transform'], {
+      duration: theme.transitions.duration.shorter,
+    }),
+    '&:hover': {
+      boxShadow: `0 4px 14px ${alpha(glow, 0.45)}`,
+      transform: 'translateY(-1px)',
+    },
+    '&:active': {
+      transform: 'translateY(0)',
+    },
+  }
+})
 
 
 

@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded'
 import { MapEditor } from '../../../common/components/MapEditor/MapEditor'
-import { SaveCancelBar } from '../../../common/components/SaveCancelBar/SaveCancelBar'
+import { ConfirmBar } from '../../../common/components/ConfirmBar/ConfirmBar'
 import { UploadedTag } from '../../../common/components/UploadedTag/UploadedTag'
 import { useGeoLayers } from '../../../common/geo/useGeoLayers'
 import { useNotification } from '../../../common/hooks/useNotification'
@@ -176,10 +176,10 @@ export const RouteMapDropzone = ({
         )}
 
         {canEdit && pending && (
-          <SaveCancelBar
-            onSave={handleSave}
+          <ConfirmBar
+            onAction={handleSave}
             onCancel={handleCancel}
-            saving={saving}
+            busy={saving}
             disabled={isLoading}
           />
         )}

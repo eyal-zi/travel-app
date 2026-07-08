@@ -2,7 +2,7 @@ import { useState } from 'react'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 import { FileDropzone } from '../../common/components/FileDropzone/FileDropzone'
 import { Notification } from '../../common/components/Notification/Notification'
-import { SaveCancelBar } from '../../common/components/SaveCancelBar/SaveCancelBar'
+import { ConfirmBar } from '../../common/components/ConfirmBar/ConfirmBar'
 import { UploadedTag } from '../../common/components/UploadedTag/UploadedTag'
 import { useNotification } from '../../common/hooks/useNotification'
 import { useSelectedDate } from '../../common/hooks/useSelectedDate'
@@ -23,9 +23,10 @@ export const PdfDropzone = () => {
   const date = selectedDate ?? todayKey()
   const canEdit = useIsAdmin()
 
-  
-  
+
+
   const [file, setFile] = useState<File | null>(null)
+  const [pendingDelete, setPendingDelete] = useState(false)
   const { notification, notifyError, notifySuccess, close } = useNotification()
 
   const { data: record, isLoading } = usePdfForDate(date)
@@ -37,11 +38,22 @@ export const PdfDropzone = () => {
 
 
   const handleFileChange = (next: File) => {
+    setPendingDelete(false)
     setFile(next)
   }
 
 
   const handleSave = () => {
+    if (pendingDelete) {
+      deletePdf.mutate(date, {
+        onSuccess: () => {
+          notifySuccess('PDF deleted.')
+          setPendingDelete(false)
+        },
+        onError: () => notifyError('Failed to delete the PDF.'),
+      })
+      return
+    }
     if (!file) return
     savePdf.mutate(
       { date, file },
@@ -58,19 +70,18 @@ export const PdfDropzone = () => {
 
   const handleCancel = () => {
     setFile(null)
+    setPendingDelete(false)
   }
 
+
   const handleDelete = () => {
-    deletePdf.mutate(date, {
-      onSuccess: () => notifySuccess('PDF deleted.'),
-      onError: () => notifyError('Failed to delete the PDF.'),
-    })
+    setPendingDelete(true)
   }
 
   return (
     <PdfRoot>
       <UploadedTag date={uploadedAt} />
-      {existingUrl && !file && canEdit && (
+      {existingUrl && !file && !pendingDelete && canEdit && (
         <DeleteButton
           onClick={handleDelete}
           disabled={deletePdf.isPending}
@@ -93,11 +104,23 @@ export const PdfDropzone = () => {
         renderPreview={(src) => <PdfViewer url={src} />}
       />
 
-      {canEdit && file && (
-        <SaveCancelBar
-          onSave={handleSave}
+      {canEdit && pendingDelete && (
+        <ConfirmBar
+          onAction={handleSave}
           onCancel={handleCancel}
-          saving={savePdf.isPending}
+          busy={deletePdf.isPending}
+          actionColor="error"
+          actionLabel="Delete"
+          busyLabel="Deleting…"
+          actionIcon={<DeleteOutlineRoundedIcon />}
+        />
+      )}
+
+      {canEdit && file && (
+        <ConfirmBar
+          onAction={handleSave}
+          onCancel={handleCancel}
+          busy={savePdf.isPending}
         />
       )}
 
