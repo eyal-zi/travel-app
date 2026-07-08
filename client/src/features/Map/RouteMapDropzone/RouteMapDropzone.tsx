@@ -5,11 +5,10 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import Tooltip from '@mui/material/Tooltip'
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded'
 import { MapEditor } from '../../../common/components/MapEditor/MapEditor'
+import { SaveCancelBar } from '../../../common/components/SaveCancelBar/SaveCancelBar'
 import { UploadedTag } from '../../../common/components/UploadedTag/UploadedTag'
 import { useGeoLayers } from '../../../common/geo/useGeoLayers'
 import { useNotification } from '../../../common/hooks/useNotification'
@@ -20,8 +19,6 @@ import { useRouteForDate, useSaveRoute } from '../queries/useRoute'
 import { useIsAdmin } from '../../Auth/hooks/useIsAdmin'
 import type { Route } from '../types/route.type'
 import {
-  ActionBar,
-  ActionButton,
   LayerControl,
   LayerListContainer,
   LayerListItemIcon,
@@ -179,27 +176,12 @@ export const RouteMapDropzone = ({
         )}
 
         {canEdit && pending && (
-          <ActionBar>
-            <ActionButton
-              variant="contained"
-              size="small"
-              startIcon={<CheckRoundedIcon />}
-              onClick={handleSave}
-              disabled={saving || isLoading}
-            >
-              {saving ? 'Saving…' : 'Save'}
-            </ActionButton>
-            <ActionButton
-              variant="text"
-              color="inherit"
-              size="small"
-              startIcon={<CloseRoundedIcon />}
-              onClick={handleCancel}
-              disabled={saving || isLoading}
-            >
-              Cancel
-            </ActionButton>
-          </ActionBar>
+          <SaveCancelBar
+            onSave={handleSave}
+            onCancel={handleCancel}
+            saving={saving}
+            disabled={isLoading}
+          />
         )}
       </MapEditor>
     </RouteMapRoot>

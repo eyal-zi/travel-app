@@ -1,6 +1,5 @@
-import { alpha, styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Popover from '@mui/material/Popover'
 
@@ -30,28 +29,6 @@ export const LayerListContainer = styled(Box)({
   overflowY: 'auto',
 })
 
-export const ActionBar = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: theme.spacing(2.5),
-  left: '50%',
-  transform: 'translateX(-50%)',
-  zIndex: 1000,
-  maxWidth: `calc(100% - ${theme.spacing(4)})`,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexWrap: 'wrap',
-  gap: theme.spacing(1),
-  padding: theme.spacing(0.75),
-  borderRadius: 999,
-  
-  
-  
-  backgroundColor: alpha(theme.palette.background.paper, 0.92),
-  border: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
-  boxShadow: theme.shadows[4],
-}))
-
 export const LayerPopover = styled(Popover)(({ theme }) => ({
   '& .MuiPopover-paper': {
     marginTop: theme.spacing(1),
@@ -62,9 +39,3 @@ export const LayerPopover = styled(Popover)(({ theme }) => ({
 export const LayerListItemIcon = styled(ListItemIcon)({
   minWidth: 32,
 })
-
-export const ActionButton = styled(Button)(({ theme }) => ({
-  borderRadius: 999,
-  paddingLeft: theme.spacing(2),
-  paddingRight: theme.spacing(2),
-}))
