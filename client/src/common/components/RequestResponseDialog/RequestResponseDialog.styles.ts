@@ -16,9 +16,11 @@ type StatusColor = 'info' | 'warning' | 'success'
 export const StyledDialog = styled(Dialog, {
   shouldForwardProp: (prop) => prop !== 'width',
 })<{ width?: number }>(({ theme, width = 480 }) => ({
+  // No backdrop-filter blur here: without GPU compositing it forces a full
+  // backdrop re-blur on every repaint, making every interaction inside the
+  // dialog (typing, map pans, toggle clicks) take 100-180ms per frame.
   '& .MuiBackdrop-root': {
-    backdropFilter: 'blur(4px)',
-    backgroundColor: alpha(theme.palette.common.black, 0.5),
+    backgroundColor: alpha(theme.palette.common.black, 0.6),
   },
   '& .MuiDialog-paper': {
     width: '100%',

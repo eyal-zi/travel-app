@@ -19,7 +19,6 @@ export const DragOverlay = styled(Box)(({ theme }) => ({
   borderRadius: (theme.shape.borderRadius as number) * 1.5,
   border: `2px dashed ${theme.palette.primary.main}`,
   backgroundColor: theme.palette.action.hover,
-  backdropFilter: 'blur(1px)',
   color: theme.palette.primary.main,
   font: 'inherit',
   fontWeight: theme.typography.fontWeightMedium,

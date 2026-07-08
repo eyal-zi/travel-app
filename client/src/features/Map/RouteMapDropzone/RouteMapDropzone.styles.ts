@@ -44,9 +44,10 @@ export const ActionBar = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1),
   padding: theme.spacing(0.75),
   borderRadius: 999,
-  backgroundColor: alpha(theme.palette.background.paper, 0.6),
-  backdropFilter: 'blur(8px)',
-  WebkitBackdropFilter: 'blur(8px)',
+  // Mostly-opaque tint, no backdrop blur — this bar floats over the live map,
+  // and a backdrop-filter re-rasterizes on every pan frame without GPU
+  // compositing.
+  backgroundColor: alpha(theme.palette.background.paper, 0.92),
   border: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
   boxShadow: theme.shadows[4],
 }))
