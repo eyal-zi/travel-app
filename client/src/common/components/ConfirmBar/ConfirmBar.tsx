@@ -20,9 +20,10 @@ export const ConfirmBar = ({
   actionIcon = <CheckRoundedIcon />,
   cancelIcon = <CloseRoundedIcon />,
   actionColor = 'primary',
+  placement = 'bottom',
   zIndex = 1000,
 }: ConfirmBarProps) => (
-  <Bar zIndex={zIndex}>
+  <Bar zIndex={zIndex} placement={placement}>
     <ActionButton
       variant="contained"
       color={actionColor}

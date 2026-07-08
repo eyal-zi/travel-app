@@ -39,5 +39,8 @@ export type ConfirmBarProps = {
   actionColor?: ActionColor
 
 
+  placement?: 'top' | 'bottom'
+
+
   zIndex?: number
 }

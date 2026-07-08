@@ -112,6 +112,9 @@ export const RouteMapDropzone = ({
     if (committed.length === 0) setLayersAnchor(null)
   }
 
+
+  const isDelete = committed.length > 0 && layers.length === 0
+
   return (
     <RouteMapRoot>
       <UploadedTag date={uploadedAt} zIndex={1000} />
@@ -181,6 +184,10 @@ export const RouteMapDropzone = ({
             onCancel={handleCancel}
             busy={saving}
             disabled={isLoading}
+            actionColor={isDelete ? 'error' : 'primary'}
+            actionLabel={isDelete ? 'Delete' : 'Save'}
+            busyLabel={isDelete ? 'Deleting…' : 'Saving…'}
+            actionIcon={isDelete ? <DeleteOutlineRoundedIcon /> : undefined}
           />
         )}
       </MapEditor>

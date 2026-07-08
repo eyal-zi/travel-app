@@ -6,6 +6,8 @@ import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
+import { ConfirmBar } from '../../../common/components/ConfirmBar/ConfirmBar'
 import { Notification } from '../../../common/components/Notification/Notification'
 import { UploadedTag } from '../../../common/components/UploadedTag/UploadedTag'
 import { useNotification } from '../../../common/hooks/useNotification'
@@ -32,6 +34,7 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
   const canEdit = useIsAdmin()
 
   const [file, setFile] = useState<File | null>(null)
+  const [pendingDelete, setPendingDelete] = useState(false)
   const { notification, notifyError, notifySuccess, close } = useNotification()
 
   
@@ -47,7 +50,10 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
 
   
   
-  const handleExited = () => setFile(null)
+  const handleExited = () => {
+    setFile(null)
+    setPendingDelete(false)
+  }
 
   const handleSave = () => {
     if (!file) return
@@ -64,10 +70,21 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
   }
 
   const handleDelete = () => {
+    setPendingDelete(true)
+  }
+
+  const handleConfirmDelete = () => {
     deleteWeather.mutate(date, {
-      onSuccess: () => notifySuccess('Weather image deleted.'),
+      onSuccess: () => {
+        notifySuccess('Weather image deleted.')
+        setPendingDelete(false)
+      },
       onError: () => notifyError('Failed to delete the weather image.'),
     })
+  }
+
+  const handleCancelDelete = () => {
+    setPendingDelete(false)
   }
 
   return (
@@ -96,19 +113,31 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
               loading={isLoading}
               readOnly={!canEdit}
             />
+            {canEdit && pendingDelete && (
+              <ConfirmBar
+                onAction={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                busy={deleteWeather.isPending}
+                actionColor="error"
+                actionLabel="Delete"
+                busyLabel="Deleting…"
+                actionIcon={<DeleteOutlineRoundedIcon />}
+                placement="top"
+              />
+            )}
           </DropzoneWrapper>
         </DialogContent>
 
         <DialogActions>
-          {existingUrl && canEdit && (
+          {existingUrl && !pendingDelete && canEdit && (
             <DeleteButton onClick={handleDelete} disabled={busy}>
-              {deleteWeather.isPending ? 'Deleting…' : 'Delete'}
+              Delete
             </DeleteButton>
           )}
           <Button onClick={onClose} color="inherit" disabled={busy}>
             {canEdit ? 'Cancel' : 'Close'}
           </Button>
-          {canEdit && (
+          {canEdit && !pendingDelete && (
             <Button variant="contained" onClick={handleSave} disabled={!file || busy}>
               {saveWeather.isPending ? 'Saving…' : 'Save'}
             </Button>
