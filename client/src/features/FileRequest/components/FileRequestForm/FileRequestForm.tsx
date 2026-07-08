@@ -51,9 +51,9 @@ const INITIAL_STATE: FormState = {
 }
 
 type FileRequestFormProps = {
-  // Called after a request is successfully created, so the page can take the
-  // user to their requests list. Success feedback is owned by the caller since
-  // this form unmounts on navigation.
+  
+  
+  
   onSubmitted?: () => void
 }
 
@@ -116,7 +116,7 @@ export const FileRequestForm = ({ onSubmitted }: FileRequestFormProps) => {
       area,
       fileTypes: fileTypes,
       geo,
-      // Notes are optional — omit when blank rather than sending an empty string.
+      
       ...(values.notes.trim() ? { notes: values.notes.trim() } : {}),
     }
 

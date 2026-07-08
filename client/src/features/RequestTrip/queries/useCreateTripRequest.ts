@@ -3,11 +3,11 @@ import { tripRequestService } from '../services/tripRequestService'
 import type { CreateTripRequest } from '../types'
 import { tripRequestsKey } from './useTripRequests'
 
-/**
- * Owns the create-trip-request mutation. On success it invalidates the
- * trip-requests list so a freshly submitted request shows up when the user
- * switches to the list view.
- */
+
+
+
+
+
 export const useCreateTripRequest = () => {
   const queryClient = useQueryClient()
 

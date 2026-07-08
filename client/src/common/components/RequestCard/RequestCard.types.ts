@@ -5,9 +5,9 @@ import type {
   RequestSummary,
 } from '../RequestResponseDialog/RequestResponseDialog.types'
 
-// The request shape the card needs: the dialog summary plus the requester's
-// notes and creation time shown on the card itself. Both trip and file requests
-// satisfy it.
+
+
+
 export type RequestCardSummary = RequestSummary & {
   notes?: string
   createdAt: string
@@ -15,33 +15,33 @@ export type RequestCardSummary = RequestSummary & {
 
 export type RequestCardProps = {
   request: RequestCardSummary
-  // Whether this card's response dialog is open (owned by the feature item so it
-  // can seed the draft from the same flag).
+  
+  
   open: boolean
   onOpen: () => void
   onClose: () => void
-  // The draft consumed by the default response dialog. Omit when supplying a
-  // feature-specific dialog via `renderDialog`.
+  
+  
   draft?: RequestDraft
-  // When true, the dialog opens in admin mode (status/note/file editor).
+  
   admin?: boolean
-  // The feature-specific detail fields rendered inside the card's grid.
+  
   children: ReactNode
-  // When set, renders this instead of the default shared response dialog — used by
-  // file requests, whose response dialog is a large-file creation form.
+  
+  
   renderDialog?: () => ReactNode
-  // Shows a "File ready" indicator on the card (file requests fulfilled by a
-  // large file, which carry no `files`).
+  
+  
   fulfilled?: boolean
 }
 
-// A labelled single-value detail field.
+
 export type FieldProps = {
   label: string
   value: string
 }
 
-// A labelled list of tag chips, resolving each value to its option label.
+
 export type TagDetailProps = {
   label: string
   values: string[]

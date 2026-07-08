@@ -12,10 +12,7 @@ import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { IsFeatureCollection } from '../../../common/validators/is-feature-collection.validator';
 import { IsIsoDate } from '../../../common/validators/is-iso-date.validator';
 
-// Search a page of large files. Every filter is optional — an empty body returns
-// the newest page unfiltered. Inherits `cursor`/`limit` for keyset pagination.
 export class SearchLargeFilesDto extends PaginationQueryDto {
-  // Target accuracy 0..15; matches records whose accuracy is within ±1.
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -23,28 +20,23 @@ export class SearchLargeFilesDto extends PaginationQueryDto {
   @Max(15)
   accuracy?: number;
 
-  // Matches records whose file type is one of these. Omit/empty to match any.
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   fileTypes?: string[];
 
-  // Matches records whose country equals this (exact match). Omit to match any.
   @IsOptional()
   @IsString()
   country?: string;
 
-  // Inclusive lower bound on a record's coverage date ('YYYY-MM-DD').
   @IsOptional()
   @IsIsoDate()
   startDate?: string;
 
-  // Inclusive upper bound on a record's coverage date ('YYYY-MM-DD').
   @IsOptional()
   @IsIsoDate()
   endDate?: string;
 
-  // The drawn search area. Records whose geometry intersects any feature match.
   @IsOptional()
   @IsFeatureCollection()
   area?: FeatureCollection;

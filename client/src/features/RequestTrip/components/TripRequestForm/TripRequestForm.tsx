@@ -46,7 +46,7 @@ const INITIAL_STATE: FormState = {
 }
 
 type TripRequestFormProps = {
-  // Called after a request is submitted successfully (e.g. to switch to the list).
+  
   onSubmitted: () => void
   onCancel: () => void
 }
@@ -93,7 +93,7 @@ export const TripRequestForm = ({ onSubmitted, onCancel }: TripRequestFormProps)
       timeDivision: values.timeDivision,
       startDate: serializeDate(values.startDate),
       endDate: serializeDate(values.endDate),
-      // Notes are optional — omit when blank rather than sending an empty string.
+      
       ...(values.notes.trim() ? { notes: values.notes.trim() } : {}),
     }
 
@@ -102,7 +102,7 @@ export const TripRequestForm = ({ onSubmitted, onCancel }: TripRequestFormProps)
       notifySuccess('Trip request submitted!')
       setValues(INITIAL_STATE)
       setShowErrors(false)
-      // Let the success toast show briefly, then hand back to the list view.
+      
       setTimeout(onSubmitted, 1000)
     } catch {
       notifyError("Couldn't submit your trip request. Please try again.")

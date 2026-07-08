@@ -11,21 +11,21 @@ import { decodeJwt } from '../utils/decodeJwt'
 import { MOCK_EXTERNAL_TOKEN } from '../utils/mockExternalToken'
 import { clearToken, getToken, setToken } from '../utils/tokenStorage'
 
-// How long to wait for the SSO popup to post its message before giving up.
+
 const SSO_TIMEOUT_MS = 30_000
 
-// Reads the HTTP status off an unknown error (axios error or otherwise).
+
 const statusOf = (error: unknown): number | undefined =>
   (error as { response?: { status?: number } })?.response?.status
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [status, setStatus] = useState<AuthStatus>('loading')
-  // Guards against overlapping SSO attempts (popup already open).
+  
   const authenticatingRef = useRef(false)
 
-  // Runs the SSO popup flow: open the IdP, wait for its message, mock the
-  // external token, exchange it for our app JWT, and swap it into storage.
+  
+  
   const runSsoFlow = useCallback(() => {
     if (authenticatingRef.current) return
     authenticatingRef.current = true
@@ -46,15 +46,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const handleMessage = async (event: MessageEvent) => {
-      // Only trust messages coming from the IdP popup's origin.
+      
       if (authUrl && event.origin !== new URL(authUrl).origin) return
 
-      // MOCK: a real IdP sends `event.data.user.token`; for now we substitute a
-      // hardcoded external token. TODO: read event.data.user.token instead.
+      
+      
       const externalToken = MOCK_EXTERNAL_TOKEN
 
-      // The first token goes to storage, then we exchange it for our app JWT
-      // and swap storage to the new one.
+      
+      
       setToken(externalToken)
       try {
         const { data } = await authService.signIn(externalToken)
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     window.addEventListener('message', handleMessage)
   }, [])
 
-  // On mount, rehydrate from a stored token; if that fails, start the SSO flow.
+  
   useEffect(() => {
     let cancelled = false
     const token = getToken()
@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [runSsoFlow])
 
-  // React to auth failures surfaced by the axios interceptor from anywhere.
+  
   useEffect(() => {
     const onUnauthenticated = () => {
       setUser(null)

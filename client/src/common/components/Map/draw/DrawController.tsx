@@ -10,13 +10,13 @@ interface DrawControllerProps {
   onChange?: (layers: GeoLayer[]) => void
 }
 
-/**
- * Headless bridge between the declarative `layers` state and Geoman's imperative
- * editing. It owns a single FeatureGroup that holds every editable shape (from
- * file, API or freshly drawn), keeps it in sync with `layers`, and emits the
- * regrouped GeoLayers back out on every draw/edit/delete. Renders nothing; the
- * toolbar that toggles Geoman modes is a sibling (see `MapDrawToolbar`).
- */
+
+
+
+
+
+
+
 export const DrawController = ({ layers, onChange }: DrawControllerProps) => {
   const map = useMap()
   const theme = useTheme()
@@ -27,14 +27,14 @@ export const DrawController = ({ layers, onChange }: DrawControllerProps) => {
     onChangeRef.current = onChange
   }, [onChange])
 
-  // All freshly drawn shapes collect under one stable "Drawn shapes" layer.
+  
   const drawnTagRef = useRef<GeoTag>({
     id: crypto.randomUUID(),
     name: 'Drawn shapes',
     source: 'drawn',
   })
-  // The last array we emitted, so the sync effect can ignore our own updates and
-  // avoid tearing down Geoman's live edit handles mid-edit.
+  
+  
   const lastEmittedRef = useRef<GeoLayer[] | null>(null)
 
   const pathStyle = useMemo<L.PathOptions>(
@@ -50,7 +50,7 @@ export const DrawController = ({ layers, onChange }: DrawControllerProps) => {
     onChangeRef.current?.(next)
   }, [])
 
-  // Re-serialise whenever a shape's geometry finishes changing.
+  
   const wireLayer = useCallback(
     (layer: L.Layer) => {
       layer.on('pm:update', emit)
@@ -58,7 +58,7 @@ export const DrawController = ({ layers, onChange }: DrawControllerProps) => {
     [emit],
   )
 
-  // One-time setup: the working group, Geoman global options, draw/remove wiring.
+  
   useEffect(() => {
     const group = new L.FeatureGroup()
     group.addTo(map)
@@ -67,8 +67,8 @@ export const DrawController = ({ layers, onChange }: DrawControllerProps) => {
     map.pm.setGlobalOptions({ pathOptions: pathStyle, snappable: true })
 
     const handleCreate = (e: { layer: L.Layer }) => {
-      // Geoman drops the drawn layer straight on the map; fold it into our group
-      // and tag it so it serialises into the shared "Drawn shapes" layer.
+      
+      
       tagLayer(e.layer, drawnTagRef.current)
       wireLayer(e.layer)
       group.addLayer(e.layer)
@@ -89,12 +89,12 @@ export const DrawController = ({ layers, onChange }: DrawControllerProps) => {
       map.removeLayer(group)
       groupRef.current = null
     }
-    // pathStyle is re-applied by the load effect below; setup runs once per map.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
+    
   }, [map, emit, wireLayer])
 
-  // Load external changes (new baseline, dropped file, list delete) into the
-  // group, skipping the echo of our own edits.
+  
+  
   useEffect(() => {
     const group = groupRef.current
     if (!group) return

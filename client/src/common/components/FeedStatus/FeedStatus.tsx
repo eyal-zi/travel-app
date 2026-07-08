@@ -4,12 +4,12 @@ import Typography from '@mui/material/Typography'
 import type { FeedStatusProps } from './FeedStatus.types'
 import { StatusRow } from './FeedStatus.styles'
 
-/**
- * The loading / error / empty / loading-more rows shared by every infinite feed.
- * Renders the single state that applies (or nothing once items are present and
- * no page is in flight), so a list can drop it in between its items and its
- * scroll sentinel.
- */
+
+
+
+
+
+
 export const FeedStatus = ({
   isLoading,
   isError,

@@ -19,8 +19,8 @@ export const Header = styled(Box)(({ theme }) => ({
   '& svg': { color: theme.palette.primary.main },
 }))
 
-// Scrollable, newest-first message list. Grows to fill the panel; the composer
-// stays pinned below it.
+
+
 export const List = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,
@@ -47,8 +47,8 @@ export const List = styled(Box)(({ theme }) => ({
   },
 }))
 
-// Bottom sentinel observed for infinite scroll; zero-height so it doesn't
-// affect layout.
+
+
 export const Sentinel = styled(Box)({
   height: 1,
   flexShrink: 0,

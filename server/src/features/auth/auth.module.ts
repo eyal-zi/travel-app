@@ -25,9 +25,7 @@ import { AuthService } from './auth.service';
   providers: [
     AuthService,
     JwtStrategy,
-    // Global authentication, then authorization. Order matters: JwtAuthGuard
-    // populates request.user that GroupsGuard and RolesGuard read. GroupsGuard
-    // gates app access; RolesGuard enforces per-route @Roles(...).
+
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: GroupsGuard },
     { provide: APP_GUARD, useClass: RolesGuard },

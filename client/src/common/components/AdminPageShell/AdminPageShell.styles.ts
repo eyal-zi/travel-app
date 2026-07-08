@@ -2,8 +2,8 @@ import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
 export const PageRoot = styled(Box)(({ theme }) => ({
-  // Locked to the viewport height so the list can size itself against the
-  // remaining space rather than overflowing the page.
+  
+  
   height: '100svh',
   display: 'flex',
   flexDirection: 'column',
@@ -15,9 +15,9 @@ export const PageRoot = styled(Box)(({ theme }) => ({
   },
 }))
 
-// Centered column holding the header and the admin content, filling the page
-// height so the content below can grow into the remaining space. `maxWidth`
-// defaults to the standard admin width but callers can widen it.
+
+
+
 export const Shell = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'maxWidth',
 })<{ maxWidth?: number }>(({ theme, maxWidth = 1040 }) => ({

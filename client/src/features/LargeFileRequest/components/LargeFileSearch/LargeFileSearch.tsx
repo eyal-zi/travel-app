@@ -4,11 +4,11 @@ import { LargeFileResultsList } from '../LargeFileResultsList/LargeFileResultsLi
 import type { AppliedFilters } from '../../queries/useLargeFileSearch'
 import { ResultsColumn, Split } from '../../LargeFileRequest.styles'
 
-/**
- * The "Search files" experience: the filters/map form on the left and the
- * matching results on the right. Owns the applied-filter state (null until the
- * first search) so it can be dropped into any page that needs file search.
- */
+
+
+
+
+
 export const LargeFileSearch = () => {
   const [filters, setFilters] = useState<AppliedFilters | null>(null)
 

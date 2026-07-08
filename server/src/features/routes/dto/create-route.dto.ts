@@ -8,8 +8,6 @@ export class CreateRouteDto {
   @IsNotEmpty()
   name: string;
 
-  // The calendar date the route belongs to ("YYYY-MM-DD"). One route per date:
-  // posting a date that already exists overwrites that route (see RoutesService).
   @IsIsoDate()
   date: string;
 

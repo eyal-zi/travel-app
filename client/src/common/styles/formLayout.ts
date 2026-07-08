@@ -3,9 +3,9 @@ import type { Theme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-// Shared styled primitives for the request forms (FileRequest, TripRequest) so
-// both stay visually consistent. Factored from the original per-feature styles
-// plus the section patterns in RequestResponseDialog.styles.ts.
+
+
+
 
 const panelBase = (theme: Theme) => ({
   width: '100%',
@@ -15,10 +15,10 @@ const panelBase = (theme: Theme) => ({
   boxShadow: theme.shadows[2],
 })
 
-// The card holding the form fields and the submit action. Flexes to fill the
-// remaining height and lays its sections out with a compact, even rhythm so the
-// form fits the viewport without scrolling. Keeps overflow:auto purely as a
-// safety net for very short screens.
+
+
+
+
 export const FormCard = styled('form')(({ theme }) => ({
   ...panelBase(theme),
   flex: 1,
@@ -44,16 +44,16 @@ export const FormCard = styled('form')(({ theme }) => ({
   },
 }))
 
-// A labelled group of related fields. Separation comes from the card's gap and
-// the overline label rather than dividers, keeping the form compact and clean.
+
+
 export const FormSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
 }))
 
-// Side-by-side columns of sections that stack on smaller screens. Lets a form
-// spread across the width instead of running tall (and off-screen).
+
+
 export const FormColumns = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(3),
@@ -65,7 +65,7 @@ export const FormColumns = styled(Box)(({ theme }) => ({
   '& > *': { flex: 1, minWidth: 0 },
 }))
 
-// Two controls side by side, stacking on small screens.
+
 export const FieldRow = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(2),
@@ -75,27 +75,27 @@ export const FieldRow = styled(Box)(({ theme }) => ({
   '& > *': { flex: 1, minWidth: 0 },
 }))
 
-// A labelled block: label/hint above a single control.
+
 export const FieldGroup = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
 }))
 
-// Overline heading introducing a section.
+
 export const SectionLabel = styled(Typography)(({ theme }) => ({
   letterSpacing: 0.6,
   fontWeight: 700,
   color: theme.palette.text.secondary,
 }))
 
-// One-line secondary description shown under a section label.
+
 export const SectionHint = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   marginTop: theme.spacing(-0.5),
 }))
 
-// Submit/cancel row, pinned to the bottom of the card.
+
 export const Actions = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'flex-end',

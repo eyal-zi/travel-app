@@ -1,6 +1,5 @@
 import type { Geometry } from 'geojson';
 
-// A search hit: the stored metadata plus its footprint as GeoJSON.
 export interface LargeFileResult {
   id: string;
   name: string;

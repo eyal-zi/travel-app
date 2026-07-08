@@ -18,14 +18,14 @@ export const DialogHeader = styled(Box)({
   justifyContent: 'space-between',
 })
 
-// Positioning context so the "uploaded for" tag can overlay the image's
-// top-left corner.
+
+
 export const DropzoneWrapper = styled(Box)({
   position: 'relative',
 })
 
-// Destructive action pushed to the far left of the dialog actions, away from
-// Cancel/Save.
+
+
 export const DeleteButton = styled(Button)(({ theme }) => ({
   marginRight: 'auto',
   color: theme.palette.error.main,

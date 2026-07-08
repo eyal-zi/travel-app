@@ -1,8 +1,8 @@
 import { parseShp } from 'shpjs'
 import type { FeatureCollection, Geometry } from 'geojson'
 
-// Parses a raw .shp file (geometry only — no .dbf attributes or .prj projection).
-// Coordinates are assumed to already be in WGS84 (lng/lat).
+
+
 export const parseShpFile = async (file: File): Promise<FeatureCollection> => {
   const buffer = await file.arrayBuffer()
   const geometries = parseShp(buffer) as Geometry[]

@@ -21,23 +21,23 @@ const closedDialog = (): CalendarDialogState => ({
   values: defaultFormValues(),
 })
 
-/**
- * Owns the calendar's editor dialog and bridges its actions to the React Query
- * event cache. The event list, caching, and optimistic updates live in
- * `useEvents`/`useEventMutations`; this hook adds the dialog state machine and
- * surfaces failures through the shared notification.
- */
+
+
+
+
+
+
 export const useCalendarEvents = () => {
   const { events, isLoading, isError } = useEvents()
   const { createEvent, updateEvent, removeEvent } = useEventMutations()
   const { notification, notifyError, close } = useNotification()
   const [dialog, setDialog] = useState<CalendarDialogState>(closedDialog)
 
-  // Surface a load failure once. notifyError is stable for the hook's lifetime,
-  // so reacting to isError alone can't loop or spam.
+  
+  
   useEffect(() => {
     if (isError) notifyError('Failed to load events.')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [isError])
 
   const openCreate = (values: EventFormValues = defaultFormValues()) =>
@@ -78,7 +78,7 @@ export const useCalendarEvents = () => {
     })
   }
 
-  /** Persists a drag/resize gesture coming from FullCalendar back to the server. */
+  
   const moveEvent = (info: EventDropArg | EventResizeDoneArg) => {
     const { id, start, end, allDay } = info.event
     if (!start) return

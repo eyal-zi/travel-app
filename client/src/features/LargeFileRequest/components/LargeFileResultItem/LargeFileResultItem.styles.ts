@@ -29,7 +29,7 @@ export const TitleBlock = styled(Box)({
   flexDirection: 'column',
 })
 
-// Row of small icon + value metadata (accuracy, size, geometry type).
+
 export const MetaRow = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',

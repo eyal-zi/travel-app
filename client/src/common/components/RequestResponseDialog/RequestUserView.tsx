@@ -24,7 +24,7 @@ type RequestUserViewProps = {
   request: RequestSummary
 }
 
-/** Read-only requester view: the admin's response note and downloadable files. */
+
 export const RequestUserView = ({ request }: RequestUserViewProps) => {
   const hasNote = Boolean(request.adminNote)
   const files = request.files ?? []
@@ -48,8 +48,8 @@ export const RequestUserView = ({ request }: RequestUserViewProps) => {
             </Typography>
           </EmptyState>
         )}
-        {/* Who last handled the request and when, so the requester knows who to
-            follow up with. */}
+        {
+}
         {request.updatedByUsername && (
           <ResponseByline>
             <UpdateRoundedIcon />

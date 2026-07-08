@@ -5,12 +5,12 @@ import { useTabParam } from '../../common/hooks/useTabParam'
 import { LargeFileSearch } from '../LargeFileRequest/components/LargeFileSearch/LargeFileSearch'
 import { FileRequestsList } from './components/FileRequestsList/FileRequestsList'
 
-/**
- * Admin surface for triaging file requests. Reuses the shared FileRequestsList
- * in `admin` mode so reviewers can filter by status, respond, and attach files,
- * and exposes the same "Search files" experience users get so admins can look up
- * existing large files without leaving their page.
- */
+
+
+
+
+
+
 type TabValue = 'requests' | 'search'
 
 export const FileRequestAdminPage = () => {

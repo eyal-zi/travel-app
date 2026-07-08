@@ -11,7 +11,6 @@ import { CreateWeatherDto } from './dto/create-weather.dto';
 import { Weather, weather } from './weather.schema';
 
 export interface WeatherWithUrl extends Weather {
-  // Short-lived presigned URL for fetching the image from S3.
   signedUrl: string;
 }
 
@@ -29,8 +28,6 @@ export class WeatherService {
     dto: CreateWeatherDto,
     file: Express.Multer.File,
   ): Promise<WeatherWithUrl> {
-    // Store under a uuid-based key so uploads never collide; keep the original
-    // extension so the object's name stays meaningful.
     const key = `${randomUUID()}${extname(file.originalname)}`;
 
     await this.s3.uploadFile({
@@ -50,10 +47,6 @@ export class WeatherService {
   }
 
   async findClosest(date: string): Promise<WeatherWithUrl> {
-    // Newest non-deleted image at or before the target date wins — same date if
-    // present, otherwise the closest preceding one. Ties on date fall back to
-    // the most recently uploaded. Signed URLs are short-lived and not stored, so
-    // we regenerate one on each read.
     const [row] = await this.db
       .select()
       .from(weather)
@@ -71,12 +64,6 @@ export class WeatherService {
   }
 
   async softDeleteByDate(date: string): Promise<void> {
-    // Soft-delete the image(s) for this exact date so findClosest falls back to
-    // the closest preceding date again. Flip the flag rather than removing rows
-    // (or the S3 object), so the image stays recoverable and the history is
-    // preserved. If the date never had its own image (the view was showing a
-    // fallback from an earlier date), this is a no-op — we must not delete that
-    // earlier image, which still belongs to its own date.
     await this.db
       .update(weather)
       .set({ isDeleted: true })

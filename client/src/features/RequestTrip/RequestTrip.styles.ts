@@ -2,8 +2,8 @@ import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
 export const PageRoot = styled(Box)(({ theme }) => ({
-  // Locked to the viewport height so the active panel can size itself as a
-  // share of the remaining space rather than overflowing the page.
+  
+  
   height: '100svh',
   display: 'flex',
   flexDirection: 'column',
@@ -15,8 +15,8 @@ export const PageRoot = styled(Box)(({ theme }) => ({
   },
 }))
 
-// Centered column that holds the header, the tab switcher and the active panel.
-// Fills the page height so the panel below can grow into the remaining space.
+
+
 export const Shell = styled(Box)(({ theme }) => ({
   width: '100%',
   maxWidth: 1040,
@@ -37,7 +37,7 @@ export const HeaderText = styled(Box)({
   minWidth: 0,
 })
 
-// Pill-shaped segmented switcher between the form and the list.
+
 export const TabsBar = styled(Box)(({ theme }) => ({
   display: 'inline-flex',
   alignSelf: 'flex-start',
@@ -71,5 +71,5 @@ export const TabButton = styled('button', {
   },
 }))
 
-// The form's card container and field-layout primitives (FormCard, FieldRow,
-// FormSection, Actions) now live in common/styles/formLayout.ts.
+
+

@@ -6,12 +6,12 @@ import { useNavigate } from 'react-router-dom'
 import type { AdminPageShellProps } from './AdminPageShell.types'
 import { HeaderText, PageHeader, PageRoot, Shell } from './AdminPageShell.styles'
 
-/**
- * Shared chrome for the admin triage pages: a back-to-home button, the admin
- * icon, and a titled header above the page content. Reached from the home boxes
- * when the signed-in user is an admin; the /admin/* routes are protected by the
- * RequireAdmin guard.
- */
+
+
+
+
+
+
 export const AdminPageShell = ({
   title,
   subtitle,

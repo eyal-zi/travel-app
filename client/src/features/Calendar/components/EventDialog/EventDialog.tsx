@@ -35,14 +35,14 @@ const isValid = (values: EventFormValues) =>
 
 const LOCAL_FMT = "yyyy-MM-dd'T'HH:mm"
 
-/** Parse a stored form value (`yyyy-MM-ddTHH:mm`) into a Date for the picker. */
+
 const toDate = (value: string) => {
   if (!value) return null
   const date = parseISO(value)
   return isValidDate(date) ? date : null
 }
 
-/** Serialise a picker Date back into the stored form value. */
+
 const fromDate = (date: Date | null, allDay: boolean) => {
   if (!date || !isValidDate(date)) return ''
   return allDay ? `${format(date, 'yyyy-MM-dd')}T00:00` : format(date, LOCAL_FMT)
@@ -58,8 +58,8 @@ export const EventDialog = ({
 }: EventDialogProps) => {
   const [values, setValues] = useState<EventFormValues>(initialValues)
 
-  // Reseed the form whenever the dialog (re)opens — the render-phase way (no
-  // effect), the same pattern the trip-request response dialog uses.
+  
+  
   const [wasOpen, setWasOpen] = useState(open)
   if (open !== wasOpen) {
     setWasOpen(open)

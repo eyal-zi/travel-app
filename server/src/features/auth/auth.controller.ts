@@ -9,8 +9,6 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // Exchange the external IdP token for our app JWT. Public: the user has no
-  // app token yet when they call this.
   @Public()
   @Post('sign-in')
   @HttpCode(200)
@@ -18,8 +16,6 @@ export class AuthController {
     return this.authService.signIn(dto.token);
   }
 
-  // Returns the currently authenticated user's claims (protected by the global
-  // JwtAuthGuard). Handy for the client to rehydrate auth state.
   @Get('me')
   me(@CurrentUser() user: AuthenticatedUser) {
     return user;

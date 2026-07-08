@@ -64,7 +64,7 @@ export const LargeFileRequestForm = ({
     const start = serializeDate(startDate);
     const end = serializeDate(endDate);
 
-    // Merge every drawn layer's features into one search-area FeatureCollection.
+    
     const features = areaLayers.flatMap((layer) => layer.data.features);
     const area: FeatureCollection | undefined = features.length
       ? { type: "FeatureCollection", features }

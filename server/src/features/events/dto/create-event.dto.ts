@@ -12,7 +12,6 @@ export class CreateEventDto {
   @IsNotEmpty()
   title: string;
 
-  // Calendar start ("YYYY-MM-DD" for all-day, "YYYY-MM-DDTHH:mm" for timed).
   @IsString()
   @IsNotEmpty()
   start: string;

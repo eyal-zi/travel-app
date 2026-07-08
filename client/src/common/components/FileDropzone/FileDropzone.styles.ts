@@ -1,9 +1,9 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
-// Drop target shown once a file is selected: it stays mounted so a new file can
-// be dropped to replace the current one. Stretches its single child to fill the
-// area (e.g. a PDF iframe), while `minHeight` lets consumers floor the height.
+
+
+
 export const PreviewFrame = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'minHeight',
 })<{ minHeight?: number }>(({ minHeight }) => ({
@@ -15,7 +15,7 @@ export const PreviewFrame = styled(Box, {
   '& > *': { flex: 1, minWidth: 0 },
 }))
 
-// Centered frame for the loading spinner.
+
 export const LoadingFrame = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'minHeight',
 })<{ minHeight?: number }>(({ minHeight }) => ({
@@ -27,8 +27,8 @@ export const LoadingFrame = styled(Box, {
   ...(minHeight ? { minHeight } : null),
 }))
 
-// Empty-state drop target shown before a file is selected. `isDragActive`
-// drives the hover styling while a file is dragged over the dropzone.
+
+
 export const DropPrompt = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isDragActive' && prop !== 'minHeight',
 })<{ isDragActive: boolean; minHeight?: number }>(

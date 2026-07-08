@@ -18,7 +18,7 @@ export const Meta = styled(Box)(({ theme }) => ({
   gap: theme.spacing(0.25),
 }))
 
-// Announcement body, preserving the author's line breaks.
+
 export const MessageText = styled(Typography)({
   whiteSpace: 'pre-wrap',
   wordBreak: 'break-word',

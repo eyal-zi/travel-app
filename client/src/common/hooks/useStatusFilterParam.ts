@@ -3,12 +3,12 @@ import type { StatusFilter } from '../components/RequestFeed/RequestFeed.types'
 import { REQUEST_STATUSES } from '../requests/requestStatus'
 import { useSearchParamState } from './useSearchParamState'
 
-/**
- * Drives a request feed's status filter from the `status` search param so filtered
- * views are linkable. Validates against REQUEST_STATUSES (falling back to `defaultStatus`)
- * and clears the param when the filter equals the default, keeping URLs clean. Returns
- * the same [value, setter] shape the lists pass to RequestFeed.
- */
+
+
+
+
+
+
 export const useStatusFilterParam = (defaultStatus: StatusFilter) => {
   const [raw, setRaw] = useSearchParamState('status', { replace: true })
   const statusFilter: StatusFilter =

@@ -25,18 +25,18 @@ type RequestResponseDialogProps = {
   open: boolean
   onClose: () => void
   request: RequestSummary
-  // The draft is owned by a feature-specific `use*Draft` hook (called by the
-  // caller so it can seed from `open`), keeping this dialog feature-agnostic.
+  
+  
   draft: RequestDraft
-  // When true, render the admin editor; otherwise the read-only user view.
+  
   admin?: boolean
 }
 
-/**
- * Shared response dialog for a request workflow. Renders the admin editor
- * (status/note/files) or the read-only requester view. Used by both trip
- * requests and file requests via the generic RequestSummary/RequestDraft shapes.
- */
+
+
+
+
+
 export const RequestResponseDialog = ({
   open,
   onClose,
@@ -48,8 +48,8 @@ export const RequestResponseDialog = ({
   const status = REQUEST_STATUS_META[request.status] ?? REQUEST_STATUS_META.received
 
   const handleSave = async () => {
-    // The success snackbar lives outside the dialog, so it still shows after we
-    // close on success.
+    
+    
     if (await save()) onClose()
   }
 

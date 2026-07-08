@@ -14,11 +14,11 @@ export type SelectFieldProps = {
   fullWidth?: boolean
 }
 
-/**
- * A single-select field whose options are split into collapsible groups (the
- * single-select sibling of MultiSelectField). Options carrying a `group` render
- * under a collapsible subheader; ungrouped options render at the top level.
- */
+
+
+
+
+
 export const SelectField = ({
   value,
   onChange,

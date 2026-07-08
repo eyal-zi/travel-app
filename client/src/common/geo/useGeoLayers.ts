@@ -11,14 +11,14 @@ export interface UseGeoLayers {
   replace: (layers: GeoLayer[]) => void
 }
 
-/**
- * Working geo-layer state shared by the map surfaces. File-parse failures are
- * reported through `onError` (wire it to a `useNotification` notifier) rather
- * than held here, so each caller surfaces them via the shared `Notification`.
- */
+
+
+
+
+
 export const useGeoLayers = (onError?: (message: string) => void): UseGeoLayers => {
   const [layers, setLayers] = useState<GeoLayer[]>([])
-  // Held in a ref so `addFromFiles` stays stable even if the notifier isn't memoised.
+  
   const onErrorRef = useRef(onError)
   useEffect(() => {
     onErrorRef.current = onError
@@ -50,9 +50,9 @@ export const useGeoLayers = (onError?: (message: string) => void): UseGeoLayers 
 
   const reset = useCallback((next: GeoLayer[]) => setLayers(next), [])
 
-  // Apply edits made directly on the map (draw/edit/delete). Unlike `reset`,
-  // which seeds the committed baseline, this represents user changes that the
-  // pending diff should pick up so Save/Cancel surfaces.
+  
+  
+  
   const replace = useCallback((next: GeoLayer[]) => setLayers(next), [])
 
   return { layers, addFromFiles, remove, clear, reset, replace }

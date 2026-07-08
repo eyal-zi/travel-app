@@ -17,7 +17,7 @@ const FORMATS: Record<string, GeoFormat> = {
     parse: parseKml,
     accept: { 'application/vnd.google-earth.kml+xml': ['.kml'] },
   },
-  // .shp has no reliable MIME type; react-dropzone matches on the listed extension.
+  
   shp: {
     parse: parseShpFile,
     accept: { 'application/octet-stream': ['.shp'] },
@@ -26,8 +26,8 @@ const FORMATS: Record<string, GeoFormat> = {
     parse: parseGeoJson,
     accept: { 'application/geo+json': ['.geojson'], 'application/json': ['.json'] },
   },
-  // parseFile dispatches by extension, so .json needs its own entry. Its accept map
-  // is already covered by the geojson entry above, so leave it empty to avoid duplicates.
+  
+  
   json: {
     parse: parseGeoJson,
     accept: {},
@@ -44,9 +44,9 @@ const FORMATS: Record<string, GeoFormat> = {
       'application/vnd.ms-excel.sheet.macroEnabled.12': ['.xlsm'],
     },
   },
-  // parseFile dispatches by extension, so each Excel extension needs its own entry. The
-  // accept map is already covered by the xlsx entry above, so leave these empty to avoid
-  // duplicates.
+  
+  
+  
   xls: {
     parse: parseExcel,
     accept: {},
@@ -55,13 +55,13 @@ const FORMATS: Record<string, GeoFormat> = {
     parse: parseExcel,
     accept: {},
   },
-  // GeoTIFF: only the header is read to derive the footprint (see ./geotiff).
+  
   tiff: {
     parse: parseGeoTiff,
     accept: { 'image/tiff': ['.tif', '.tiff'] },
   },
-  // parseFile dispatches by extension, so .tif needs its own entry. Its accept
-  // map is already covered by the tiff entry above, so leave it empty.
+  
+  
   tif: {
     parse: parseGeoTiff,
     accept: {},
@@ -83,8 +83,8 @@ export const acceptedFileTypes: Accept = Object.values(FORMATS).reduce<Accept>(
   {},
 )
 
-// Whether a file can be turned into map layers by parseFile. Lets callers skip
-// pushing unparseable uploads (e.g. ECW, which has no browser parser) onto the
-// map instead of surfacing an "Unsupported file type" error.
+
+
+
 export const isParseable = (file: File): boolean =>
   extensionOf(file.name) in FORMATS

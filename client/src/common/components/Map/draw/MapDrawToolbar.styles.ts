@@ -2,14 +2,14 @@ import { alpha, styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 
-// A single neutral "glass" tint used for both themes — a light slate that reads
-// as a frosted pane over either a light or dark map. Rendered as a mostly-opaque
-// tint, not backdrop-filter blur: the toolbar floats over the live Leaflet map,
-// and without GPU compositing a blur re-rasterizes on every pan/zoom frame.
+
+
+
+
 const GLASS = '#cbd5e1'
 
-// The glass is a light tint, so icons use a fixed dark slate (not the theme's
-// mid-grey text colour) to stay legible over either map/theme.
+
+
 const ICON = '#1e293b'
 const ICON_SELECTED = '#0f766e'
 
@@ -21,7 +21,7 @@ export const ToolbarRoot = styled(Box)(({ theme }) => ({
   padding: theme.spacing(0.5),
   borderRadius: (theme.shape.borderRadius as number) * 1.25,
   backgroundColor: alpha(GLASS, 0.88),
-  // Bright top edge + soft drop shadow read as a clear glass pane.
+  
   border: `1px solid ${alpha('#ffffff', 0.35)}`,
   boxShadow: `${theme.shadows[4]}, inset 0 1px 0 ${alpha('#ffffff', 0.25)}`,
 }))

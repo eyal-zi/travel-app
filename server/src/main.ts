@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api');
   app.enableCors();
-  // GeoJSON layers can exceed the default 100kb body limit.
+
   app.useBodyParser('json', { limit: '10mb' });
   app.useGlobalPipes(
     new ValidationPipe({

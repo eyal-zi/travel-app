@@ -1,9 +1,9 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
-// Pill overlaying the top-left corner of its positioned parent (which must
-// establish a positioning context). `zIndex` is consumed here rather than
-// forwarded to the DOM.
+
+
+
 export const TagPill = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'zIndex',
 })<{ zIndex: number }>(({ theme, zIndex }) => ({

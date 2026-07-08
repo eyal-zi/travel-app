@@ -22,8 +22,6 @@ export class AnnouncementsService {
 
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
-  // Newest-first page. Fetches limit + 1 rows to tell whether an older page
-  // exists, then trims to the requested size and exposes the keyset cursor.
   async findPage(
     limit = DEFAULT_LIMIT,
     cursor?: string,

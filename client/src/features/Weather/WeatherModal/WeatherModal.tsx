@@ -34,19 +34,19 @@ export const WeatherModal = ({ open, onClose }: WeatherModalProps) => {
   const [file, setFile] = useState<File | null>(null)
   const { notification, notifyError, notifySuccess, close } = useNotification()
 
-  // Load the saved image only while the modal is open.
+  
   const { data: record, isLoading } = useWeatherForDate(date, open)
   const saveWeather = useSaveWeather()
   const deleteWeather = useDeleteWeather()
 
   const existingUrl = record?.signedUrl ?? null
-  // The date the shown image was actually uploaded for; may be a closest-
-  // preceding fallback rather than the selected date.
+  
+  
   const uploadedAt = record?.date ?? null
   const busy = saveWeather.isPending || deleteWeather.isPending
 
-  // Clear the staged file once the close animation finishes; the saved image is
-  // re-read from cache when the modal reopens.
+  
+  
   const handleExited = () => setFile(null)
 
   const handleSave = () => {

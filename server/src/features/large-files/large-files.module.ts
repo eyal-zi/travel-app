@@ -7,7 +7,7 @@ import { LargeFilesService } from './large-files.service';
   imports: [StorageModule],
   controllers: [LargeFilesController],
   providers: [LargeFilesService],
-  // Exported so FileRequestsService can create a large file when an admin responds.
+
   exports: [LargeFilesService],
 })
 export class LargeFilesModule {}

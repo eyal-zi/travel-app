@@ -12,10 +12,10 @@ import { MapRoot } from './Map.styles'
 import { DrawController } from './draw/DrawController'
 import { MapDrawToolbar } from './draw/MapDrawToolbar'
 
-// Leaflet's default icon resolves its image URLs through `_getIconUrl`, which prepends an
-// auto-detected `imagePath` and breaks the asset URLs the bundler gives us. Dropping that
-// override lets the merged URLs below (the marker images shipped with Leaflet) resolve as-is,
-// so GeoJSON Point features render with the standard marker instead of appearing iconless.
+
+
+
+
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
 L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
@@ -23,9 +23,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
-// Leaflet's attribution control ships with a default "Leaflet" prefix. Setting
-// the prefix to false here strips it at runtime (robust to HMR reusing the map
-// instance, where the `attributionControl` creation-time prop wouldn't re-apply).
+
+
+
 const HideAttribution = () => {
   const map = useMap()
   useEffect(() => {
@@ -36,8 +36,8 @@ const HideAttribution = () => {
 
 const FitBounds = ({ layers }: { layers: GeoLayer[] }) => {
   const map = useMap()
-  // Fit on load and when layers are added/removed, but not on every geometry
-  // edit — otherwise editing a vertex would keep snapping the viewport.
+  
+  
   const signature = layers.map((layer) => layer.id).join('|')
 
   useEffect(() => {
@@ -47,8 +47,8 @@ const FitBounds = ({ layers }: { layers: GeoLayer[] }) => {
       bounds.extend(L.geoJSON(layer.data).getBounds())
     }
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24] })
-    // `layers` is intentionally excluded; we refit only when the id set changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
+    
   }, [signature, map])
 
   return null
@@ -67,8 +67,8 @@ export const Map = ({
       >
         <HideAttribution />
         <TileLayer url={import.meta.env.VITE_MAP_TILE_URL} />
-        {/* Editable mode renders shapes into a Geoman-managed group instead of
-            the read-only GeoJSON layers, so the two never fight over the DOM. */}
+        {
+}
         {editable ? (
           <>
             <DrawController layers={layers} onChange={onLayersChange} />

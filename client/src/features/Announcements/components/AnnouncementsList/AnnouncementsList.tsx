@@ -6,11 +6,11 @@ import { AnnouncementItem } from '../AnnouncementItem/AnnouncementItem'
 import { Header, List, Sentinel } from '../../Announcements.styles'
 import type { AnnouncementsListProps } from './AnnouncementsList.types'
 
-/**
- * Read-only, newest-first announcements feed (header + cursor-paginated list
- * with infinite scroll). Self-contained so it can be reused on pages that don't
- * allow posting.
- */
+
+
+
+
+
 export const AnnouncementsList = ({
   items,
   isLoading,

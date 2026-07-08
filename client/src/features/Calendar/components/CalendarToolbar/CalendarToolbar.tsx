@@ -46,8 +46,8 @@ export const CalendarToolbar = ({
   const [pickerOpen, setPickerOpen] = useState(false)
   const jumpButtonRef = useRef<HTMLButtonElement>(null)
 
-  // Commit only once the full date is accepted (day picked); onChange fires on
-  // each intermediate view step (year, then month) and must not jump the calendar.
+  
+  
   const handleAcceptDate = (date: Date | null) => {
     if (!date || Number.isNaN(date.getTime())) return
     onGoToDate(date)

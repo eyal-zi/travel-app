@@ -16,13 +16,13 @@ import type { FileRequestResponseDraft } from './FileRequestResponseDialog.types
 
 const DEFAULT_ACCURACY = 7
 
-/**
- * Owns the admin response draft for a file request: the workflow status/note and
- * the large-file form (name, type, accuracy, country, coverage date, footprint
- * layers and the uploaded file). Reseeds whenever the dialog (re)opens, then
- * `submit()` posts everything as multipart FormData via the respond mutation and
- * reports the outcome through the shared notification.
- */
+
+
+
+
+
+
+
 export const useFileRequestResponseDraft = (
   request: FileRequest,
   open: boolean,
@@ -40,17 +40,17 @@ export const useFileRequestResponseDraft = (
   const [areaLayers, setAreaLayers] = useState<GeoLayer[]>([])
   const [file, setFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
-  // Direct-to-S3 upload progress in [0, 1] while a large file is uploading, else
-  // null (idle, or the quick metadata-only respond step afterwards).
+  
+  
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
 
-  // Reseed each time the dialog transitions to open so it starts fresh and drops
-  // abandoned edits. When the request already has a fulfilling large file, seed
-  // the metadata fields from it so a reopened response shows the existing details
-  // instead of a blank form (the footprint and the file bytes live in S3 and
-  // can't be restored — the admin re-drops the file to save again). Adjusting
-  // state during render is the React-recommended alternative to an effect here
-  // (see useRequestDraft).
+  
+  
+  
+  
+  
+  
+  
   const [wasOpen, setWasOpen] = useState(open)
   if (open !== wasOpen) {
     setWasOpen(open)
@@ -70,8 +70,8 @@ export const useFileRequestResponseDraft = (
     }
   }
 
-  // Picking a file drives the metadata: fill the name from the file's base name
-  // and the type from its extension (unknown extensions become a custom value).
+  
+  
   const setFileAndAutofill = useCallback((next: File) => {
     setFile(next)
     const { base, extension } = splitFileName(next.name)
@@ -79,11 +79,11 @@ export const useFileRequestResponseDraft = (
     setFileType(inferFileTypeValue(extension))
   }, [])
 
-  // Drop the picked file so the dropzone reappears; leaves the autofilled
-  // name/type in place so removing a file doesn't wipe the admin's edits.
+  
+  
   const clearFile = useCallback(() => setFile(null), [])
 
-  // Merge every drawn layer's features into one footprint FeatureCollection.
+  
   const features = areaLayers.flatMap((layer) => layer.data.features)
   const canSave =
     !saving &&
@@ -96,8 +96,8 @@ export const useFileRequestResponseDraft = (
     if (!canSave || !file) return false
     setSaving(true)
     try {
-      // Upload the (possibly multi-GB) file straight to S3 first, then send the
-      // metadata referencing the resulting object — no file bytes touch the API.
+      
+      
       setUploadProgress(0)
       const uploaded = await uploadLargeFile(file, {
         onProgress: setUploadProgress,

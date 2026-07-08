@@ -12,9 +12,9 @@ export const ViewerRoot = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }))
 
-// Keep pointer events on so the PDF can be scrolled inside the iframe. Replacing
-// the file goes through the delete button + empty-state dropzone rather than
-// dropping straight over the preview.
+
+
+
 export const Frame = styled('iframe')({
   flex: 1,
   width: '100%',

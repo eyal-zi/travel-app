@@ -1,10 +1,10 @@
-/**
- * Inline Tripadvisor horizontal logo (owl + wordmark).
- *
- * The text paths use `currentColor` so they automatically follow the MUI
- * theme's `text.primary` in both light and dark mode.  The owl icon keeps
- * its signature green regardless of the surrounding colour scheme.
- */
+
+
+
+
+
+
+
 export const TripadvisorLogoSvg = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 3354.111 713.496"
@@ -12,7 +12,7 @@ export const TripadvisorLogoSvg = (props: React.SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <g>
-      {/* ── Wordmark ("Tripadvisor") ── uses currentColor for theme adaptation */}
+      {}
       <path
         fill="currentColor"
         d="M3335.258,476.767c-10.404,0-18.854,8.45-18.854,18.854c0,10.404,8.449,18.854,18.854,18.854
@@ -49,9 +49,9 @@ export const TripadvisorLogoSvg = (props: React.SVGProps<SVGSVGElement>) => (
          M3265.023,285.956v-45.6h-69.914v271.288h69.914V348.976c0-29.457,18.895-43.927,48.35-43.927h38.266v-64.692h-32.684
         C3293.363,240.356,3271.162,253.709,3265.023,285.956z"
       />
-      {/* ── Owl icon green circle ── */}
+      {}
       <circle fill="#34E0A1" cx="356.749" cy="356.748" r="356.748" />
-      {/* ── Owl binoculars / eyes (on top of the green circle, always dark) ── */}
+      {}
       <path
         d="M577.095,287.152l43.049-46.836h-95.465c-47.792-32.646-105.51-51.659-167.931-51.659
         c-62.342,0-119.899,19.054-167.612,51.659H93.432l43.049,46.836c-26.387,24.075-42.929,58.754-42.929,97.259

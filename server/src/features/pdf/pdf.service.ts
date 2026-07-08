@@ -11,7 +11,6 @@ import { CreatePdfDto } from './dto/create-pdf.dto';
 import { Pdf, pdf } from './pdf.schema';
 
 export interface PdfWithUrl extends Pdf {
-  // Short-lived presigned URL for fetching the PDF from S3.
   signedUrl: string;
 }
 
@@ -29,8 +28,6 @@ export class PdfService {
     dto: CreatePdfDto,
     file: Express.Multer.File,
   ): Promise<PdfWithUrl> {
-    // Store under a uuid-based key so uploads never collide; keep the original
-    // extension so the object's name stays meaningful.
     const key = `${randomUUID()}${extname(file.originalname)}`;
 
     await this.s3.uploadFile({
@@ -40,9 +37,6 @@ export class PdfService {
       contentType: file.mimetype,
     });
 
-    // Upsert by date: exactly one PDF per date. Posting a date that already
-    // exists overwrites its key (and resurrects it if it had been soft-deleted)
-    // instead of inserting a duplicate.
     const [row] = await this.db
       .insert(pdf)
       .values({ fileKey: key, date: dto.date })
@@ -57,9 +51,6 @@ export class PdfService {
   }
 
   async findClosest(date: string): Promise<PdfWithUrl> {
-    // Newest non-deleted PDF at or before the target date wins — same date if
-    // present, otherwise the closest preceding one. Signed URLs are short-lived
-    // and not stored, so we regenerate one on each read.
     const [row] = await this.db
       .select()
       .from(pdf)
@@ -75,10 +66,6 @@ export class PdfService {
   }
 
   async softDeleteByDate(date: string): Promise<void> {
-    // Soft-delete the PDF for this exact date so findClosest falls back to the
-    // closest preceding date again. If the date never had its own PDF (the view
-    // was showing a fallback from an earlier date), this is a no-op — we must
-    // not delete that earlier PDF, which still belongs to its own date.
     await this.db
       .update(pdf)
       .set({ isDeleted: true, updatedAt: new Date() })

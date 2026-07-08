@@ -1,30 +1,30 @@
-// Re-baselines drizzle's migration bookkeeping table so it exactly mirrors the
-// on-disk migrations in ./drizzle.
-//
-// WHY THIS EXISTS
-// drizzle-kit `migrate` decides what to run with a single comparison: it looks
-// at the newest row in `drizzle.__drizzle_migrations` and applies a migration
-// only if its journal timestamp (`when`) is greater than that row's
-// `created_at` (see drizzle-orm/pg-core dialect: `created_at < folderMillis`).
-// If the bookkeeping table ever holds a row newer than a pending migration —
-// which is exactly what happens after migrations are squashed/regenerated and
-// the table keeps stale rows from the previous set — `migrate` silently treats
-// everything as applied and creates nothing, while still printing "applied
-// successfully". New tables then never get created.
-//
-// This script makes the table a faithful mirror of the current journal: one row
-// per migration file, with `created_at` = the journal `when` and `hash` =
-// sha256 of the file (the same hash drizzle computes). After running it,
-// `migrate` works correctly again.
-//
-// WHEN TO RUN
-// Run AFTER you have squashed/regenerated migrations (or otherwise know the
-// database schema already matches the migrations at head) to re-baseline the
-// bookkeeping. Verify with `npm run db:generate` first: it should report no
-// schema changes. Do NOT run it to skip migrations that haven't actually been
-// applied to the database.
-//
-// Usage: npm run db:baseline
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import 'dotenv/config';
 import { createHash } from 'node:crypto';

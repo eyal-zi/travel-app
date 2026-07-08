@@ -3,10 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { AppJwtPayload, AuthenticatedUser } from './auth.types';
 
-// Validates our own app JWT (Bearer token) on every protected request. The
-// token was signed by AuthService at sign-in; here we only verify its signature
-// (handled by passport-jwt using JWT_SECRET) and surface the claims onto
-// `request.user`.
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {

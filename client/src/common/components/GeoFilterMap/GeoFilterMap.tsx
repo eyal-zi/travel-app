@@ -10,39 +10,39 @@ import { OverlayChip } from './GeoFilterMap.styles'
 const DEFAULT_PROMPT = 'Drop a KML, GeoJSON, SHP, CSV or Excel file to set the search area'
 
 type GeoFilterMapProps = {
-  // Called whenever the layers change, so the parent can derive the selected
-  // area. Memoize it to keep the sync effect stable.
+  
+  
   onChange: (layers: GeoLayer[]) => void
-  // Overlay text shown while dragging a file over the map.
+  
   prompt?: string
-  // Footprint to seed the map with on mount (e.g. an existing area being edited).
-  // Seeded once; later drops/draws flow through the normal paths.
+  
+  
   initialGeometry?: Geometry | null
 }
 
-// Imperative handle so a parent can push files onto the map (e.g. reusing a file
-// dropped elsewhere in the form). Parse failures surface via this map's own
-// notification, so the parent doesn't need to handle them.
+
+
+
 export type GeoFilterMapHandle = {
   addFiles: (files: File[]) => void
 }
 
-/**
- * Search-area map: drop geo files or draw/edit/delete shapes to define an area.
- * Unlike `RouteMapDropzone` it has no Save/Cancel or persistence — it reports
- * the live layers to the parent form via `onChange`. A thin wrapper over the
- * shared `MapEditor`.
- */
+
+
+
+
+
+
 export const GeoFilterMap = forwardRef<GeoFilterMapHandle, GeoFilterMapProps>(
   ({ onChange, prompt = DEFAULT_PROMPT, initialGeometry }, ref) => {
     const { notification, notifyError, close } = useNotification()
     const { layers, addFromFiles, clear, replace, reset } = useGeoLayers(notifyError)
 
-    // Let a parent add files through the same parse/notify path as an on-map drop.
+    
     useImperativeHandle(ref, () => ({ addFiles: addFromFiles }), [addFromFiles])
 
-    // Seed an existing footprint once on mount so a reopened form shows it. The
-    // dialog remounts this map each time it opens, so mount === open here.
+    
+    
     const seeded = useRef(false)
     useEffect(() => {
       if (seeded.current || !initialGeometry) return
@@ -62,7 +62,7 @@ export const GeoFilterMap = forwardRef<GeoFilterMapHandle, GeoFilterMapProps>(
       ])
     }, [initialGeometry, reset])
 
-    // Surface the current layers to the parent whenever they change.
+    
     useEffect(() => {
       onChange(layers)
     }, [layers, onChange])

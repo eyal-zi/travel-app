@@ -1,25 +1,25 @@
-// Trip request data model — mirrors the server DTO/schema in
-// server/src/features/trip-requests. `status` and timestamps are set server-side.
+
+
 
 import type { SelectOption } from '../../common/types'
 
 export type CreateTripRequest = {
   tripGoal: string
   country: string
-  startDate: string // 'YYYY-MM-DD'
-  endDate: string // 'YYYY-MM-DD'
+  startDate: string 
+  endDate: string 
   timezone: string
   landmark: string
   timeDivision: string
-  notes?: string // optional
+  notes?: string 
 }
 
-// Workflow statuses, in order. Mirrors TRIP_REQUEST_STATUSES on the server.
+
 export const TRIP_REQUEST_STATUSES = ['received', 'processing', 'done'] as const
 
 export type TripRequestStatus = (typeof TRIP_REQUEST_STATUSES)[number]
 
-// A file the admin attached to a request, with a short-lived URL to download it.
+
 export type TripRequestFile = {
   id: string
   fileName: string
@@ -30,19 +30,19 @@ export type TripRequestFile = {
 export type TripRequest = CreateTripRequest & {
   id: string
   status: TripRequestStatus
-  // Admin's free-form response, or null until one is written.
+  
   adminNote: string | null
   files: TripRequestFile[]
-  // Username of the requester (shown to admins) and of the admin who last updated
-  // the request (shown to the requester). Null until set / user unknown.
+  
+  
   createdByUsername: string | null
   updatedByUsername: string | null
   createdAt: string
   updatedAt: string
 }
 
-// A newest-first page of trip requests. `nextCursor` is the createdAt to pass
-// back for the next (older) page, or null when there are no older items left.
+
+
 export type TripRequestPage = {
   items: TripRequest[]
   nextCursor: string | null

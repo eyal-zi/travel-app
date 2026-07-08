@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 
-// `severity` selects the accent color; it's consumed here, not forwarded to the DOM.
+
 const consumeSeverity = { shouldForwardProp: (prop: string) => prop !== 'severity' }
 
 export const Surface = styled(Paper)(({ theme }) => ({
@@ -26,7 +26,7 @@ export const Surface = styled(Paper)(({ theme }) => ({
       : '0 12px 34px -12px rgba(0, 0, 0, 0.7)',
 }))
 
-// Severity accent bar down the leading edge.
+
 export const AccentBar = styled(Box, consumeSeverity)<{ severity: AlertColor }>(
   ({ theme, severity }) => ({
     position: 'absolute',
@@ -38,7 +38,7 @@ export const AccentBar = styled(Box, consumeSeverity)<{ severity: AlertColor }>(
   }),
 )
 
-// Tinted circular glyph badge.
+
 export const IconBadge = styled(Box, consumeSeverity)<{ severity: AlertColor }>(
   ({ theme, severity }) => ({
     display: 'flex',
@@ -70,7 +70,7 @@ export const DismissButton = styled(IconButton)(({ theme }) => ({
   },
 }))
 
-// Slim countdown bar; remounts per message (via `key`) so it restarts each toast.
+
 export const Countdown = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'severity' && prop !== 'duration',
 })<{ severity: AlertColor; duration: number }>(({ theme, severity, duration }) => ({

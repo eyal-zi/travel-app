@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { TripadvisorLogoSvg } from './TripadvisorLogoSvg'
 
-// Slightly larger than the theme default so panels read as soft, modern cards.
+
 const PANEL_RADIUS = 16
 
 export const PageRoot = styled(Box)(({ theme }) => ({
@@ -15,8 +15,8 @@ export const PageRoot = styled(Box)(({ theme }) => ({
   height: '100svh',
   overflow: 'hidden',
   backgroundColor: theme.palette.background.default,
-  // A single brand-tinted glow anchored top-left adds depth without visual
-  // noise — the only decorative flourish on an otherwise flat surface.
+  
+  
   backgroundImage:
     theme.palette.mode === 'light'
       ? `radial-gradient(1200px 520px at 0% -10%, ${alpha(theme.palette.primary.light, 0.14)}, transparent 60%)`
@@ -49,9 +49,9 @@ export const Brand = styled(Box)(({ theme }) => ({
   minWidth: 0,
 }))
 
-// The official Tripadvisor horizontal logo (owl + wordmark) rendered as an
-// inline SVG.  `color` drives `currentColor` inside the SVG so the wordmark
-// text automatically matches the theme while the owl keeps its signature green.
+
+
+
 export const TripadvisorLogo = styled(TripadvisorLogoSvg)(({ theme }) => ({
   flexShrink: 0,
   height: 40,
@@ -59,7 +59,7 @@ export const TripadvisorLogo = styled(TripadvisorLogoSvg)(({ theme }) => ({
   color: theme.palette.text.primary,
 }))
 
-// Circular initials badge for the signed-in user.
+
 export const UserAvatar = styled(Avatar)(({ theme }) => ({
   width: 38,
   height: 38,
@@ -99,7 +99,7 @@ export const Sidebar = styled(Box)(({ theme }) => ({
   },
 }))
 
-// Base card surface: a bordered, softly shadowed column that clips its content.
+
 export const Panel = styled(Box)(({ theme }) => ({
   minWidth: 0,
   minHeight: 0,
@@ -115,8 +115,8 @@ export const Panel = styled(Box)(({ theme }) => ({
       : '0 1px 2px rgba(0, 0, 0, 0.5)',
 }))
 
-// Consistent card heading (icon + title) that gives the map and document
-// panels the same labelled chrome the calendar and announcements already have.
+
+
 export const PanelHeader = styled(Box)(({ theme }) => ({
   flexShrink: 0,
   display: 'flex',
@@ -128,8 +128,8 @@ export const PanelHeader = styled(Box)(({ theme }) => ({
   '& > svg': { color: theme.palette.primary.main, fontSize: 20 },
 }))
 
-// The scrollable/fillable region below a PanelHeader. `position: relative` keeps
-// it the positioning context for children that overlay controls on their content.
+
+
 export const PanelBody = styled(Box)({
   position: 'relative',
   flex: 1,
@@ -186,9 +186,9 @@ export const QuickActions = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1.25),
 }))
 
-// Tappable gradient navigation card (trip request / large file request). `tone`
-// selects which palette the gradient and text colour are drawn from. Built on
-// ButtonBase for real button semantics (focus ring, keyboard, ripple).
+
+
+
 export const ActionCard = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== 'tone',
 })<{ tone: 'primary' | 'secondary' }>(({ theme, tone }) => ({
@@ -216,7 +216,7 @@ export const ActionCard = styled(ButtonBase, {
   },
 }))
 
-// Translucent square housing an action card's icon.
+
 export const ActionIcon = styled(Box)({
   flexShrink: 0,
   display: 'flex',
@@ -229,29 +229,29 @@ export const ActionIcon = styled(Box)({
   '& svg': { fontSize: 22 },
 })
 
-// Trailing chevron that hints the card navigates elsewhere.
+
 export const ActionChevron = styled(Box)({
   marginLeft: 'auto',
   display: 'flex',
   opacity: 0.75,
 })
 
-// Personalised greeting line in the header (bolder than the h5 default).
+
 export const Greeting = styled(Typography)({
   fontWeight: 700,
 })
 
-// Title line inside an action card (bolder than the subtitle1 default).
+
 export const ActionTitle = styled(Typography)({
   fontWeight: 600,
 })
 
-// Tight, truncatable text column (min-width:0 lets noWrap children ellipsize).
+
 export const TextColumn = styled(Stack)({
   minWidth: 0,
 })
 
-// Muted subtitle line inside a gradient action card.
+
 export const CardSubtitle = styled(Typography)({
   opacity: 0.85,
 })

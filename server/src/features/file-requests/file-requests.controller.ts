@@ -21,10 +21,6 @@ import { UpdateFileRequestDto } from './dto/update-file-request.dto';
 export class FileRequestsController {
   constructor(private readonly fileRequestsService: FileRequestsService) {}
 
-  // Newest-first page of file requests. Pass `cursor` (the createdAt of the last
-  // item seen) to fetch the next, older page, and `status` to filter by workflow
-  // status. Each item carries the admin's note and the large file (if any) that
-  // fulfilled it.
   @Get()
   findAll(@Query() query: FindFileRequestsDto) {
     return this.fileRequestsService.findPage(
@@ -42,7 +38,6 @@ export class FileRequestsController {
     return this.fileRequestsService.create(dto, user.id);
   }
 
-  // Admin update: change the status and/or the admin note (both optional).
   @Patch(':id')
   @Roles('admin')
   update(
@@ -53,10 +48,6 @@ export class FileRequestsController {
     return this.fileRequestsService.update(id, dto, user.id);
   }
 
-  // Admin response: create the fulfilling large file from the large-file metadata
-  // plus a reference (`fileKey`/`fileName`) to the object the admin already
-  // uploaded straight to S3 via the presigned multipart flow. Links it to the
-  // request and advances its status. This is a plain JSON body — no file bytes.
   @Post(':id/respond')
   @Roles('admin')
   respond(

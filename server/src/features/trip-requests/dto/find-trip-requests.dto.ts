@@ -5,9 +5,7 @@ import {
   type RequestStatus,
 } from '../../../common/database/enums';
 
-// Query for a page of trip requests. Inherits `cursor`/`limit` keyset pagination.
 export class FindTripRequestsDto extends PaginationQueryDto {
-  // Optional workflow-status filter. Omit to list requests of every status.
   @IsOptional()
   @IsIn(requestStatus.enumValues)
   status?: RequestStatus;

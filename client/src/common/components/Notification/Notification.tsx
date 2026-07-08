@@ -20,7 +20,7 @@ import {
 type NotificationProps = {
   notification: NotificationData | null
   onClose: () => void
-  // Override the severity-based default (errors linger longer than successes).
+  
   autoHideDuration?: number
 }
 
@@ -31,23 +31,23 @@ const ICONS: Record<AlertColor, typeof CheckCircleRoundedIcon> = {
   info: InfoRoundedIcon,
 }
 
-// Slide up from the bottom — feels lighter than the default grow.
+
 const SlideUp = (props: SlideProps) => <Slide {...props} direction="up" />
 
-/**
- * Renders the single active notification from `useNotification` as a clean,
- * modern bottom-center toast: a tinted severity glyph, the message, a subtle
- * close button, and a slim progress bar that depletes over the auto-hide
- * window. Pair them: `const { notification, notifyError, notifySuccess, close }
- * = useNotification()` then `<Notification notification={notification}
- * onClose={close} />`.
- */
+
+
+
+
+
+
+
+
 export const Notification = ({
   notification,
   onClose,
   autoHideDuration,
 }: NotificationProps) => {
-  // severity/message linger through the slide-out animation, which is fine.
+  
   const severity = notification?.severity ?? 'info'
   const duration = autoHideDuration ?? (severity === 'error' ? 6000 : 4000)
   const Icon = ICONS[severity]
@@ -77,7 +77,7 @@ export const Notification = ({
           <CloseRoundedIcon fontSize="small" />
         </DismissButton>
 
-        {/* Remounts per message so the countdown restarts for each toast. */}
+        {}
         <Countdown
           key={`${severity}:${notification?.message ?? ''}`}
           severity={severity}

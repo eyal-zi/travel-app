@@ -50,12 +50,12 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
 
   const getApi = () => calendarRef.current?.getApi()
 
-  // Default the URL-driven selection to today on first mount.
+  
   useEffect(() => {
     if (!selectedDate) setSelectedDate(format(new Date(), DATE_FMT))
   }, [selectedDate, setSelectedDate])
 
-  // Keep FullCalendar sized to its (flex) container, coalescing bursts into one frame.
+  
   useEffect(() => {
     const wrapper = wrapperRef.current
     if (!wrapper) return
@@ -95,8 +95,8 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
     [events, theme],
   )
 
-  // Render the event ourselves so an icon-marked event shows its marking icon
-  // before the time/title; otherwise mirror FullCalendar's default block layout.
+  
+  
   const renderEventContent = (arg: EventContentArg) => {
     const MarkingIcon = getMarkingIcon(arg.event.extendedProps.style ?? 'primary')
     return (
@@ -110,7 +110,7 @@ export const Calendar = ({ initialView = 'dayGridMonth' }: CalendarProps) => {
 
   const handleSelect = (selectInfo: DateSelectArg) => {
     getApi()?.unselect()
-    // Ignore a bare single-day click in month view; that's handled by dateClick.
+    
     if (selectInfo.allDay && differenceInCalendarDays(selectInfo.end, selectInfo.start) <= 1) return
     openCreate({
       title: '',

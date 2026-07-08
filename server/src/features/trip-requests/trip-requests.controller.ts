@@ -25,9 +25,6 @@ import { UpdateTripRequestDto } from './dto/update-trip-request.dto';
 export class TripRequestsController {
   constructor(private readonly tripRequestsService: TripRequestsService) {}
 
-  // Newest-first page of trip requests. Pass `cursor` (the createdAt of the last
-  // item seen) to fetch the next, older page, and `status` to filter by workflow
-  // status. Each item carries the admin's note and attached files.
   @Get()
   findAll(@Query() query: FindTripRequestsDto) {
     return this.tripRequestsService.findPage(
@@ -45,7 +42,6 @@ export class TripRequestsController {
     return this.tripRequestsService.create(dto, user.id);
   }
 
-  // Admin update: change the status and/or the admin note (both optional).
   @Patch(':id')
   @Roles('admin')
   update(
@@ -56,7 +52,6 @@ export class TripRequestsController {
     return this.tripRequestsService.update(id, dto, user.id);
   }
 
-  // Admin attaches a file (any type) to a request. Multipart "file" part.
   @Post(':id/files')
   @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
@@ -67,7 +62,6 @@ export class TripRequestsController {
     return this.tripRequestsService.addFile(id, file);
   }
 
-  // Admin removes a previously attached file.
   @Delete(':id/files/:fileId')
   @Roles('admin')
   @HttpCode(204)

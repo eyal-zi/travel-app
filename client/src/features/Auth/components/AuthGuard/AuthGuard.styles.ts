@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 
-// Full-viewport centered container for the "authenticating" state.
+
 export const CenteredScreen = styled(Box)(({ theme }) => ({
   minHeight: '100svh',
   display: 'flex',

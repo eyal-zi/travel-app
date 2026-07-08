@@ -16,20 +16,12 @@ import {
   DRIZZLE,
   type DrizzleDB,
 } from '../../common/database/database.constants';
-import {
-  buildPage,
-  keysetCondition,
-} from '../../common/pagination/keyset';
+import { buildPage, keysetCondition } from '../../common/pagination/keyset';
 import { S3Service } from '../../common/storage/s3.service';
 import { largeFileFiles, largeFiles } from './large-files.schema';
 import { CreateLargeFileDto } from './dto/create-large-file.dto';
 import { SearchLargeFilesDto } from './dto/search-large-files.dto';
-import {
-  LargeFilePage,
-  LargeFileResult,
-  LargeFileRow,
-} from './types';
-
+import { LargeFilePage, LargeFileResult, LargeFileRow } from './types';
 
 const DEFAULT_LIMIT = 20;
 
@@ -44,10 +36,6 @@ export class LargeFilesService {
     private readonly s3: S3Service,
   ) {}
 
-  // Newest-first page of large files matching the given filters. Accuracy is an
-  // inclusive ±1 band, file types an IN-list, and the area an intersection test.
-  // All filtering happens in SQL so cursor pagination stays exact: fetch
-  // limit + 1 rows to detect an older page, then trim and expose the cursor.
   async search(dto: SearchLargeFilesDto): Promise<LargeFilePage> {
     const limit = dto.limit ?? DEFAULT_LIMIT;
 
@@ -83,20 +71,12 @@ export class LargeFilesService {
     };
   }
 
-  // Creates a large file from admin-supplied metadata plus an object the admin
-  // already uploaded to S3 via the presigned multipart flow (`source.key`). The
-  // object's real size/type are read back from S3 (not trusted from the client);
-  // the file is recorded in `large_file_files` (joined on read) and the footprint
-  // is written as a PostGIS geometry via ST_GeomFromGeoJSON. Returns the record as
-  // a search-style result so callers can render it immediately.
   async create(
     dto: CreateLargeFileDto,
     source: { key: string; fileName: string },
   ): Promise<LargeFileResult> {
     const geometry = this.toSingleGeometry(dto.area);
 
-    // Authoritative size/type from S3, so a client can't misreport them. Throws
-    // NotFoundException if the object isn't there (e.g. upload never completed).
     const head = await this.s3.headObject(source.key, LARGE_FILE_BUCKET);
     const sizeBytes = head.contentLength ?? 0;
     const contentType = head.contentType ?? 'application/octet-stream';
@@ -135,11 +115,7 @@ export class LargeFilesService {
     });
   }
 
-  // Loads large files by id as search-style results, keyed by id. Used to enrich
-  // fulfilled file requests with their linked large file in one query.
-  async findResultsByIds(
-    ids: string[],
-  ): Promise<Map<string, LargeFileResult>> {
+  async findResultsByIds(ids: string[]): Promise<Map<string, LargeFileResult>> {
     if (ids.length === 0) return new Map();
     const rows = await this.db
       .select(this.resultColumns())
@@ -148,8 +124,6 @@ export class LargeFilesService {
     return new Map(rows.map((row) => [row.id, this.toResult(row)]));
   }
 
-  // The column selection shared by every read: metadata plus the footprint as
-  // GeoJSON text (parsed by `toResult`).
   private resultColumns() {
     return {
       id: largeFiles.id,
@@ -164,8 +138,6 @@ export class LargeFilesService {
     } as const;
   }
 
-  // Maps a DB row (geometry as GeoJSON string or already-parsed object) to the
-  // API result shape.
   private toResult(
     row: (Omit<LargeFileRow, 'geometry'> & { geometry: string }) | LargeFileRow,
   ): LargeFileResult {
@@ -186,8 +158,6 @@ export class LargeFilesService {
     };
   }
 
-  // Collapses a drawn area (a FeatureCollection) into one geometry to store: the
-  // lone geometry when there is a single feature, otherwise a GeometryCollection.
   private toSingleGeometry(area: FeatureCollection): Geometry {
     const geometries = area.features
       .map((feature) => feature.geometry)
@@ -197,10 +167,6 @@ export class LargeFilesService {
       : { type: 'GeometryCollection', geometries };
   }
 
-  // Match records intersecting the drawn area. ORs a per-feature ST_Intersects
-  // term so we never depend on GeometryCollection support, and parameterises the
-  // GeoJSON (Drizzle binds the interpolated string) so it is injection-safe.
-  // Returns undefined when there is no usable area, leaving the filter off.
   private areaCondition(area?: FeatureCollection): SQL | undefined {
     if (!area?.features?.length) return undefined;
 

@@ -14,7 +14,6 @@ import {
 import { User, UserRole, users } from './users.schema';
 
 export interface SignInResult {
-  // The app JWT the client should store and send on subsequent requests.
   token: string;
   user: User;
 }
@@ -28,13 +27,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // Exchange a verified external IdP token for our own app JWT, upserting the
-  // user's profile along the way.
   async signIn(externalToken: string): Promise<SignInResult> {
     const claims = this.verifyExternalToken(externalToken);
     const role = this.resolveRole(claims.groups);
-    // Provision/refresh the user even when unauthorized, so we keep a record of
-    // the attempt, then enforce the required group before issuing a token.
+
     const user = await this.upsertUser(claims, role);
     this.assertAuthorized(user);
     const token = await this.signAppToken(user);
@@ -42,9 +38,6 @@ export class AuthService {
     return { token, user };
   }
 
-  // Verify the external token against the IdP secret and pull the profile
-  // claims off it. The mock IdP shares IDP_SECRET with us; swap this for real
-  // IdP key verification when wiring a live provider.
   private verifyExternalToken(externalToken: string): UserClaims {
     const secret = process.env.IDP_SECRET;
     if (!secret) {
@@ -73,10 +66,6 @@ export class AuthService {
     };
   }
 
-  // Reject sign-in (403) when ALLOWED_GROUP is configured and the user isn't a
-  // member, so the client lands on the Unauthorized page immediately rather
-  // than after a later API call. Mirrors GroupsGuard, which protects the rest
-  // of the API.
   private assertAuthorized(user: User): void {
     const requiredGroup = process.env.ALLOWED_GROUP;
     if (requiredGroup && !user.groups.includes(requiredGroup)) {
@@ -84,8 +73,6 @@ export class AuthService {
     }
   }
 
-  // A user is an admin when they belong to the configured ADMIN_GROUP,
-  // otherwise a regular user.
   private resolveRole(groups: string[]): UserRole {
     const adminGroup = process.env.ADMIN_GROUP;
     if (adminGroup && groups.includes(adminGroup)) {

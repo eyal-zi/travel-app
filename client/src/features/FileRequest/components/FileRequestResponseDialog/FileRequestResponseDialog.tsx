@@ -70,7 +70,7 @@ import type {
 } from './FileRequestResponseDialog.types'
 import type { FileRequest } from '../../types'
 
-/** Admin large-file form: status, note, and the metadata + file that fulfil the request. */
+
 const AdminForm = ({
   draft,
   request,
@@ -101,9 +101,9 @@ const AdminForm = ({
     clearFile,
   } = draft
 
-  // Picking the fulfilling file also renders its footprint on the map when the
-  // format is parseable (e.g. GeoTIFF's extent). Formats with no browser parser
-  // (e.g. ECW) upload normally and keep a hand-drawn footprint.
+  
+  
+  
   const mapRef = useRef<GeoFilterMapHandle>(null)
   const handleFileChange = (next: File) => {
     setFile(next)
@@ -178,7 +178,7 @@ const AdminForm = ({
                   label=""
                   emptyText="Select a file type"
                   options={LARGE_FILE_TYPE_OPTIONS}
-                  // The fulfilling file has a single type — single-select mode.
+                  
                   multiple={false}
                   value={fileType ? [fileType] : []}
                   onChange={(values) => setFileType(values[0] ?? '')}
@@ -302,7 +302,7 @@ const AdminForm = ({
   )
 }
 
-/** Requester view: the admin's note and the fulfilling large file as a search-style card. */
+
 const RequesterView = ({ request }: { request: FileRequest }) => (
   <UserSections>
     <Section>
@@ -339,12 +339,12 @@ const RequesterView = ({ request }: { request: FileRequest }) => (
   </UserSections>
 )
 
-/**
- * The file-request response dialog. For admins it is a full large-file creation
- * form (status/note + metadata + footprint + file) whose Save creates the large
- * file and links it; for requesters it shows the resulting file as a search-style
- * card. Feature-specific — passed to the shared RequestCard via `renderDialog`.
- */
+
+
+
+
+
+
 export const FileRequestResponseDialog = ({
   open,
   onClose,
@@ -361,7 +361,7 @@ export const FileRequestResponseDialog = ({
     if (await submit()) onClose()
   }
 
-  // While uploading, the button shows live progress; then the quick metadata save.
+  
   const saveLabel =
     uploadProgress !== null
       ? `Uploading… ${Math.round(uploadProgress * 100)}%`

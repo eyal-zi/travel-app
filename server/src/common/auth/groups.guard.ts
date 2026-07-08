@@ -9,10 +9,6 @@ import type { Request } from 'express';
 import type { AuthenticatedUser } from './auth.types';
 import { IS_PUBLIC_KEY } from './public.decorator';
 
-// Global authorization guard, runs after JwtAuthGuard. If ALLOWED_GROUP is
-// configured, the authenticated user must belong to it; otherwise we reject
-// with 403, which the client turns into the /unauthorized page. Public routes
-// are skipped.
 @Injectable()
 export class GroupsGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

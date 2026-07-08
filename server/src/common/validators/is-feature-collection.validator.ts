@@ -1,10 +1,5 @@
 import { registerDecorator, type ValidationOptions } from 'class-validator';
 
-/**
- * Validates that a value is a GeoJSON FeatureCollection. This is a shallow,
- * cheap check (type tag + features array) rather than a full GeoJSON schema
- * validation, which is enough to reject obviously malformed payloads.
- */
 export const IsFeatureCollection =
   (options?: ValidationOptions) => (object: object, propertyName: string) => {
     registerDecorator({

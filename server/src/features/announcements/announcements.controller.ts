@@ -10,8 +10,6 @@ import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 export class AnnouncementsController {
   constructor(private readonly announcementsService: AnnouncementsService) {}
 
-  // Newest-first page of announcements. Pass `cursor` (the createdAt of the last
-  // item seen) to fetch the next, older page.
   @Get()
   findAll(@Query() query: PaginationQueryDto) {
     return this.announcementsService.findPage(query.limit, query.cursor);

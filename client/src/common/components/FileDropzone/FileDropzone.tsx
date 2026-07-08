@@ -20,13 +20,13 @@ export const FileDropzone = ({
 }: FileDropzoneProps) => {
   const [preview, setPreview] = useState<string | null>(null)
 
-  // Build an object-URL preview for the current file, revoking it whenever the
-  // file changes or the component unmounts so we don't leak blobs. The effect
-  // (rather than a render-time useMemo) is deliberate: it keeps the create/revoke
-  // lifecycle correct under StrictMode's double-invocation.
+  
+  
+  
+  
   useEffect(() => {
     const url = file ? URL.createObjectURL(file) : null
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing an external blob-URL resource
+    
     setPreview(url)
     return () => {
       if (url) URL.revokeObjectURL(url)
@@ -47,12 +47,12 @@ export const FileDropzone = ({
     multiple: false,
   })
 
-  // A freshly picked file wins; otherwise fall back to the existing remote file.
+  
   const displayedSrc = preview ?? fileUrl
 
-  // Single render tree: the preview (editable keeps it a drop target to swap the
-  // file; watch-only just shows it), the loading spinner, or — when empty — a
-  // watch-only placeholder or the upload prompt.
+  
+  
+  
   return displayedSrc ? (
     readOnly ? (
       <PreviewFrame minHeight={minHeight}>{renderPreview(displayedSrc)}</PreviewFrame>

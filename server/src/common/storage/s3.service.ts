@@ -25,9 +25,7 @@ export class S3Service {
       region: process.env.AWS_REGION,
       endpoint: process.env.AWS_ENDPOINT,
       s3ForcePathStyle: true,
-      // SigV4 so presigned URLs don't fold Content-Type into the signature: the
-      // browser always attaches a Content-Type to each uploaded part, which a
-      // SigV2 signature rejects (403). SigV4 only signs headers it's told to.
+
       signatureVersion: 'v4',
     });
   }
@@ -80,9 +78,7 @@ export class S3Service {
     key: string,
     bucket: string,
     expiresInSeconds = 3600,
-    // When set (e.g. `attachment; filename="report.pdf"`), the object is served
-    // with this Content-Disposition so the browser downloads it rather than
-    // rendering it inline.
+
     contentDisposition?: string,
   ): string {
     return this.s3.getSignedUrl('getObject', {
@@ -93,13 +89,6 @@ export class S3Service {
     });
   }
 
-  // --- Multipart upload (direct browser -> S3) ---------------------------------
-  // These back the presigned multipart flow: the client uploads each part straight
-  // to S3 using URLs signed by `signUploadPart`, so file bytes never pass through
-  // this server.
-
-  // Opens a multipart upload and returns its id. ContentType is fixed here (parts
-  // don't carry it) so the finished object is stored with the right type.
   async createMultipartUpload({
     key,
     bucket,
@@ -119,8 +108,6 @@ export class S3Service {
     return UploadId;
   }
 
-  // Presigns a single `uploadPart` PUT. The client PUTs the part's bytes to this
-  // URL and reads the resulting ETag from the response.
   signUploadPart({
     key,
     bucket,
@@ -137,8 +124,6 @@ export class S3Service {
     });
   }
 
-  // Finalizes the upload by assembling the parts (ordered by part number) into the
-  // final object.
   async completeMultipartUpload({
     key,
     bucket,
@@ -159,8 +144,6 @@ export class S3Service {
       .promise();
   }
 
-  // Lists the parts already uploaded to an open multipart upload (paged through in
-  // full), so a client can resume by skipping what's done. Ordered by part number.
   async listParts({
     key,
     bucket,
@@ -197,7 +180,6 @@ export class S3Service {
     return parts;
   }
 
-  // Best-effort cleanup of an abandoned upload so its parts don't linger.
   async abortMultipartUpload({
     key,
     bucket,
@@ -208,8 +190,6 @@ export class S3Service {
       .promise();
   }
 
-  // Reads an object's size/type without downloading it. Used at finalize to trust
-  // S3 rather than the client for the recorded size.
   async headObject(key: string, bucket: string): Promise<HeadObjectResult> {
     try {
       const response = await this.s3

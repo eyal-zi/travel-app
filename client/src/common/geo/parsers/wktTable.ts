@@ -3,7 +3,7 @@ import type { Feature, FeatureCollection, GeoJsonProperties } from 'geojson'
 
 type Row = Record<string, unknown>
 
-// Matches a geometry column named "WKT" or "GEOMETRY", ignoring case and surrounding space.
+
 const isGeometryColumn = (key: string) => {
   const normalized = key.trim().toLowerCase()
   return normalized === 'wkt' || normalized === 'geometry'
@@ -11,11 +11,11 @@ const isGeometryColumn = (key: string) => {
 
 const isEmpty = (value: unknown) => value === null || value === undefined || String(value).trim() === ''
 
-/**
- * Builds a GeoJSON FeatureCollection from tabular rows (CSV/Excel) where one column
- * holds geometry as WKT text. The geometry column is found case-insensitively
- * ("WKT" or "GEOMETRY"); every other column becomes a feature property.
- */
+
+
+
+
+
 export const featureCollectionFromWktRows = (rows: Row[], fileName: string): FeatureCollection => {
   const headerKeys = rows.length ? Object.keys(rows[0]) : []
   const geometryKey = headerKeys.find(isGeometryColumn)

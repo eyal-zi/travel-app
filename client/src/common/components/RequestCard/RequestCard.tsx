@@ -22,13 +22,13 @@ import {
   RequestedRow,
 } from './RequestCard.styles'
 
-/**
- * Shared request card: a keyboard-accessible summary card (title, status, detail
- * grid, requester notes, and admin-response indicators) that opens the shared
- * response dialog. Feature-agnostic — the caller owns the open state and draft,
- * and supplies the feature-specific detail fields as `children`. Used by the trip
- * and file request items.
- */
+
+
+
+
+
+
+
 export const RequestCard = ({
   request,
   open,
@@ -82,7 +82,7 @@ export const RequestCard = ({
               </Typography>
             </RequestedRow>
 
-            {/* Admins see who submitted the request. */}
+            {}
             {admin && request.createdByUsername && (
               <RequestedRow>
                 <PersonOutlineRoundedIcon />
@@ -92,7 +92,7 @@ export const RequestCard = ({
               </RequestedRow>
             )}
 
-            {/* Requesters see who last handled it and when. */}
+            {}
             {!admin && request.updatedByUsername && (
               <RequestedRow>
                 <UpdateRoundedIcon />
@@ -104,7 +104,7 @@ export const RequestCard = ({
             )}
           </FooterMeta>
 
-          {/* Small indicators that the admin has responded. */}
+          {}
           {(hasNote || fileCount > 0 || fulfilled) && (
             <Indicators>
               {hasNote && (

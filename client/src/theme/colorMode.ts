@@ -11,7 +11,7 @@ export const ColorModeContext = createContext<ColorModeContextValue | undefined>
   undefined,
 )
 
-/** Read the current colour mode; must be used within a `ColorModeProvider`. */
+
 export const useColorMode = () => {
   const context = useContext(ColorModeContext)
   if (!context) {

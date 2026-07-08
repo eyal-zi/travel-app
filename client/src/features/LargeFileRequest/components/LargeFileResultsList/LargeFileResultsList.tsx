@@ -7,11 +7,11 @@ import { LargeFileResultItem } from '../LargeFileResultItem/LargeFileResultItem'
 import { ListPanel, Sentinel, StatusRow } from '../../LargeFileRequest.styles'
 import type { LargeFileResultsListProps } from './LargeFileResultsList.types'
 
-/**
- * Newest-first, cursor-paginated results feed with infinite scroll. Owns the
- * search query for the applied filters and loads the next page when the bottom
- * sentinel nears the viewport.
- */
+
+
+
+
+
 export const LargeFileResultsList = ({ filters }: LargeFileResultsListProps) => {
   const {
     items,

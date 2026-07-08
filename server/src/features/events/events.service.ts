@@ -48,7 +48,6 @@ export class EventsService {
   }
 
   async remove(id: string): Promise<void> {
-    // Soft delete: flag the row instead of removing it so the data is retained.
     const [event] = await this.db
       .update(events)
       .set({ isDeleted: true })

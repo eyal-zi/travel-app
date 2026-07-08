@@ -11,19 +11,19 @@ import { PdfViewer } from './PdfViewer'
 import { usePdfForDate, useSavePdf, useDeletePdf } from './queries/usePdf'
 import { DeleteButton, PdfRoot } from './PdfDropzone.styles'
 
-/**
- * Inline PDF dropzone: loads the PDF for the selected date (or the closest
- * preceding one) and uploads a dropped PDF straight away, persisting it through
- * React Query. Rendering is delegated to the shared `FileDropzone` and the
- * `PdfViewer` iframe.
- */
+
+
+
+
+
+
 export const PdfDropzone = () => {
   const [selectedDate] = useSelectedDate()
   const date = selectedDate ?? todayKey()
   const canEdit = useIsAdmin()
 
-  // The picked file drives the preview while the upload is in flight; afterwards
-  // the cached record's signed URL takes over.
+  
+  
   const [file, setFile] = useState<File | null>(null)
   const { notification, notifyError, notifySuccess, close } = useNotification()
 

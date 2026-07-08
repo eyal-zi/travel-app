@@ -53,8 +53,8 @@ export const SwatchRow = styled(Box)(({ theme }) => ({
 export const Swatch = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== 'swatchStyle' && prop !== 'selected',
 })<{ swatchStyle: EventStyle; selected: boolean }>(({ theme, swatchStyle, selected }) => {
-  // Colours fill with their palette; icon markings use a neutral fill (the icon
-  // child is what distinguishes them).
+  
+  
   const fill = isColorStyle(swatchStyle)
     ? theme.palette[swatchStyle].main
     : alpha(theme.palette.text.primary, 0.12)

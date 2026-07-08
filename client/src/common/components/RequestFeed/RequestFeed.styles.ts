@@ -2,8 +2,8 @@ import { styled } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
-// Wraps the status-filter bar and the scrollable list so the list still grows
-// into the remaining height beneath the (auto-height) filter row.
+
+
 export const ListSection = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,
@@ -12,7 +12,7 @@ export const ListSection = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1.5),
 }))
 
-// Horizontal row of status filter chips above the list.
+
 export const FilterBar = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
@@ -27,7 +27,7 @@ const panelBase = (theme: Theme) => ({
   boxShadow: theme.shadows[2],
 })
 
-// List panel: a bounded, scrollable column of request cards.
+
 export const ListPanel = styled(Box)(({ theme }) => ({
   ...panelBase(theme),
   flex: 1,
@@ -53,7 +53,7 @@ export const ListPanel = styled(Box)(({ theme }) => ({
   },
 }))
 
-// Zero-height sentinel observed for infinite scroll.
+
 export const Sentinel = styled(Box)({
   height: 1,
   flexShrink: 0,

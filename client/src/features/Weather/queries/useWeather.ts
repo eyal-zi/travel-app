@@ -1,15 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { weatherService, type WeatherRecord } from '../services/weatherService'
 
-// Per-date key. The weather image for a date is a singleton: the one stored on
-// that date, or the closest preceding one.
+
+
 export const weatherKey = (date: string) => ['weather', date] as const
 
-/**
- * The weather image for the date (or closest preceding), or null when none.
- * Enabled only while the modal is open so the image isn't fetched for every
- * date in the background.
- */
+
+
+
+
+
 export const useWeatherForDate = (date: string, enabled: boolean) =>
   useQuery({
     queryKey: weatherKey(date),
@@ -32,8 +32,8 @@ export const useDeleteWeather = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (date: string) => weatherService.remove(date),
-    // Drop straight to the empty state rather than falling back to the closest
-    // preceding image, matching the PDF feature.
+    
+    
     onSuccess: (_data, date) => {
       queryClient.setQueryData<WeatherRecord | null>(weatherKey(date), null)
     },

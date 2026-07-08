@@ -2,8 +2,8 @@ import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 
-// Positioning context so the date label and delete control can overlay the
-// PDF, which fills it.
+
+
 export const PdfRoot = styled(Box)({
   position: 'relative',
   flex: 1,

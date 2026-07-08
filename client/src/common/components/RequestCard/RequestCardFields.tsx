@@ -4,7 +4,7 @@ import type { FieldProps, TagDetailProps } from './RequestCard.types'
 import { ChipRow, Detail, FieldValue } from './RequestCard.styles'
 import { labelFor } from './RequestCard.utils'
 
-// A labelled single-value detail field.
+
 export const Field = ({ label, value }: FieldProps) => (
   <Detail>
     <Typography variant="caption" color="text.secondary">
@@ -14,7 +14,7 @@ export const Field = ({ label, value }: FieldProps) => (
   </Detail>
 )
 
-// A labelled list of tag chips.
+
 export const TagDetail = ({ label, values, options }: TagDetailProps) => (
   <Detail>
     <Typography variant="caption" color="text.secondary">

@@ -30,23 +30,23 @@ import {
 } from './RouteMapDropzone.styles'
 import type { RouteMapDropzoneProps } from './RouteMapDropzone.types'
 
-// Stable empty baseline so the reset effect doesn't fire every render while no
-// route is loaded.
+
+
 const NO_LAYERS: GeoLayer[] = []
 
-// A route with no geometry renders as no layers, so an empty FeatureCollection
-// (e.g. the closest preceding date itself was emptied) shows a blank map.
+
+
 const toLayers = (route: Route): GeoLayer[] =>
   route.data.features.length
     ? [{ id: route.id, name: route.name, source: 'api', data: route.data }]
     : NO_LAYERS
 
-/**
- * Route editor: loads the route for the selected date, lets the user drop files
- * or draw/edit/delete shapes on the shared `MapEditor`, and persists the working
- * layers through React Query on Save. Owns the working-vs-committed diff and the
- * Save/Cancel + layer-list UI; the map and file-drop wiring live in `MapEditor`.
- */
+
+
+
+
+
+
 export const RouteMapDropzone = ({
   name = 'My map',
   onSave,
@@ -64,25 +64,25 @@ export const RouteMapDropzone = ({
   const saveRoute = useSaveRoute()
 
   const committed = route ? toLayers(route) : NO_LAYERS
-  // Only surface the date when a layer was actually fetched.
+  
   const uploadedAt = committed.length > 0 && route ? route.date : null
 
-  // Seed/replace the working layers whenever a new committed baseline arrives.
+  
   useEffect(() => {
     reset(committed)
-    // committed is derived from `route`; depend on it to avoid resetting each render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
+    
   }, [route, reset])
 
-  // Surface a (non-404) load failure; 404s resolve to null and show a blank map.
+  
   useEffect(() => {
     if (isError) notifyError('Failed to load the map for this date.')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [isError])
 
-  // Drawing/editing reshapes geometry without necessarily changing layer ids or
-  // counts (a route is one layer with many features), so compare the serialised
-  // data too — not just identity — otherwise Save/Cancel never surface for edits.
+  
+  
+  
   const pending = useMemo(() => {
     if (layers.length !== committed.length) return true
     return layers.some((layer, i) => {

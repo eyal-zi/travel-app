@@ -71,7 +71,7 @@ export const HomePage = () => {
   const firstName = user?.firstName || user?.displayName || 'traveller'
   const initials = getInitials(user?.firstName, user?.lastName, firstName)
 
-  // Non-admins create requests; admins jump straight to the review queues.
+  
   const actions: QuickAction[] = admin
     ? [
         {

@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { tripRequestService } from '../services/tripRequestService'
 import { tripRequestsKey } from './useTripRequests'
 
-/**
- * Admin file attach/remove mutations. Both invalidate the trip-requests list
- * prefix on success so the card's file list refetches with fresh signed URLs.
- */
+
+
+
+
 export const useTripRequestFiles = () => {
   const queryClient = useQueryClient()
   const invalidate = () =>
@@ -25,7 +25,7 @@ export const useTripRequestFiles = () => {
 
   return {
     addFile: addFile.mutate,
-    // Promise-returning variants, for sequencing inside a batched save.
+    
     addFileAsync: addFile.mutateAsync,
     removeFileAsync: removeFile.mutateAsync,
     isAddingFile: addFile.isPending,

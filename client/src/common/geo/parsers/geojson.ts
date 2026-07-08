@@ -10,8 +10,8 @@ const GEOMETRY_TYPES = new Set([
   'GeometryCollection',
 ])
 
-// Normalizes any GeoJSON object (FeatureCollection, single Feature, or a bare
-// geometry) into a FeatureCollection so the rest of the map pipeline is uniform.
+
+
 const toFeatureCollection = (geojson: GeoJsonObject): FeatureCollection => {
   if (geojson.type === 'FeatureCollection') {
     return geojson as FeatureCollection

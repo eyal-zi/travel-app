@@ -32,8 +32,6 @@ export class RoutesService {
   }
 
   async findClosest(date: string): Promise<Route> {
-    // Newest route at or before the target date wins — same date if present,
-    // otherwise the closest preceding one.
     const [route] = await this.db
       .select()
       .from(routes)
@@ -46,9 +44,6 @@ export class RoutesService {
   }
 
   async create(dto: CreateRouteDto): Promise<Route> {
-    // Upsert by date: there is exactly one route per date. Posting a date that
-    // already exists overwrites that route's name/geometry (and resurrects it if
-    // it had been soft-deleted) instead of inserting a duplicate.
     const [route] = await this.db
       .insert(routes)
       .values(dto)
@@ -67,8 +62,6 @@ export class RoutesService {
   }
 
   async update(id: string, dto: UpdateRouteDto): Promise<Route> {
-    // Build the patch from only the provided fields rather than passing the DTO
-    // straight to .set(), so the update stays explicit as the DTO grows.
     const set: Partial<Pick<Route, 'name' | 'data'>> = {};
     if (dto.name !== undefined) set.name = dto.name;
     if (dto.data !== undefined) set.data = dto.data;
@@ -83,11 +76,6 @@ export class RoutesService {
   }
 
   async removeByDate(date: string): Promise<void> {
-    // Soft-delete the route that belongs to this exact date. Emptying a date's
-    // map removes its own route so `findClosest` falls back to the closest
-    // preceding date again. If the date never had its own route (the map was
-    // showing a fallback from an earlier date), this is a no-op — we must not
-    // delete that earlier route, which still belongs to its own date.
     await this.db
       .update(routes)
       .set({ isDeleted: true, updatedAt: new Date() })
@@ -96,7 +84,6 @@ export class RoutesService {
   }
 
   async remove(id: string): Promise<void> {
-    // Soft delete: flag the row instead of removing it so the data is retained.
     const [route] = await this.db
       .update(routes)
       .set({ isDeleted: true })

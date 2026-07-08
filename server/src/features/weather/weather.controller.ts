@@ -20,15 +20,11 @@ import { WeatherService } from './weather.service';
 export class WeatherController {
   constructor(private readonly weatherService: WeatherService) {}
 
-  // Returns the weather record for the date (or the closest preceding one) with
-  // a fresh signed URL for fetching the image from S3.
   @Get('closest')
   findClosest(@Query() query: FindWeatherDto) {
     return this.weatherService.findClosest(query.date);
   }
 
-  // Multipart upload: an "image" file part plus a "date" field. Uploads the
-  // image to S3 and returns the stored record with a signed URL.
   @Post()
   @Roles('admin')
   @UseInterceptors(FileInterceptor('image'))
@@ -39,9 +35,6 @@ export class WeatherController {
     return this.weatherService.create(dto, image);
   }
 
-  // Soft-deletes the stored weather image(s) for a given date so the view falls
-  // back to the closest preceding date. A no-op (still 204) if that date had no
-  // image of its own.
   @Delete()
   @Roles('admin')
   @HttpCode(204)

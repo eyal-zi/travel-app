@@ -8,8 +8,6 @@ import type { RequestStatus } from '../database/enums';
 import { buildPage, keysetCondition, type Page } from '../pagination/keyset';
 import type { S3Service } from '../storage/s3.service';
 
-// The minimal row shapes the shared logic reads. Concrete request/file rows widen
-// these via the TRequest/TFile generics.
 export interface RequestRow {
   id: string;
   createdAt: Date;
@@ -23,52 +21,39 @@ export interface RequestFileRow {
   createdAt: Date;
 }
 
-// A file plus a short-lived presigned URL the client can download it from.
 export type WithSignedUrl<TFile> = TFile & { signedUrl: string };
 
-// The usernames resolved (via join) from a request's created-by/updated-by user
-// foreign keys, so clients can show who submitted and who last handled a request
-// without exposing the raw ids. Null when unset or the user no longer exists.
 export interface RequestUsernames {
   createdByUsername: string | null;
   updatedByUsername: string | null;
 }
 
-// A request enriched with its admin-attached files (each carrying a download URL)
-// and the created-by/updated-by usernames.
 export type WithFiles<TRequest, TFile> = TRequest &
   RequestUsernames & {
     files: WithSignedUrl<TFile>[];
   };
 
-// The fields an admin may change on a request.
 export interface RequestUpdate {
   status?: RequestStatus;
   adminNote?: string;
 }
 
-// Tables and columns the base (file-agnostic) queries touch. Typed loosely
-// (PgTable/PgColumn) because the base is reused across feature table sets; the
-// concrete row types arrive through the TRequest generic and results are asserted
-// to them at the (few) query boundaries below.
 export interface RequestBaseConfig {
   requestTable: PgTable;
   idColumn: PgColumn;
   createdAtColumn: PgColumn;
   statusColumn: PgColumn;
-  // FK columns to `users.id`: who submitted the request and who last updated it.
+
   createdByColumn: PgColumn;
   updatedByColumn: PgColumn;
-  // The users table and its id/username columns, joined to resolve the created-by
-  // and updated-by usernames on read.
+
   userTable: PgTable;
   userIdColumn: PgColumn;
   userNameColumn: PgColumn;
-  // Singular label for log lines and 404 messages, e.g. "Trip request".
+
   label: string;
 }
 
-// Adds the file-collection tables/bucket the file-attach behaviour needs.
 export interface RequestServiceConfig extends RequestBaseConfig {
   fileTable: PgTable;
   fileForeignKeyColumn: PgColumn;
@@ -79,10 +64,6 @@ export interface RequestServiceConfig extends RequestBaseConfig {
 
 const DEFAULT_LIMIT = 20;
 
-// Shared implementation for the request features (trip requests, file requests):
-// a newest-first keyset page of requests with resolved usernames, create, and an
-// admin status/note update. Subclasses supply `config` and may override `enrich`
-// to attach feature-specific data (e.g. files, a linked large file) on read.
 export abstract class RequestService<
   TRequest extends RequestRow,
   TCreate,
@@ -94,8 +75,6 @@ export abstract class RequestService<
 
   constructor(protected readonly db: DrizzleDB) {}
 
-  // Newest-first page, optionally filtered by status. Fetches limit + 1 rows to
-  // tell whether an older page exists, then trims, enriches and exposes the cursor.
   async findPage(
     limit = DEFAULT_LIMIT,
     cursor?: string,
@@ -111,8 +90,6 @@ export abstract class RequestService<
       userTable,
     } = this.config;
 
-    // Join the users table twice (once per FK) to resolve the usernames without
-    // exposing the raw ids. Left joins so a request survives a missing/deleted user.
     const createdByUser = alias(userTable, 'created_by_user');
     const updatedByUser = alias(userTable, 'updated_by_user');
     const createdByCols = getTableColumns(createdByUser);
@@ -146,17 +123,12 @@ export abstract class RequestService<
     return { items, nextCursor: page.nextCursor };
   }
 
-  // Attaches feature-specific data to a page of requests on read. The base only
-  // resolves usernames, so the default is the identity; subclasses override to add
-  // files, a linked record, etc.
   protected async enrich(
     rows: (TRequest & RequestUsernames)[],
   ): Promise<TItem[]> {
     return rows as unknown as TItem[];
   }
 
-  // `status` is omitted from the insert so it falls back to the column default.
-  // `createdBy` stamps the submitting user (from the authenticated request).
   async create(dto: TCreate, createdBy?: string): Promise<TRequest> {
     const values: Record<string, unknown> = { ...(dto as object) };
     if (createdBy) {
@@ -173,9 +145,6 @@ export abstract class RequestService<
     return row;
   }
 
-  // Admin update: advance `status` and/or set `adminNote`, stamping `updatedBy`
-  // with the acting admin. Only provided fields change; `updatedAt` bumps
-  // automatically via $onUpdate.
   async update(
     id: string,
     patch: RequestUpdate,
@@ -213,8 +182,6 @@ export abstract class RequestService<
     }
   }
 
-  // JS field name (e.g. "tripRequestId") of a column on a table — used to set a
-  // column by name on insert/update and to read one back off a row when grouping.
   protected columnName(table: PgTable, column: PgColumn): string {
     const columns = getTableColumns(table);
     const name = Object.keys(columns).find((key) => columns[key] === column);
@@ -229,9 +196,6 @@ export abstract class RequestService<
   }
 }
 
-// Extends the base with an admin-attached file collection: files are grouped onto
-// each request on read (via the overridden `enrich`), and can be attached/removed
-// individually. A subclass supplies `config` (including the file table and bucket).
 export abstract class RequestWithFilesService<
   TRequest extends RequestRow,
   TFile extends RequestFileRow,
@@ -252,9 +216,6 @@ export abstract class RequestWithFilesService<
     return this.attachFiles(rows);
   }
 
-  // Attaches a file to a request. Stored under a uuid-based S3 key (keeping the
-  // original extension) so uploads never collide; the original name and type are
-  // kept for download.
   async addFile(
     id: string,
     file: Express.Multer.File,
@@ -285,8 +246,6 @@ export abstract class RequestWithFilesService<
     return this.withUrl(row);
   }
 
-  // Removes a file from a request. The S3 object is left in place — dropping the
-  // row is enough to hide it from clients.
   async removeFile(id: string, fileId: string): Promise<void> {
     const deleted = (await this.db
       .delete(this.config.fileTable)
@@ -305,9 +264,6 @@ export abstract class RequestWithFilesService<
     this.logger.log(`Removed file ${fileId} from ${this.lowerLabel} ${id}`);
   }
 
-  // Loads the files for a set of requests in one query and groups them onto each
-  // request. Signed URLs are generated locally (no network) and download as the
-  // original filename.
   private async attachFiles(
     rows: (TRequest & RequestUsernames)[],
   ): Promise<WithFiles<TRequest, TFile>[]> {

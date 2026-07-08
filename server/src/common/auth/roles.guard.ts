@@ -10,10 +10,6 @@ import type { UserRole } from '../../features/auth/users.schema';
 import type { AuthenticatedUser } from './auth.types';
 import { ROLES_KEY } from './roles.decorator';
 
-// Global role guard, runs after JwtAuthGuard/GroupsGuard. Only handlers annotated
-// with @Roles(...) are checked; every other route passes through. The
-// authenticated user (populated by JwtAuthGuard) must carry one of the required
-// roles, otherwise we reject with 403.
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

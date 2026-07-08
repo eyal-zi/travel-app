@@ -10,23 +10,23 @@ import ToggleButton from '@mui/material/ToggleButton'
 import Typography from '@mui/material/Typography'
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded'
 
-// MUI palette colours a workflow status can map to (see REQUEST_STATUS_META).
+
 type StatusColor = 'info' | 'warning' | 'success'
 
 export const StyledDialog = styled(Dialog, {
   shouldForwardProp: (prop) => prop !== 'width',
 })<{ width?: number }>(({ theme, width = 480 }) => ({
-  // No backdrop-filter blur here: without GPU compositing it forces a full
-  // backdrop re-blur on every repaint, making every interaction inside the
-  // dialog (typing, map pans, toggle clicks) take 100-180ms per frame.
+  
+  
+  
   '& .MuiBackdrop-root': {
     backgroundColor: alpha(theme.palette.common.black, 0.6),
   },
   '& .MuiDialog-paper': {
     width: '100%',
     maxWidth: width,
-    // Bound the frame to the viewport and lay its sections out as a column so the
-    // title/actions stay put and only the content scrolls.
+    
+    
     maxHeight: 'calc(100% - 64px)',
     display: 'flex',
     flexDirection: 'column',
@@ -34,8 +34,8 @@ export const StyledDialog = styled(Dialog, {
     backgroundImage: 'none',
     boxShadow: `0 24px 64px ${alpha(theme.palette.common.black, 0.28)}`,
   },
-  // The single scroll region. Min-height:0 lets it shrink inside the flex column
-  // (otherwise it would push the frame taller and create the second scrollbar).
+  
+  
   '& .MuiDialogContent-root': {
     minHeight: 0,
     scrollbarWidth: 'thin',
@@ -49,9 +49,9 @@ export const StyledDialog = styled(Dialog, {
   },
 }))
 
-// Title bar with a touch less bottom padding so the chip sits near the title.
-// Typed with `component` so it can render as a div (avoiding an <h6> inside the
-// default <h2>).
+
+
+
 export const DialogTitleBar = styled(DialogTitle)<{ component?: ElementType }>(
   ({ theme }) => ({
     paddingBottom: theme.spacing(1.5),
@@ -65,7 +65,7 @@ export const DialogHeader = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1.5),
 }))
 
-// Title + status chip stacked in the header.
+
 export const TitleColumn = styled(Box)(({ theme }) => ({
   minWidth: 0,
   display: 'flex',
@@ -83,14 +83,14 @@ export const StatusChip = styled(Chip)({
   fontWeight: 600,
 })
 
-// Vertical stack of one section's contents (label + control).
+
 export const Section = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
 }))
 
-// View roots: the same column with a wider gap between their sections.
+
 export const UserSections = styled(Section)(({ theme }) => ({
   gap: theme.spacing(3),
 }))
@@ -99,19 +99,19 @@ export const AdminSections = styled(Section)(({ theme }) => ({
   gap: theme.spacing(2),
 }))
 
-// Divider between admin sections; pulled tighter so the attachments sit closer
-// to the fields above it than the default section gap allows.
+
+
 export const SectionDivider = styled(Divider)(({ theme }) => ({
   marginBlock: theme.spacing(-1),
 }))
 
-// Overline heading introducing a section.
+
 export const SectionLabel = styled(Typography)({
   letterSpacing: 0.6,
   fontWeight: 700,
 })
 
-// Status toggle; when selected it adopts the status's palette colour.
+
 export const StatusToggle = styled(ToggleButton, {
   shouldForwardProp: (prop) => prop !== 'statusColor',
 })<{ statusColor: StatusColor }>(({ theme, statusColor }) => ({
@@ -122,7 +122,7 @@ export const StatusToggle = styled(ToggleButton, {
   },
 }))
 
-// A single attached file: tinted icon + name link/label + (admin) remove button.
+
 export const FileRow = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -131,7 +131,7 @@ export const FileRow = styled(Box)(({ theme }) => ({
   '& svg': { fontSize: 16 },
 }))
 
-// Attachment-row leading icons, differing only by tint.
+
 export const ExistingFileIcon = styled(AttachFileRoundedIcon)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }))
@@ -140,7 +140,7 @@ export const StagedFileIcon = styled(AttachFileRoundedIcon)(({ theme }) => ({
   color: theme.palette.primary.main,
 }))
 
-// Existing-file name link; struck through once marked for removal.
+
 export const FileLink = styled(Link, {
   shouldForwardProp: (prop) => prop !== 'removed',
 })<{ removed?: boolean }>(({ theme, removed }) => ({
@@ -152,13 +152,13 @@ export const FileLink = styled(Link, {
   }),
 }))
 
-// Staged (not-yet-uploaded) file name.
+
 export const StagedFileName = styled(Typography)({
   flex: 1,
   wordBreak: 'break-all',
 })
 
-// Soft, rounded card that frames the admin's written response in the user view.
+
 export const NoteCard = styled(Box)(({ theme }) => ({
   position: 'relative',
   padding: theme.spacing(2),
@@ -177,15 +177,15 @@ export const NoteCard = styled(Box)(({ theme }) => ({
   },
 }))
 
-// The admin's response text inside the note card.
+
 export const ResponseNoteText = styled(Typography)({
   whiteSpace: 'pre-wrap',
   wordBreak: 'break-word',
   lineHeight: 1.6,
 })
 
-// Attribution row under the response: which admin last handled the request and
-// when. A subtle, icon-led meta line kept distinct from the response body.
+
+
 export const ResponseByline = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -194,9 +194,9 @@ export const ResponseByline = styled(Box)(({ theme }) => ({
   '& svg': { fontSize: 16 },
 }))
 
-// Clickable file tile, rendered as an anchor (component="a") with a hover lift.
-// Typed with BoxProps<'a'> so the polymorphic `component`/`href`/`target`/`rel`
-// props type-check on the styled Box.
+
+
+
 export const FileCard = styled(Box)<BoxProps<'a'>>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -216,19 +216,19 @@ export const FileCard = styled(Box)<BoxProps<'a'>>(({ theme }) => ({
   },
 }))
 
-// Name + hint text column inside a download file tile.
+
 export const FileCardBody = styled(Box)({
   flex: 1,
   minWidth: 0,
 })
 
-// Bold file name shown inside a file tile.
+
 export const FileName = styled(Typography)({
   fontWeight: 600,
   wordBreak: 'break-all',
 })
 
-// Rounded icon badge sitting at the left of a file tile.
+
 export const FileIconBadge = styled(Box)(({ theme }) => ({
   display: 'grid',
   placeItems: 'center',
@@ -241,7 +241,7 @@ export const FileIconBadge = styled(Box)(({ theme }) => ({
   '& svg': { fontSize: 20 },
 }))
 
-// Muted, centered placeholder for empty note/attachment sections.
+
 export const EmptyState = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',

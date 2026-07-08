@@ -3,9 +3,6 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from './public.decorator';
 
-// Global authentication guard: every endpoint requires a valid app JWT unless
-// it is marked @Public() (the sign-in endpoint). Registered via APP_GUARD in
-// AuthModule.
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private readonly reflector: Reflector) {

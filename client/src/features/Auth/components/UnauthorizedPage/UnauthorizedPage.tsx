@@ -10,8 +10,8 @@ import {
   PageRoot,
 } from './UnauthorizedPage.styles'
 
-// Shown when authentication couldn't complete, or the user lacks the required
-// group (server 403). "Try again" re-runs the SSO flow.
+
+
 export const UnauthorizedPage = () => {
   const { retry } = useAuth()
 

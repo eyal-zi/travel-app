@@ -21,15 +21,11 @@ import { PdfService } from './pdf.service';
 export class PdfController {
   constructor(private readonly pdfService: PdfService) {}
 
-  // Returns the PDF for the date (or the closest preceding one) with a fresh
-  // signed URL for fetching it from S3.
   @Get('closest')
   findClosest(@Query() query: FindPdfDto) {
     return this.pdfService.findClosest(query.date);
   }
 
-  // Multipart upload: a "file" part plus a "date" field. Uploads the PDF to S3
-  // and returns the stored record with a signed URL.
   @Post()
   @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
@@ -45,8 +41,6 @@ export class PdfController {
     return this.pdfService.create(dto, file);
   }
 
-  // Soft-deletes the stored PDF for a given date so the view falls back to the
-  // closest preceding date. A no-op (still 204) if that date had no PDF.
   @Delete()
   @Roles('admin')
   @HttpCode(204)

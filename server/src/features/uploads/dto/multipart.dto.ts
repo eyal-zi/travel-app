@@ -11,11 +11,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-// S3 allows at most 10,000 parts per multipart upload, numbered from 1.
 const MAX_PART_NUMBER = 10_000;
 
-// Opens a multipart upload. The server derives the object key from `fileName`, so
-// the client never chooses where the object lands.
 export class CreateMultipartUploadDto {
   @IsString()
   @MinLength(1)
@@ -26,7 +23,6 @@ export class CreateMultipartUploadDto {
   contentType?: string;
 }
 
-// Requests presigned PUT URLs for a batch of part numbers of an open upload.
 export class SignPartsDto {
   @IsString()
   @MinLength(1)
@@ -44,7 +40,6 @@ export class SignPartsDto {
   partNumbers: number[];
 }
 
-// One uploaded part, reported back after its PUT succeeded.
 export class UploadedPartDto {
   @IsInt()
   @Min(1)
@@ -56,7 +51,6 @@ export class UploadedPartDto {
   etag: string;
 }
 
-// Finalizes an upload by assembling the reported parts into the object.
 export class CompleteMultipartUploadDto {
   @IsString()
   @MinLength(1)
@@ -73,7 +67,6 @@ export class CompleteMultipartUploadDto {
   parts: UploadedPartDto[];
 }
 
-// Lists the parts already uploaded to an open upload, so the client can resume.
 export class ListPartsDto {
   @IsString()
   @MinLength(1)
@@ -84,7 +77,6 @@ export class ListPartsDto {
   uploadId: string;
 }
 
-// Aborts an open upload so its parts are discarded.
 export class AbortMultipartUploadDto {
   @IsString()
   @MinLength(1)

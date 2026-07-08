@@ -3,13 +3,13 @@ import type { Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 
 export const PageRoot = styled(Box)(({ theme }) => ({
-  // Locked to the viewport so the columns can size themselves against the
-  // remaining height rather than overflowing the page.
+  
+  
   height: "100svh",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  // Slim vertical padding so the columns (and the map) get more height.
+  
   padding: theme.spacing(2, 2),
   backgroundColor: theme.palette.background.default,
   [theme.breakpoints.down("sm")]: {
@@ -37,8 +37,8 @@ export const HeaderText = styled(Box)({
   minWidth: 0,
 });
 
-// Two columns: filters/map on the left, results on the right. On md down they
-// stack and the whole split scrolls as one column.
+
+
 export const Split = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,
@@ -72,14 +72,14 @@ const scrollbar = (theme: Theme) => ({
   },
 });
 
-// The filters form: file-type select, accuracy slider, country/date fields, the
-// map and the Search action. Never scrolls — the map flexes to absorb the
-// leftover height and compacts on short viewports so the whole form always fits
-// the column at every screen size.
+
+
+
+
 export const FormCard = styled("form")(({ theme }) => ({
   ...panelBase(theme),
-  // Give the filters/map column extra width over the results so the map has
-  // more room to breathe.
+  
+  
   flex: 2,
   minWidth: 0,
   minHeight: 0,
@@ -92,24 +92,24 @@ export const FormCard = styled("form")(({ theme }) => ({
   },
 }));
 
-// A labelled form block (label/helper above the control).
+
 export const Field = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(1),
 }));
 
-// The search-area field grows to absorb spare height so the map can flex.
+
 export const MapField = styled(Field)({
   flex: 1,
   minHeight: 0,
 });
 
-// Frames the embedded map with rounded, clipped corners. On the desktop column
-// it both grows into spare height and shrinks below its preferred size so the
-// form always fits without scrolling: `flex: 1 1 240px` sets a comfortable
-// target height, while `minHeight: 0` lets it compact further on short laptop
-// screens. On md down the column scrolls as one, so the map takes a fixed height.
+
+
+
+
+
 export const MapFrame = styled(Box)(({ theme }) => ({
   position: "relative",
   flex: "1 1 240px",
@@ -123,8 +123,8 @@ export const MapFrame = styled(Box)(({ theme }) => ({
   },
 }));
 
-// The form's action row. It never shrinks, so the map (which does) always yields
-// height first and the Search action stays visible at the bottom of the card.
+
+
 export const Actions = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-end",
@@ -132,7 +132,7 @@ export const Actions = styled(Box)(({ theme }) => ({
   flexShrink: 0,
 }));
 
-// Right-hand results column wrapping the scrollable results panel.
+
 export const ResultsColumn = styled(Box)(({ theme }) => ({
   flex: 1,
   minWidth: 0,
@@ -145,7 +145,7 @@ export const ResultsColumn = styled(Box)(({ theme }) => ({
   },
 }));
 
-// Bounded, scrollable column of result cards.
+
 export const ListPanel = styled(Box)(({ theme }) => ({
   ...panelBase(theme),
   flex: 1,
@@ -172,7 +172,7 @@ export const StatusRow = styled(Box)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-// Zero-height sentinel observed for infinite scroll.
+
 export const Sentinel = styled(Box)({
   height: 1,
   flexShrink: 0,

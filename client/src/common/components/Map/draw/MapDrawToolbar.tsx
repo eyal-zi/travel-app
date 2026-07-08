@@ -10,18 +10,18 @@ import { ToolbarGroup, ToolbarRoot } from './MapDrawToolbar.styles'
 
 type DrawMode = 'draw' | 'edit' | 'delete'
 
-/**
- * Custom glass toolbar that drives Geoman's draw/edit/delete modes via `map.pm`.
- * Geoman's own toolbar stays hidden; the active state is read back from Geoman's
- * mode-toggled events so the buttons stay correct however a mode is ended (e.g.
- * finishing a shape or pressing Escape).
- */
+
+
+
+
+
+
 export const MapDrawToolbar = () => {
   const map = useMap()
   const rootRef = useRef<HTMLDivElement | null>(null)
   const [mode, setMode] = useState<DrawMode | null>(null)
 
-  // Keep clicks/scroll on the toolbar from panning or zooming the map beneath it.
+  
   useEffect(() => {
     const node = rootRef.current
     if (!node) return
@@ -29,7 +29,7 @@ export const MapDrawToolbar = () => {
     L.DomEvent.disableScrollPropagation(node)
   }, [])
 
-  // Mirror Geoman's actual mode state into the toggle buttons.
+  
   useEffect(() => {
     const sync = () => {
       if (map.pm.globalDrawModeEnabled()) setMode('draw')
@@ -49,7 +49,7 @@ export const MapDrawToolbar = () => {
 
   const handleMode = useCallback(
     (_: unknown, next: DrawMode | null) => {
-      // Modes are mutually exclusive: clear all, then enable the chosen one.
+      
       if (map.pm.globalDrawModeEnabled()) map.pm.disableDraw()
       if (map.pm.globalEditModeEnabled()) map.pm.disableGlobalEditMode()
       if (map.pm.globalRemovalModeEnabled()) map.pm.disableGlobalRemovalMode()

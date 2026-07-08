@@ -32,7 +32,7 @@ type RequestAdminEditorProps = {
   draft: RequestDraft
 }
 
-/** Admin editor: status transitions, an editable note, and staged file changes. */
+
 export const RequestAdminEditor = ({ request, draft }: RequestAdminEditorProps) => {
   const {
     statusDraft,
@@ -134,7 +134,7 @@ export const RequestAdminEditor = ({ request, draft }: RequestAdminEditorProps) 
           )
         })}
 
-        {/* Newly chosen files, pending upload on Save */}
+        {}
         {stagedFiles.map((file, index) => (
           <FileRow key={`staged-${index}`}>
             <StagedFileIcon />

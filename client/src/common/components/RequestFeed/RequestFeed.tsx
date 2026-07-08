@@ -9,12 +9,12 @@ import {
 import { FilterBar, ListPanel, ListSection, Sentinel } from './RequestFeed.styles'
 import type { RequestFeedProps } from './RequestFeed.types'
 
-/**
- * Newest-first, cursor-paginated request feed with infinite scroll and a status
- * filter. Presentational and feature-agnostic: the caller owns the query (and
- * the status state that drives it) and supplies `renderItem`. Shared by the trip
- * and file request lists.
- */
+
+
+
+
+
+
 export const RequestFeed = <T,>({
   items,
   isLoading,

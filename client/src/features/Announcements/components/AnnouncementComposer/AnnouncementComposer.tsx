@@ -13,10 +13,10 @@ type AnnouncementComposerProps = {
   resetPostError: () => void
 }
 
-/**
- * Input row for posting a new announcement. Owns its own draft state; the parent
- * supplies the submit handler and post status.
- */
+
+
+
+
 export const AnnouncementComposer = ({
   onSend,
   isPosting,
@@ -33,7 +33,7 @@ export const AnnouncementComposer = ({
   }
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    // Enter sends; Shift+Enter inserts a newline.
+    
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       handleSend()
