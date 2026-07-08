@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import ButtonBase from '@mui/material/ButtonBase'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { TripadvisorLogoSvg } from './TripadvisorLogoSvg'
 
 // Slightly larger than the theme default so panels read as soft, modern cards.
 const PANEL_RADIUS = 16
@@ -48,18 +49,14 @@ export const Brand = styled(Box)(({ theme }) => ({
   minWidth: 0,
 }))
 
-export const BrandMark = styled(Box)(({ theme }) => ({
+// The official Tripadvisor horizontal logo (owl + wordmark) rendered as an
+// inline SVG.  `color` drives `currentColor` inside the SVG so the wordmark
+// text automatically matches the theme while the owl keeps its signature green.
+export const TripadvisorLogo = styled(TripadvisorLogoSvg)(({ theme }) => ({
   flexShrink: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: 44,
-  height: 44,
-  borderRadius: 14,
-  color: theme.palette.primary.contrastText,
-  background: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
-  boxShadow: `0 10px 24px -10px ${alpha(theme.palette.primary.main, 0.6)}`,
-  '& svg': { fontSize: 24 },
+  height: 40,
+  width: 'auto',
+  color: theme.palette.text.primary,
 }))
 
 // Circular initials badge for the signed-in user.

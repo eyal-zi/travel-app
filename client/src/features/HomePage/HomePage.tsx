@@ -4,7 +4,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import DatasetRoundedIcon from '@mui/icons-material/DatasetRounded'
-import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded'
+
 import FlightTakeoffRoundedIcon from '@mui/icons-material/FlightTakeoffRounded'
 import MapRoundedIcon from '@mui/icons-material/MapRounded'
 import PictureAsPdfRoundedIcon from '@mui/icons-material/PictureAsPdfRounded'
@@ -24,7 +24,6 @@ import {
   ActionTitle,
   AnnouncementsContainer,
   Brand,
-  BrandMark,
   CalendarContainer,
   CardSubtitle,
   Greeting,
@@ -40,6 +39,7 @@ import {
   RightColumn,
   Sidebar,
   TextColumn,
+  TripadvisorLogo,
   UserAvatar,
 } from './HomePage.styles'
 
@@ -110,9 +110,7 @@ export const HomePage = () => {
     <PageRoot>
       <PageHeader>
         <Brand>
-          <BrandMark>
-            <ExploreRoundedIcon />
-          </BrandMark>
+          <TripadvisorLogo aria-label="Tripadvisor" />
           <TextColumn spacing={0.25}>
             <Greeting variant="h5" noWrap>
               {getGreeting(now.getHours())}, {firstName}
