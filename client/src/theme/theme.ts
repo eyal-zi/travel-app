@@ -2,15 +2,18 @@ import { createTheme, responsiveFontSizes } from '@mui/material/styles'
 import type { PaletteMode, ThemeOptions } from '@mui/material/styles'
 
 const tokens = {
+  // Elegant, muted deep-teal brand. Dark mode uses the brighter teal-500 as the
+  // active primary so it stays legible on the near-black background.
   brand: {
-    main: '#0d9488',
-    light: '#2dd4bf',
-    dark: '#0f766e',
+    main: '#0f766e',
+    light: '#14b8a6',
+    dark: '#115e59',
   },
+  // Warm amber/sand accent — a quiet, sophisticated complement to teal, used sparingly.
   accent: {
-    main: '#f97316',
-    light: '#fb923c',
-    dark: '#c2410c',
+    main: '#b45309',
+    light: '#f59e0b',
+    dark: '#92400e',
   },
   success: '#22c55e',
   warning: '#f59e0b',
@@ -40,10 +43,12 @@ const getPalette = (mode: PaletteMode): ThemeOptions['palette'] => {
   return {
     mode,
     primary: {
+      // Light: deep teal with white text. Dark: brighter teal-500 with dark text,
+      // an elegant "bright chip on dark" look that reads well without being neon.
       main: isLight ? tokens.brand.main : tokens.brand.light,
       light: tokens.brand.light,
       dark: tokens.brand.dark,
-      contrastText: '#ffffff',
+      contrastText: isLight ? '#ffffff' : '#04302b',
     },
     secondary: {
       main: isLight ? tokens.accent.main : tokens.accent.light,
@@ -134,6 +139,29 @@ const components: ThemeOptions['components'] = {
   MuiChip: {
     styleOverrides: {
       root: { borderRadius: BORDER_RADIUS / 1.5, fontWeight: 500 },
+    },
+  },
+  MuiAppBar: {
+    defaultProps: { elevation: 0, color: 'inherit' },
+    styleOverrides: {
+      root: { backgroundImage: 'none' },
+    },
+  },
+  MuiTabs: {
+    styleOverrides: {
+      root: { minHeight: 44 },
+      indicator: { height: 2, borderRadius: 2 },
+    },
+  },
+  MuiTab: {
+    styleOverrides: {
+      root: {
+        minHeight: 44,
+        textTransform: 'none',
+        fontWeight: 600,
+        fontSize: '0.9375rem',
+        letterSpacing: 0,
+      },
     },
   },
 }

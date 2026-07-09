@@ -2,13 +2,12 @@ import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
 export const PageRoot = styled(Box)(({ theme }) => ({
-  
-  
-  height: '100svh',
+  height: '100%',
+  minHeight: 0,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: theme.spacing(4, 2),
+  padding: theme.spacing(3, 2),
   backgroundColor: theme.palette.background.default,
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(2, 1.5),

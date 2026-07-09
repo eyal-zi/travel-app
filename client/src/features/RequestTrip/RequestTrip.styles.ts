@@ -2,13 +2,12 @@ import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 
 export const PageRoot = styled(Box)(({ theme }) => ({
-  
-  
-  height: '100svh',
+  height: '100%',
+  minHeight: 0,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: theme.spacing(4, 2),
+  padding: theme.spacing(3, 2),
   backgroundColor: theme.palette.background.default,
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(2, 1.5),
@@ -36,40 +35,3 @@ export const PageHeader = styled(Box)(({ theme }) => ({
 export const HeaderText = styled(Box)({
   minWidth: 0,
 })
-
-
-export const TabsBar = styled(Box)(({ theme }) => ({
-  display: 'inline-flex',
-  alignSelf: 'flex-start',
-  gap: theme.spacing(0.5),
-  padding: theme.spacing(0.5),
-  borderRadius: 999,
-  backgroundColor: theme.palette.action.hover,
-  border: `1px solid ${theme.palette.divider}`,
-}))
-
-export const TabButton = styled('button', {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<{ active?: boolean }>(({ theme, active }) => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: theme.spacing(0.75),
-  border: 'none',
-  cursor: 'pointer',
-  padding: theme.spacing(0.75, 2),
-  borderRadius: 999,
-  fontSize: 14,
-  fontWeight: 600,
-  fontFamily: 'inherit',
-  transition: theme.transitions.create(['background-color', 'color', 'box-shadow']),
-  color: active ? theme.palette.text.primary : theme.palette.text.secondary,
-  backgroundColor: active ? theme.palette.background.paper : 'transparent',
-  boxShadow: active ? theme.shadows[1] : 'none',
-  '& svg': { fontSize: 18 },
-  '&:hover': {
-    color: theme.palette.text.primary,
-  },
-}))
-
-
-

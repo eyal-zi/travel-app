@@ -1,14 +1,11 @@
 import { useCallback } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { useTabParam } from '../../common/hooks/useTabParam'
 import { useNotification } from '../../common/hooks/useNotification'
 import { Notification } from '../../common/components/Notification/Notification'
-import IconButton from '@mui/material/IconButton'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import Typography from '@mui/material/Typography'
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
-import DatasetRoundedIcon from '@mui/icons-material/DatasetRounded'
 import { LargeFileSearch } from './components/LargeFileSearch/LargeFileSearch'
 import { FileRequestForm } from '../FileRequest/components/FileRequestForm/FileRequestForm'
 import { FileRequestsList } from '../FileRequest/components/FileRequestsList/FileRequestsList'
@@ -17,7 +14,6 @@ import { HeaderText, PageHeader, PageRoot, Shell } from './LargeFileRequest.styl
 type TabValue = 'search' | 'request' | 'history'
 
 export const LargeFileRequestPage = () => {
-  const navigate = useNavigate()
   const [tab, setTab] = useTabParam(
     ['search', 'request', 'history'] as const,
     'search',
@@ -38,14 +34,6 @@ export const LargeFileRequestPage = () => {
     <PageRoot>
       <Shell>
         <PageHeader>
-          <IconButton
-            type="button"
-            onClick={() => navigate('/')}
-            aria-label="Back to home"
-          >
-            <ArrowBackRoundedIcon />
-          </IconButton>
-          <DatasetRoundedIcon color="primary" />
           <HeaderText>
             <Typography variant="h5">Large file request</Typography>
             <Typography variant="body2" color="text.secondary">

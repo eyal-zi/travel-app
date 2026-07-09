@@ -9,15 +9,14 @@ export const WeatherButton = styled(ButtonBase)(({ theme }) => ({
   gap: theme.spacing(1),
   paddingRight: theme.spacing(1.5),
   borderRadius: 11,
-  color: theme.palette.primary.contrastText,
-  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-  boxShadow: theme.shadows[2],
-  transition: theme.transitions.create(['transform', 'box-shadow'], {
+  color: theme.palette.text.primary,
+  backgroundColor: theme.palette.background.paper,
+  border: `1px solid ${theme.palette.divider}`,
+  transition: theme.transitions.create(['border-color', 'background-color'], {
     duration: theme.transitions.duration.shorter,
   }),
   '&:hover': {
-    transform: 'translateY(-1px)',
-    boxShadow: theme.shadows[4],
+    backgroundColor: theme.palette.action.hover,
   },
   '&:focus-visible': {
     outline: `2px solid ${theme.palette.primary.main}`,
@@ -25,14 +24,15 @@ export const WeatherButton = styled(ButtonBase)(({ theme }) => ({
   },
 }))
 
-export const IconBadge = styled(Box)({
+export const IconBadge = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   width: 40,
   height: 40,
+  color: theme.palette.primary.main,
   '& svg': { fontSize: 22 },
-})
+}))
 
 export const WeatherLabel = styled(Box)(({ theme }) => ({
   fontSize: theme.typography.body2.fontSize,

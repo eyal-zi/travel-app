@@ -1,21 +1,13 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTabParam } from '../../common/hooks/useTabParam'
-import IconButton from '@mui/material/IconButton'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 import Typography from '@mui/material/Typography'
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
-import FlightTakeoffRoundedIcon from '@mui/icons-material/FlightTakeoffRounded'
-import AddRoundedIcon from '@mui/icons-material/AddRounded'
-import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded'
 import { TripRequestForm } from './components/TripRequestForm/TripRequestForm'
 import { TripRequestsList } from './components/TripRequestsList/TripRequestsList'
-import {
-  HeaderText,
-  PageHeader,
-  PageRoot,
-  Shell,
-  TabButton,
-  TabsBar,
-} from './RequestTrip.styles'
+import { HeaderText, PageHeader, PageRoot, Shell } from './RequestTrip.styles'
+
+type TabValue = 'form' | 'list'
 
 export const RequestTripPage = () => {
   const navigate = useNavigate()
@@ -26,14 +18,6 @@ export const RequestTripPage = () => {
     <PageRoot>
       <Shell>
         <PageHeader>
-          <IconButton
-            type="button"
-            onClick={() => navigate('/')}
-            aria-label="Back to home"
-          >
-            <ArrowBackRoundedIcon />
-          </IconButton>
-          <FlightTakeoffRoundedIcon color="primary" />
           <HeaderText>
             <Typography variant="h5">Trip requests</Typography>
             <Typography variant="body2" color="text.secondary">
@@ -42,28 +26,10 @@ export const RequestTripPage = () => {
           </HeaderText>
         </PageHeader>
 
-        <TabsBar role="tablist">
-          <TabButton
-            type="button"
-            role="tab"
-            aria-selected={tab === 'form'}
-            active={tab === 'form'}
-            onClick={() => setTab('form')}
-          >
-            <AddRoundedIcon />
-            New request
-          </TabButton>
-          <TabButton
-            type="button"
-            role="tab"
-            aria-selected={tab === 'list'}
-            active={tab === 'list'}
-            onClick={() => setTab('list')}
-          >
-            <FormatListBulletedRoundedIcon />
-            My requests
-          </TabButton>
-        </TabsBar>
+        <Tabs value={tab} onChange={(_event, value: TabValue) => setTab(value)}>
+          <Tab value="form" label="New request" />
+          <Tab value="list" label="My requests" />
+        </Tabs>
 
         {tab === 'form' ? (
           <TripRequestForm
