@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 
 
 const PANEL_RADIUS = 18
@@ -14,27 +13,16 @@ export const PageRoot = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
 }))
 
-export const GreetingBar = styled(Box)(({ theme }) => ({
-  flexShrink: 0,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(0.25),
-  padding: theme.spacing(2, 3, 1.5),
-  [theme.breakpoints.down('md')]: {
-    padding: theme.spacing(1.5, 2, 1),
-  },
-}))
-
 export const PageContent = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,
   display: 'flex',
-  gap: theme.spacing(2),
-  padding: theme.spacing(0, 3, 3),
+  gap: theme.spacing(1.25),
+  padding: theme.spacing(2),
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
-    gap: theme.spacing(1.5),
-    padding: theme.spacing(0, 2, 2),
+    gap: theme.spacing(1),
+    padding: theme.spacing(1.5),
   },
 }))
 
@@ -59,8 +47,8 @@ export const PanelHeader = styled(Box)(({ theme }) => ({
   flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
-  gap: theme.spacing(1.25),
-  padding: theme.spacing(1.5, 2),
+  gap: theme.spacing(1),
+  padding: theme.spacing(1, 1.5),
   borderBottom: `1px solid ${theme.palette.divider}`,
   color: theme.palette.text.primary,
   '& > svg': { color: theme.palette.primary.main, fontSize: 20 },
@@ -104,7 +92,7 @@ export const RightColumn = styled(Box)(({ theme }) => ({
   minHeight: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(2),
+  gap: theme.spacing(1.25),
   [theme.breakpoints.down('lg')]: {
     minWidth: 260,
   },
@@ -127,7 +115,3 @@ export const AnnouncementsContainer = styled(Panel)(({ theme }) => ({
     minHeight: '50svh',
   },
 }))
-
-export const Greeting = styled(Typography)({
-  fontWeight: 700,
-})
