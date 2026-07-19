@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 
-const PANEL_RADIUS = 16
+const PANEL_RADIUS = 18
 
 export const PageRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -29,7 +29,7 @@ export const PageContent = styled(Box)(({ theme }) => ({
   flex: 1,
   minHeight: 0,
   display: 'flex',
-  gap: theme.spacing(1.5),
+  gap: theme.spacing(2),
   padding: theme.spacing(0, 3, 3),
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
@@ -37,22 +37,6 @@ export const PageContent = styled(Box)(({ theme }) => ({
     padding: theme.spacing(0, 2, 2),
   },
 }))
-
-export const Sidebar = styled(Box)(({ theme }) => ({
-  flex: '0 0 460px',
-  minWidth: 0,
-  minHeight: 0,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(1.5),
-  [theme.breakpoints.down('lg')]: {
-    flex: '0 0 400px',
-  },
-  [theme.breakpoints.down('md')]: {
-    flex: 'none',
-  },
-}))
-
 
 export const Panel = styled(Box)(({ theme }) => ({
   minWidth: 0,
@@ -93,43 +77,54 @@ export const PanelBody = styled(Box)({
   flexDirection: 'column',
 })
 
-export const CalendarContainer = styled(Panel)(({ theme }) => ({
-  flex: 3,
-  [theme.breakpoints.down('md')]: {
-    minHeight: '60svh',
-  },
-}))
-
 export const MapContainer = styled(Panel)(({ theme }) => ({
-  flex: 3,
+  flex: '1.1 1 0',
+  minWidth: 340,
+  [theme.breakpoints.down('lg')]: {
+    minWidth: 300,
+  },
   [theme.breakpoints.down('md')]: {
-    minHeight: '40svh',
+    minWidth: 0,
+    minHeight: '46svh',
   },
 }))
 
 export const PdfContainer = styled(Panel)(({ theme }) => ({
-  flex: 1,
+  flex: '1.6 1 0',
+  minWidth: 380,
   [theme.breakpoints.down('md')]: {
+    minWidth: 0,
     minHeight: '70svh',
   },
 }))
 
 export const RightColumn = styled(Box)(({ theme }) => ({
-  flex: 0.4,
-  minWidth: 0,
+  flex: '0.9 1 0',
+  minWidth: 280,
   minHeight: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(1.5),
+  gap: theme.spacing(2),
+  [theme.breakpoints.down('lg')]: {
+    minWidth: 260,
+  },
   [theme.breakpoints.down('md')]: {
     flex: 'none',
+    minWidth: 0,
+  },
+}))
+
+export const CalendarContainer = styled(Panel)(({ theme }) => ({
+  flex: 1,
+  [theme.breakpoints.down('md')]: {
+    minHeight: '50svh',
   },
 }))
 
 export const AnnouncementsContainer = styled(Panel)(({ theme }) => ({
   flex: 1,
   [theme.breakpoints.down('md')]: {
-    minHeight: '70svh',
+    minHeight: '50svh',
   },
 }))
 

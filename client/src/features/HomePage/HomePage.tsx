@@ -19,7 +19,6 @@ import {
   PanelHeader,
   PdfContainer,
   RightColumn,
-  Sidebar,
 } from './HomePage.styles'
 
 const getGreeting = (hour: number): string => {
@@ -46,20 +45,15 @@ export const HomePage = () => {
       </GreetingBar>
 
       <PageContent>
-        <Sidebar>
-          <CalendarContainer>
-            <Calendar />
-          </CalendarContainer>
-          <MapContainer>
-            <PanelHeader>
-              <MapRoundedIcon />
-              <Typography variant="h6">Route map</Typography>
-            </PanelHeader>
-            <PanelBody>
-              <RouteMapDropzone />
-            </PanelBody>
-          </MapContainer>
-        </Sidebar>
+        <MapContainer>
+          <PanelHeader>
+            <MapRoundedIcon />
+            <Typography variant="h6">Route map</Typography>
+          </PanelHeader>
+          <PanelBody>
+            <RouteMapDropzone />
+          </PanelBody>
+        </MapContainer>
 
         <PdfContainer>
           <PanelHeader>
@@ -72,6 +66,9 @@ export const HomePage = () => {
         </PdfContainer>
 
         <RightColumn>
+          <CalendarContainer>
+            <Calendar />
+          </CalendarContainer>
           <AnnouncementsContainer>
             <Announcements />
           </AnnouncementsContainer>

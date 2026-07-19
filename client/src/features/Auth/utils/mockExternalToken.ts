@@ -1,41 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const MOCK_EXTERNAL_ADMIN_TOKEN =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVJZCI6ImlkcC0wMDAxIiwidXNlcm5hbWUiOiJqZG9lIiwiZ3JvdXBzIjpbInRyYXZlbC1hcHAtdXNlcnMiLCJ0cmF2ZWwtYXBwLWFkbWlucyJdLCJmaXJzdE5hbWUiOiJKYW5lIiwibGFzdE5hbWUiOiJEb2UiLCJmdWxsTmFtZSI6IkphbmUgRG9lIiwiZGlzcGxheU5hbWUiOiJKYW5lIEQuIiwiZW1haWwiOiJqYW5lLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTc4Mjc0NDE2NH0.EPXafrtODjUmAF2eYjG4nPxehGJv_jqVyQ-syu-ie-8';
 
@@ -44,4 +6,4 @@ export const MOCK_EXTERNAL_USER_TOKEN =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVJZCI6ImlkcC0wMDAyIiwidXNlcm5hbWUiOiJqc21pdGgiLCJncm91cHMiOlsidHJhdmVsLWFwcC11c2VycyJdLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJTbWl0aCIsImZ1bGxOYW1lIjoiSm9obiBTbWl0aCIsImRpc3BsYXlOYW1lIjoiSm9obiBTLiIsImVtYWlsIjoiam9obi5zbWl0aEBleGFtcGxlLmNvbSIsImlhdCI6MTc4Mjc0NDE2NH0.HY5wSBQF_6GrSzuT1tJQj7KEUrPsSVqwRpHyG5EAE7A';
 
 
-export const MOCK_EXTERNAL_TOKEN = MOCK_EXTERNAL_ADMIN_TOKEN;
+export const MOCK_EXTERNAL_TOKEN = MOCK_EXTERNAL_USER_TOKEN;
