@@ -26,6 +26,8 @@ L.Icon.Default.mergeOptions({
 
 
 
+const DEFAULT_ZOOM = 2
+
 const HideAttribution = () => {
   const map = useMap()
   useEffect(() => {
@@ -56,14 +58,14 @@ const FitBounds = ({ layers }: { layers: GeoLayer[] }) => {
 
 export const Map = ({
   center = [20, 0],
-  zoom = 2,
+  zoom = DEFAULT_ZOOM,
   layers = [],
   editable = false,
   onLayersChange,
 }: MapProps) => {
   return (
     <MapRoot>
-      <MapContainer center={center} zoom={zoom} scrollWheelZoom worldCopyJump zoomControl={false}
+      <MapContainer center={center} zoom={zoom} minZoom={DEFAULT_ZOOM} scrollWheelZoom worldCopyJump zoomControl={false}
       >
         <HideAttribution />
         <TileLayer url={import.meta.env.VITE_MAP_TILE_URL} />
