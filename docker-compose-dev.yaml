@@ -1,0 +1,32 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    # host networking so DATABASE_URL=...@localhost:5432 keeps working against the local Postgres
+    network_mode: host
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./client/.env
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+    networks:
+      - tripadvisor-network
+
+networks:
+  tripadvisor-network:
+    driver: bridge
