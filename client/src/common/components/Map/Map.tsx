@@ -65,10 +65,20 @@ export const Map = ({
 }: MapProps) => {
   return (
     <MapRoot>
-      <MapContainer center={center} zoom={zoom} minZoom={DEFAULT_ZOOM} scrollWheelZoom worldCopyJump zoomControl={false}
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        minZoom={DEFAULT_ZOOM}
+        scrollWheelZoom
+        worldCopyJump
+        zoomControl={false}
+        crs={L.CRS.EPSG4326}
       >
         <HideAttribution />
-        <TileLayer url={import.meta.env.VITE_MAP_TILE_URL} />
+        <TileLayer
+          url="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/2004-08-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg"
+          maxNativeZoom={8}
+        />
         {
 }
         {editable ? (
