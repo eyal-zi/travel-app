@@ -5,8 +5,10 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { sql } from 'drizzle-orm';
 import { Pool } from 'pg';
+import { join } from 'node:path';
 import { DrizzleDB } from './database.constants';
 import * as schema from './schema';
 
@@ -29,6 +31,11 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit(): Promise<void> {
     await this.db.execute(sql`select 1`);
     this.logger.log('Database connection established');
+
+    const migrationsFolder = join(process.cwd(), 'drizzle');
+    this.logger.log(`Running migrations from ${migrationsFolder}`);
+    await migrate(this.db, { migrationsFolder });
+    this.logger.log('Migrations up to date');
   }
 
   async onModuleDestroy(): Promise<void> {
